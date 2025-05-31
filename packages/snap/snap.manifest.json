@@ -4,14 +4,14 @@
   "proposedName": "COTI",
   "repository": {
     "type": "git",
-    "url": "https://github.com/MetaMask/template-snap-monorepo.git"
+    "url": "https://github.com/YaruLabs/coti-snap.git"
   },
   "source": {
-    "shasum": "jhkrGmPdX2y87k1Lp1XQHJpvEBbC5F8urn6tHanuy2k=",
+    "shasum": "gLlrwbpEbjobaPFmYwvuuQH1jAf+HoKTHFrX6Ggd97g=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
-        "packageName": "snap",
+        "packageName": "@yarulabs/coti-snap",
         "iconPath": "images/icon.svg",
         "registry": "https://registry.npmjs.org/"
       }
