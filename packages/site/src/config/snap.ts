@@ -3,4 +3,4 @@
  * Will default to the local hosted snap.
  * Change it once you have the url where the snap is hosted.
  */
-export const defaultSnapOrigin = `local:https://coti-snap.vercel.app`;
+export const defaultSnapOrigin = `https://coti-snap.vercel.app`;
