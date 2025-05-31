@@ -8,6 +8,10 @@ on:
       - 'packages/snap/**'
   workflow_dispatch:
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   publish-snap:
     name: Build and Publish Snap
