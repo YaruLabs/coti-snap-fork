@@ -1,5 +1,3 @@
- 
-
 import { useSnap } from '../../hooks/SnapContext';
 import { ContentContainer } from '../styles';
 import { DeleteAESKey } from './DeleteAESKey';

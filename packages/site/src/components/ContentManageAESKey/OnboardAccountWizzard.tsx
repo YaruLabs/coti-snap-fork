@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAccount } from 'wagmi';
 
 import EditIcon from '../../assets/edit.svg';
+import { COTI_FAUCET_LINK, ONBOARD_CONTRACT_LINK } from '../../config/onboard';
 import { useWrongChain } from '../../hooks';
 import { useSnap } from '../../hooks/SnapContext';
 import { Button } from '../Button';
@@ -18,7 +19,6 @@ import {
   EditableInputContainer,
   Link,
 } from './styles';
-import { COTI_FAUCET_LINK, ONBOARD_CONTRACT_LINK } from '../../config/onboard';
 
 export const OnboardAccountWizzard = ({
   handleOnboardAccount,

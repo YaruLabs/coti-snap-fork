@@ -1,15 +1,16 @@
 import './App.css';
 import styled from 'styled-components';
+import { useAccount } from 'wagmi';
+
 import {
   ContentConnectYourWallet,
   ContentManageAESKey,
   ContentSwitchNetwork,
   Header,
 } from './components';
+import { ContentInstallAESKeyManager } from './components/ContentInstallAESKeyManager';
 import { useMetaMask, useWrongChain } from './hooks';
 import { useSnap } from './hooks/SnapContext';
-import { useAccount } from 'wagmi';
-import { ContentInstallAESKeyManager } from './components/ContentInstallAESKeyManager';
 
 const Container = styled.div`
   display: flex;

@@ -1,4 +1,4 @@
-import { setAESKeyErrorsType } from 'src/hooks/SnapContext';
+import type { setAESKeyErrorsType } from 'src/hooks/SnapContext';
 import styled from 'styled-components';
 
 export const ContentContainer = styled.div`
