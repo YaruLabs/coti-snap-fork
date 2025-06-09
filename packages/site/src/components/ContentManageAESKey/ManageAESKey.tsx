@@ -11,6 +11,8 @@ import {
   AESKeyContainer,
   ContentInput,
   IconContainer,
+  SuccessAlertContainer,
+  SuccessAlertIconContainer,
 } from './styles';
 
 export const ManageAESKey = ({
@@ -48,6 +50,12 @@ export const ManageAESKey = ({
 
   return (
     <>
+      <SuccessAlertContainer>
+        <SuccessAlertIconContainer> 
+        <CheckIcon />
+        </SuccessAlertIconContainer>
+        <ContentText>Account onboarded successfully</ContentText>
+      </SuccessAlertContainer>
       <ContentTitle>Manage your AES Key</ContentTitle>
       <ContentInput>
         <ContentText>AES Key</ContentText>

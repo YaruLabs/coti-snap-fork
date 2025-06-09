@@ -172,3 +172,21 @@ export const Edit = styled.button`
     }
   }
 `;
+
+export const SuccessAlertContainer = styled.div`
+  display: flex;
+  align-items: center;
+  background: #eafaf4;
+  border-radius: 10px;
+  padding: 18px 32px;
+  margin-bottom: 16px;
+  color: #222;
+  font-size: 22px;
+  font-weight: 400;
+`;
+
+export const SuccessAlertIconContainer = styled.span`
+  display: flex;
+  align-items: center;
+  margin-right: 16px;
+`;
