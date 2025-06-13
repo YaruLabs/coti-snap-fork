@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Button } from '../Button';
 import { ContentText, ContentTitle } from '../styles';
 import { OnboardAccountWizzard } from './OnboardAccountWizzard';
+import { ContentManageToken } from '../ContentManageToken';
 
 export const OnboardAccount = () => {
   const [startOnboarding, setStartOnboarding] = useState<boolean>(false);
@@ -11,7 +12,7 @@ export const OnboardAccount = () => {
     setStartOnboarding(!startOnboarding);
   };
 
-  return startOnboarding ? (
+  /*return startOnboarding ? (
     <OnboardAccountWizzard handleOnboardAccount={handleOnboardAccount} />
   ) : (
     <>
@@ -22,6 +23,13 @@ export const OnboardAccount = () => {
         token.
       </ContentText>
       <Button primary text="Onboard account" onClick={handleOnboardAccount} />
+    </>
+  );*/
+  return startOnboarding ? (
+    <ContentManageToken />
+  ) : (
+    <>
+      <ContentManageToken />
     </>
   );
 };
