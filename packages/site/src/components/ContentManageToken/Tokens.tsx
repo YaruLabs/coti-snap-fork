@@ -1,108 +1,301 @@
-import { useState, useRef, useEffect } from "react";
-import styled from "styled-components";
-import { HeaderBar, NetworkBadge, HeaderActions, CenteredTabsWrapper, TabsWrapper, Tab, TokenRow, TokenInfo, TokenLogos, TokenLogoBig, TokenLogoSmall, TokenName, TokenValues, TokenUsd, TokenAmount, NFTGrid, NFTCard, NFTImagePattern, NFTLogo, NFTActionsWrapper, NFTActionButton, IconButton, MenuDropdown, MenuItem, SortDropdown, SortOption} from "./styles";   
-import { ContentContainer } from "../styles";
+import React, { useState, useCallback, useMemo } from 'react';
+import { BrowserProvider } from '@coti-io/coti-ethers';
+import { 
+  HeaderBar, 
+  NetworkBadge, 
+  HeaderActions, 
+  CenteredTabsWrapper, 
+  TabsWrapper, 
+  Tab, 
+  TokenRow, 
+  TokenInfo, 
+  TokenLogos, 
+  TokenLogoBig, 
+  TokenLogoSmall, 
+  TokenName, 
+  TokenValues, 
+  TokenAmount, 
+  NFTGrid, 
+  NFTCard, 
+  NFTImagePattern, 
+  NFTLogo, 
+  NFTActionsWrapper, 
+  NFTActionButton, 
+  IconButton, 
+  MenuDropdown, 
+  MenuItem, 
+  SortDropdown, 
+  SortOption 
+} from './styles';
+import { ContentContainer } from '../styles';
+import { TransferContainer } from './styles';
+import { ImportTokenModal } from './ImportTokenModal';
+import { ImportNFTModal } from './ImportNFTModal';
+import { useSnap } from '../../hooks/SnapContext';
+import { useDropdown } from '../../hooks/useDropdown';
 
-const DownArrow = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8a8f98" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-);
+import {
+  DownArrow,
+  FilterIcon,
+  MenuIcon,
+  PlusIcon,
+  RefreshIcon,
+  NFTImageIcon,
+  PlusBlueIcon,
+  RefreshBlueIcon
+} from '../../assets/icons';
 
-const FilterIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#18191d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
-);
+interface ImportedToken {
+  address: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+  balance: string;
+}
 
-const MenuIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#18191d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
-);
+interface TokensProps {
+  balance: string;
+  provider: BrowserProvider;
+}
 
-const PlusIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#18191d" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-);
+type TabType = 'tokens' | 'nfts';
+type SortType = 'az' | 'decline';
 
-const RefreshIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#18191d" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0114.13-3.36L23 10"></path><path d="M20.49 15a9 9 0 01-14.13 3.36L1 14"></path></svg>
-);
+const MAX_BALANCE_LENGTH = 12;
+const NFT_PLACEHOLDER_COUNT = 3;
+const NFT_PATTERN_SIZE = 9;
 
-const TokensTabContent = () => {
-  return (
-    <ContentContainer style={{boxShadow:'none', padding:'0', background:'none', width:'100%', maxWidth:'100%'}}>
-      <TokenRow>
-        <TokenInfo>
-          <TokenLogos>
-            <TokenLogoBig>C</TokenLogoBig>
-            <TokenLogoSmall>C</TokenLogoSmall>
-          </TokenLogos>
-          <TokenName>COTI</TokenName>
-        </TokenInfo>
-        <TokenValues>
-          <TokenUsd>&lt;$0.01</TokenUsd>
-          <TokenAmount>0.03171 COTI</TokenAmount>
-        </TokenValues>
-      </TokenRow>
-    </ContentContainer>
-  );
+const formatBalance = (balance: string): string => {
+  if (!balance) return '0';
+  return balance.length > MAX_BALANCE_LENGTH 
+    ? `${balance.slice(0, MAX_BALANCE_LENGTH)}...`
+    : balance;
 };
 
-const NFTImageIcon = () => (
-  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cfd2d6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-);
+const sortTokens = (tokens: ImportedToken[], sortType: SortType): ImportedToken[] => {
+  const sortedTokens = [...tokens];
+  
+  if (sortType === 'az') {
+    return sortedTokens.sort((a, b) => a.name.localeCompare(b.name));
+  }
+  
+  return sortedTokens.sort((a, b) => {
+    const balanceA = parseFloat(a.balance) || 0;
+    const balanceB = parseFloat(b.balance) || 0;
+    return balanceB - balanceA;
+  });
+};
 
-const PlusBlueIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3559ff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-);
+const TokenRowComponent: React.FC<{ 
+  token: ImportedToken; 
+  index: number; 
+}> = React.memo(({ token, index }) => {
+  const formattedBalance = useMemo(() => formatBalance(token.balance), [token.balance]);
+  const tokenKey = useMemo(() => 
+    token.address || `${token.symbol}-${index}`, 
+    [token.address, token.symbol, index]
+  );
 
-const RefreshBlueIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3559ff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0114.13-3.36L23 10"></path><path d="M20.49 15a9 9 0 01-14.13 3.36L1 14"></path></svg>
-);
-
-const NFTsTabContent = () => {
   return (
-    <ContentContainer style={{boxShadow:'none', padding:'0', background:'none', width:'100%', maxWidth:'100%'}}>
+    <TokenRow key={tokenKey}>
+      <TokenInfo>
+        <TokenLogos>
+          <TokenLogoBig>{token.symbol[0]}</TokenLogoBig>
+          <TokenLogoSmall>{token.symbol[0]}</TokenLogoSmall>
+        </TokenLogos>
+        <TokenName>{token.name}</TokenName>
+      </TokenInfo>
+      <TokenValues>
+        <TokenAmount>
+          {formattedBalance} {token.symbol}
+        </TokenAmount>
+      </TokenValues>
+    </TokenRow>
+  );
+});
+
+TokenRowComponent.displayName = 'TokenRowComponent';
+
+const TokensTabContent: React.FC<{ 
+  tokens: ImportedToken[]; 
+  userHasAESKey: boolean;
+  userAESKey: string | null; 
+  getAESKey: () => void;
+}> = React.memo(({ tokens }) => (
+  <TransferContainer>
+    {tokens.map((token, index) => (
+      <TokenRowComponent 
+        key={`${token.address}-${index}`} 
+        token={token} 
+        index={index} 
+      />
+    ))}
+  </TransferContainer>
+));
+
+TokensTabContent.displayName = 'TokensTabContent';
+
+const NFTCardComponent: React.FC<{ index: number }> = React.memo(({ index }) => (
+  <NFTCard>
+    <NFTImagePattern>
+      {Array.from({ length: NFT_PATTERN_SIZE }, (_, i) => (
+        <span key={i} style={{ margin: 2 }}>
+          <NFTImageIcon />
+        </span>
+      ))}
+    </NFTImagePattern>
+    <NFTLogo>C</NFTLogo>
+  </NFTCard>
+));
+
+NFTCardComponent.displayName = 'NFTCardComponent';
+
+const NFTsTabContent: React.FC<{ 
+  onOpenImportNFTModal: () => void; 
+}> = React.memo(({ onOpenImportNFTModal }) => {
+  const handleRefreshList = useCallback(() => {
+    console.log('Refresh NFT list');
+  }, []);
+
+  const containerStyle = useMemo(() => ({
+    boxShadow: 'none', 
+    padding: '0', 
+    background: 'none', 
+    width: '100%', 
+    maxWidth: '100%'
+  }), []);
+
+  return (
+    <ContentContainer style={containerStyle}>
       <NFTGrid>
-        {[1,2,3].map((n) => (
-          <NFTCard key={n}>
-            <NFTImagePattern>
-              {[...Array(9)].map((_,i) => <span key={i} style={{margin:2}}><NFTImageIcon /></span>)}
-            </NFTImagePattern>
-            <NFTLogo>C</NFTLogo>
-          </NFTCard>
+        {Array.from({ length: NFT_PLACEHOLDER_COUNT }, (_, index) => (
+          <NFTCardComponent key={index} index={index} />
         ))}
       </NFTGrid>
       <NFTActionsWrapper>
-        <NFTActionButton><PlusBlueIcon />Import NFT</NFTActionButton>
-        <NFTActionButton><RefreshBlueIcon />Refresh list</NFTActionButton>
+        <NFTActionButton onClick={onOpenImportNFTModal}>
+          <PlusBlueIcon />
+          Import NFT
+        </NFTActionButton>
+        <NFTActionButton onClick={handleRefreshList}>
+          <RefreshBlueIcon />
+          Refresh list
+        </NFTActionButton>
       </NFTActionsWrapper>
     </ContentContainer>
   );
-};
+});
 
-export const Tokens = () => {
-  const [activeTab, setActiveTab] = useState<'tokens' | 'nfts'>('tokens');
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [sortOpen, setSortOpen] = useState(false);
-  const [sort, setSort] = useState<'az' | 'decline'>('decline');
-  const menuRef = useRef<HTMLDivElement>(null);
-  const sortRef = useRef<HTMLDivElement>(null);
+NFTsTabContent.displayName = 'NFTsTabContent';
 
-  // Close menu on outside click
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setMenuOpen(false);
-      }
-      if (sortRef.current && !sortRef.current.contains(event.target as Node)) {
-        setSortOpen(false);
-      }
-    }
-    if (menuOpen || sortOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+const SortOptions: React.FC<{
+  sort: SortType;
+  onSortChange: (sort: SortType) => void;
+  dropdownRef: React.RefObject<HTMLDivElement>;
+}> = React.memo(({ sort, onSortChange, dropdownRef }) => (
+  <SortDropdown ref={dropdownRef}>
+    <SortOption
+      selected={sort === 'az'}
+      onClick={() => onSortChange('az')}
+      type="button"
+    >
+      Alphabetically (A-Z)
+    </SortOption>
+    <SortOption
+      selected={sort === 'decline'}
+      onClick={() => onSortChange('decline')}
+      type="button"
+    >
+      Declining balance ($ high-low)
+    </SortOption>
+  </SortDropdown>
+));
+
+SortOptions.displayName = 'SortOptions';
+
+const MenuOptions: React.FC<{
+  onImportTokens: () => void;
+  onRefreshTokens: () => void;
+  dropdownRef: React.RefObject<HTMLDivElement>;
+}> = React.memo(({ onImportTokens, onRefreshTokens, dropdownRef }) => (
+  <MenuDropdown ref={dropdownRef}>
+    <MenuItem onClick={onImportTokens} type="button">
+      <PlusIcon /> Import tokens
+    </MenuItem>
+    <MenuItem onClick={onRefreshTokens} type="button">
+      <RefreshIcon /> Refresh list
+    </MenuItem>
+  </MenuDropdown>
+));
+
+MenuOptions.displayName = 'MenuOptions';
+
+export const Tokens: React.FC<TokensProps> = React.memo(({ balance, provider }) => {
+  const [activeTab, setActiveTab] = useState<TabType>('tokens');
+  const [sort, setSort] = useState<SortType>('decline');
+  const [showImportTokenModal, setShowImportTokenModal] = useState(false);
+  const [showImportNFTModal, setShowImportNFTModal] = useState(false);
+  const [importedTokens, setImportedTokens] = useState<ImportedToken[]>([]);
+
+  const { userAESKey, userHasAESKey, getAESKey } = useSnap();
+  const menuDropdown = useDropdown();
+  const sortDropdown = useDropdown();
+
+  const allTokens = useMemo(() => {
+    const cotiToken: ImportedToken = {
+      address: '',
+      name: 'COTI',
+      symbol: 'COTI',
+      decimals: 18,
+      balance: balance || '0',
     };
-  }, [menuOpen, sortOpen]);
+    return [cotiToken, ...importedTokens];
+  }, [balance, importedTokens]);
+
+  const sortedTokens = useMemo(() => 
+    sortTokens(allTokens, sort), 
+    [allTokens, sort]
+  );
+
+  const handleTabChange = useCallback((tab: TabType) => {
+    setActiveTab(tab);
+  }, []);
+
+  const handleSortChange = useCallback((newSort: SortType) => {
+    setSort(newSort);
+    sortDropdown.close();
+  }, [sortDropdown]);
+
+  const handleImportToken = useCallback((token: ImportedToken) => {
+    setImportedTokens(prev => [...prev, token]);
+  }, []);
+
+  const handleImportTokensClick = useCallback(() => {
+    if (userHasAESKey && !userAESKey) {
+      getAESKey();
+    }
+    setShowImportTokenModal(true);
+    menuDropdown.close();
+  }, [userHasAESKey, userAESKey, getAESKey, menuDropdown]);
+
+  const handleOpenImportNFTModal = useCallback(() => {
+    setShowImportNFTModal(true);
+  }, []);
+
+  const handleCloseImportTokenModal = useCallback(() => {
+    setShowImportTokenModal(false);
+  }, []);
+
+  const handleCloseImportNFTModal = useCallback(() => {
+    setShowImportNFTModal(false);
+  }, []);
+
+  const handleRefreshTokens = useCallback(() => {
+    console.log('Refresh token list');
+    menuDropdown.close();
+  }, [menuDropdown]);
+
+  const headerActionsStyle = useMemo(() => ({ position: 'relative' as const }), []);
 
   return (
     <>
@@ -110,13 +303,15 @@ export const Tokens = () => {
         <TabsWrapper>
           <Tab
             active={activeTab === 'tokens'}
-            onClick={() => setActiveTab('tokens')}
+            onClick={() => handleTabChange('tokens')}
+            type="button"
           >
             Tokens
           </Tab>
           <Tab
             active={activeTab === 'nfts'}
-            onClick={() => setActiveTab('nfts')}
+            onClick={() => handleTabChange('nfts')}
+            type="button"
           >
             NFTs
           </Tab>
@@ -126,40 +321,67 @@ export const Tokens = () => {
           <NetworkBadge>
             COTI TESTNET <DownArrow />
           </NetworkBadge>
-          <HeaderActions style={{position:'relative'}}>
-            <IconButton onClick={() => setSortOpen((v) => !v)} selected={sortOpen}><FilterIcon /></IconButton>
-            <IconButton onClick={() => setMenuOpen((v) => !v)} selected={menuOpen}><MenuIcon /></IconButton>
-            {menuOpen && (
-              <MenuDropdown ref={menuRef}>
-                <MenuItem><PlusIcon />Import tokens</MenuItem>
-                <MenuItem><RefreshIcon />Refresh list</MenuItem>
-              </MenuDropdown>
+          <HeaderActions style={headerActionsStyle}>
+            <IconButton 
+              onClick={sortDropdown.toggle} 
+              selected={sortDropdown.isOpen}
+              type="button"
+              aria-label="Sort options"
+            >
+              <FilterIcon />
+            </IconButton>
+            <IconButton 
+              onClick={menuDropdown.toggle} 
+              selected={menuDropdown.isOpen}
+              type="button"
+              aria-label="Menu options"
+            >
+              <MenuIcon />
+            </IconButton>
+            
+            {menuDropdown.isOpen && activeTab === 'tokens' && (
+              <MenuOptions
+                onImportTokens={handleImportTokensClick}
+                onRefreshTokens={handleRefreshTokens}
+                dropdownRef={menuDropdown.ref}
+              />
             )}
-            {sortOpen && (
-              <SortDropdown ref={sortRef}>
-                <SortOption
-                  selected={sort === 'az'}
-                  onClick={() => { setSort('az'); setSortOpen(false); }}
-                >
-                  Alphabetically (A-Z)
-                </SortOption>
-                <SortOption
-                  selected={sort === 'decline'}
-                  onClick={() => { setSort('decline'); setSortOpen(false); }}
-                >
-                  Declining balance ($ high-low)
-                </SortOption>
-              </SortDropdown>
+            
+            {sortDropdown.isOpen && (
+              <SortOptions
+                sort={sort}
+                onSortChange={handleSortChange}
+                dropdownRef={sortDropdown.ref}
+              />
             )}
           </HeaderActions>
         </HeaderBar>
 
         {activeTab === 'tokens' ? (
-          <TokensTabContent />
+          <TokensTabContent 
+            tokens={sortedTokens}
+            userHasAESKey={userHasAESKey}
+            userAESKey={userAESKey}
+            getAESKey={getAESKey}
+          />
         ) : (
-          <NFTsTabContent />
+          <NFTsTabContent onOpenImportNFTModal={handleOpenImportNFTModal} />
         )}
       </CenteredTabsWrapper>
+
+      <ImportTokenModal 
+        open={showImportTokenModal} 
+        onClose={handleCloseImportTokenModal} 
+        provider={provider} 
+        onImport={handleImportToken} 
+      />
+      <ImportNFTModal 
+        open={showImportNFTModal} 
+        onClose={handleCloseImportNFTModal} 
+        provider={provider} 
+      />
     </>
   );
-};
+});
+
+Tokens.displayName = 'Tokens';

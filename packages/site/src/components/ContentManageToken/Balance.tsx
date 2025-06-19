@@ -1,38 +1,34 @@
-import {
-  BalanceHeader,
-  BalanceAmountRow,
-  BalanceAmount,
-  BalanceEye,
-  BalanceSub,
-  BalancePortfolioLink,
-  BalancePortfolioIcon,
-  BalanceChange,
-} from './styles';
-import EyeIcon from '../../assets/eye.svg';
+import React from 'react';
+import { BalanceAmount } from './styles';
 
-// External link SVG (you can replace with a component if you have one)
-const ExternalLinkIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-);
+interface BalanceProps {
+  balance: string;
+  currency?: string;
+  className?: string;
+  showCurrency?: boolean;
+}
 
-export const Balance = () => {
+const DEFAULT_CURRENCY = 'COTI';
+
+export const Balance: React.FC<BalanceProps> = ({ 
+  balance, 
+  currency = DEFAULT_CURRENCY,
+  className,
+  showCurrency = true
+}) => {
+  const formattedBalance = React.useMemo(() => {
+    if (!balance || balance === '0' || typeof balance !== 'string') return '0';
+    return balance;
+  }, [balance]);
+
+  const displayText = React.useMemo(() => {
+    if (!showCurrency) return formattedBalance;
+    return `${formattedBalance} ${currency}`;
+  }, [formattedBalance, currency, showCurrency]);
+
   return (
-    <BalanceHeader>
-      <BalanceAmountRow>
-        <BalanceAmount>$0.00 USD</BalanceAmount>
-        <BalanceEye aria-label="Show/hide balance">
-          <EyeIcon />
-        </BalanceEye>
-      </BalanceAmountRow>
-      <BalanceSub>
-        <BalanceChange>+$0 (+0.00%)</BalanceChange>
-        <BalancePortfolioLink href="https://portfolio.metamask.io/" target="_blank" rel="noopener noreferrer">
-          Portfolio
-          <BalancePortfolioIcon>
-            <ExternalLinkIcon />
-          </BalancePortfolioIcon>
-        </BalancePortfolioLink>
-      </BalanceSub>
-    </BalanceHeader>
+    <BalanceAmount className={className}>
+      {displayText}
+    </BalanceAmount>
   );
 };

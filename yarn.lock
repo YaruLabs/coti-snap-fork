@@ -11051,7 +11051,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.isequal@npm:4.5.0":
+"lodash.isequal@npm:4.5.0, lodash.isequal@npm:^4.5.0":
   version: 4.5.0
   resolution: "lodash.isequal@npm:4.5.0"
   checksum: da27515dc5230eb1140ba65ff8de3613649620e8656b19a6270afe4866b7bd461d9ba2ac8a48dcc57f7adac4ee80e1de9f965d89d4d81a0ad52bb3eec2609644
@@ -12632,6 +12632,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"qrcode-generator@npm:^1.4.4":
+  version: 1.5.0
+  resolution: "qrcode-generator@npm:1.5.0"
+  checksum: e1a7d38583c42e7cabf9716498172c6f1f4267946877fa99f191e338e648b9e4f4b727780b29df750dba717a4dfb3637f197f20b30edf09a380ed18ae79eb7a2
+  languageName: node
+  linkType: hard
+
 "qrcode@npm:1.5.3":
   version: 1.5.3
   resolution: "qrcode@npm:1.5.3"
@@ -12772,6 +12779,19 @@ __metadata:
   version: 18.3.1
   resolution: "react-is@npm:18.3.1"
   checksum: e20fe84c86ff172fc8d898251b7cc2c43645d108bf96d0b8edf39b98f9a2cae97b40520ee7ed8ee0085ccc94736c4886294456033304151c3f94978cec03df21
+  languageName: node
+  linkType: hard
+
+"react-qrcode-logo@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "react-qrcode-logo@npm:3.0.0"
+  dependencies:
+    lodash.isequal: ^4.5.0
+    qrcode-generator: ^1.4.4
+  peerDependencies:
+    react: ">=18.0.0"
+    react-dom: ">=18.0.0"
+  checksum: e61945a6980108202422533db0fd54641a499ef0bd04cc82fe7e6fd7e54d9e15c5481f4a4d1b8df314ba8c7914cb2cb67f38841828633a74b49bec45460f3e8e
   languageName: node
   linkType: hard
 
@@ -13276,6 +13296,7 @@ __metadata:
     ethers: ^6.13.5
     prettier: ^2.7.1
     prettier-plugin-packagejson: ^2.2.18
+    react-qrcode-logo: ^3.0.0
     sharp: ^0.33.5
     typescript: ^4.7.4
     viem: 2.x

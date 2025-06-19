@@ -30,3 +30,11 @@ export const ContentText = styled.p`
   font-weight: medium;
   margin: 0;
 `;
+
+export const HeaderBarCentered = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 0 12px 0;
+`;
