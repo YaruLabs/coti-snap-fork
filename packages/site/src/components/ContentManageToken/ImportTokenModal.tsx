@@ -1,8 +1,12 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { useTokenOperations } from '../../hooks/useTokenOperations';
+import { useImportedTokens } from '../../hooks/useImportedTokens';
+import { useModal } from '../../hooks/useModal';
 import { BrowserProvider } from '@coti-io/coti-ethers';
 import { normalizeAddress } from '../../utils/normalizeAddress';
 import { useSnap } from '../../hooks/SnapContext';
+import { ImportedToken } from '../../types/token';
+import { ERROR_MESSAGES } from '../../constants/token';
 import {
   ModalBackdrop,
   AnimatedModalContainer,
@@ -29,16 +33,9 @@ interface ImportTokenModalProps {
   open: boolean;
   onClose: () => void;
   provider: BrowserProvider;
-  onImport: (token: ImportedToken) => void;
+  onImport?: (token: ImportedToken) => void;
 }
 
-interface ImportedToken {
-  address: string;
-  name: string;
-  symbol: string;
-  decimals: number;
-  balance: string;
-}
 
 interface TokenInfo {
   name: string;
@@ -104,7 +101,13 @@ export const ImportTokenModal: React.FC<ImportTokenModalProps> = React.memo(({
 }) => {
   const { getTokenInfo, decryptERC20Balance, addTokenToMetaMask } = useTokenOperations(provider);
   const { userAESKey, userHasAESKey } = useSnap();
+  const { addToken, hasToken } = useImportedTokens();
   const { state, updateState, resetState } = useImportTokenModal();
+  const { handleClose, handleBackdropClick, handleKeyDown } = useModal({
+    isOpen: open,
+    onClose,
+    onReset: resetState
+  });
 
   const isNextButtonDisabled = useMemo(() => {
     return !state.isAddressValid || state.importLoading;
@@ -200,6 +203,12 @@ export const ImportTokenModal: React.FC<ImportTokenModalProps> = React.memo(({
       return;
     }
 
+    // Check if token already exists
+    if (hasToken(state.address)) {
+      updateState({ tokenInfoError: 'Token already imported' });
+      return;
+    }
+
     updateState({ importLoading: true, tokenInfoError: null });
 
     try {
@@ -207,21 +216,28 @@ export const ImportTokenModal: React.FC<ImportTokenModalProps> = React.memo(({
         ? Number(state.tokenInfo.decimals) 
         : state.tokenInfo.decimals;
 
-      const addToken = await addTokenToMetaMask({
+      const addTokenResult = await addTokenToMetaMask({
         address: state.address,
         symbol: state.tokenInfo.symbol,
         decimals,
         image: ''
       });
 
-      if (addToken) {
-        onImport({
+      if (addTokenResult) {
+        const importedToken: ImportedToken = {
           address: state.address,
           name: state.tokenInfo.name,
           symbol: state.tokenInfo.symbol,
           decimals,
           balance: state.balance,
-        });
+        };
+        
+        // Add to localStorage
+        addToken(importedToken);
+        
+        // Call the onImport callback if provided
+        onImport?.(importedToken);
+        
         handleClose();
       } else {
         updateState({ tokenInfoError: 'Error importing token' });
@@ -236,24 +252,8 @@ export const ImportTokenModal: React.FC<ImportTokenModalProps> = React.memo(({
     } finally {
       updateState({ importLoading: false });
     }
-  }, [state.tokenInfo, state.address, state.balance, addTokenToMetaMask, onImport, updateState]);
+  }, [state.tokenInfo, state.address, state.balance, addTokenToMetaMask, onImport, updateState, hasToken, addToken, handleClose]);
 
-  const handleClose = useCallback(() => {
-    resetState();
-    onClose();
-  }, [resetState, onClose]);
-
-  const handleBackdropClick = useCallback((e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      handleClose();
-    }
-  }, [handleClose]);
-
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      handleClose();
-    }
-  }, [handleClose]);
 
   if (!open) return null;
 
@@ -285,7 +285,7 @@ export const ImportTokenModal: React.FC<ImportTokenModalProps> = React.memo(({
             
             {state.addressStatus === 'error' && state.address && (
               <ErrorMsg id="address-error" role="alert">
-                Invalid address
+                {ERROR_MESSAGES.INVALID_ADDRESS}
               </ErrorMsg>
             )}
             

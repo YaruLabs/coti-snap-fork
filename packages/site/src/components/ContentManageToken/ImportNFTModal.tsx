@@ -1,6 +1,10 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { normalizeAddress } from '../../utils/normalizeAddress';
 import { useTokenOperations } from '../../hooks/useTokenOperations';
+import { useImportedTokens } from '../../hooks/useImportedTokens';
+import { useModal } from '../../hooks/useModal';
+import { NFTFormData, NFTFormErrors } from '../../types/token';
+import { TOKEN_ID_REGEX, ERROR_MESSAGES } from '../../constants/token';
 import { BrowserProvider } from '@coti-io/coti-ethers';
 import InfoIcon from '../../assets/info.svg';
 import { Tooltip } from '../Tooltip';
@@ -22,54 +26,43 @@ interface ImportNFTModalProps {
   provider: BrowserProvider;
 }
 
-interface FormData {
-  address: string;
-  tokenId: string;
-}
-
-interface FormErrors {
-  address: string;
-  tokenId: string;
-}
-
-const TOKEN_ID_REGEX = /^\d*$/;
 
 const useImportNFTForm = () => {
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<NFTFormData>({
     address: '',
     tokenId: ''
   });
   
-  const [errors, setErrors] = useState<FormErrors>({
+  const [errors, setErrors] = useState<NFTFormErrors>({
     address: '',
     tokenId: ''
   });
   
   const [isLoading, setIsLoading] = useState(false);
 
-  const updateField = useCallback((field: keyof FormData, value: string) => {
+  const updateField = useCallback((field: keyof NFTFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     
     if (errors[field]) {
-      setErrors((prev: FormErrors) => ({ ...prev, [field]: '' }));
+      setErrors((prev: NFTFormErrors) => ({ ...prev, [field]: '' }));
     }
   }, [errors]);
 
-  const validateField = useCallback((field: keyof FormData, value: string): string => {
+  const validateField = useCallback((field: keyof NFTFormData, value: string): string => {
     switch (field) {
       case 'address':
         if (!value) return '';
-        return normalizeAddress(value) ? '' : 'Invalid address';
+        return normalizeAddress(value) ? '' : ERROR_MESSAGES.INVALID_ADDRESS;
       case 'tokenId':
-        if (!value) return 'Token ID required';
-        return TOKEN_ID_REGEX.test(value) ? '' : 'Token ID must be a number';
+        if (!value) return ERROR_MESSAGES.TOKEN_ID_REQUIRED;
+        return TOKEN_ID_REGEX.test(value) ? '' : ERROR_MESSAGES.TOKEN_ID_INVALID;
       default:
         return '';
     }
   }, []);
 
   const validateForm = useCallback((): boolean => {
-    const newErrors: FormErrors = {
+    const newErrors: NFTFormErrors = {
       address: validateField('address', formData.address),
       tokenId: validateField('tokenId', formData.tokenId)
     };
@@ -103,6 +96,7 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
   provider 
 }) => {
   const { addNFTToMetaMask } = useTokenOperations(provider);
+  const { addToken, hasToken } = useImportedTokens();
   const {
     formData,
     errors,
@@ -114,6 +108,12 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
     resetForm,
     setErrors
   } = useImportNFTForm();
+  
+  const { handleClose, handleBackdropClick, handleKeyDown } = useModal({
+    isOpen: open,
+    onClose,
+    onReset: resetForm
+  });
 
   const isFormValid = useMemo(() => {
     return formData.address && formData.tokenId && !errors.address && !errors.tokenId;
@@ -136,12 +136,12 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
 
   const handleAddressBlur = useCallback(() => {
     const error = validateField('address', formData.address);
-    setErrors((prev: FormErrors) => ({ ...prev, address: error }));
+    setErrors((prev: NFTFormErrors) => ({ ...prev, address: error }));
   }, [formData.address, validateField, setErrors]);
 
   const handleTokenIdBlur = useCallback(() => {
     const error = validateField('tokenId', formData.tokenId);
-    setErrors((prev: FormErrors) => ({ ...prev, tokenId: error }));
+    setErrors((prev: NFTFormErrors) => ({ ...prev, tokenId: error }));
   }, [formData.tokenId, validateField, setErrors]);
 
   const handleImport = useCallback(async () => {
@@ -149,6 +149,13 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
     
     setIsLoading(true);
     try {
+      // Check if token already exists
+      const tokenKey = `${formData.address}-${formData.tokenId}`;
+      if (hasToken(tokenKey)) {
+        setErrors(prev => ({ ...prev, address: ERROR_MESSAGES.NFT_ALREADY_IMPORTED }));
+        return;
+      }
+
       await addNFTToMetaMask({ 
         address: formData.address, 
         symbol: 'NFT', 
@@ -156,31 +163,26 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
         image: '', 
         tokenId: formData.tokenId 
       });
+
+      // Add NFT to localStorage
+      addToken({
+        address: tokenKey,
+        name: `NFT #${formData.tokenId}`,
+        symbol: 'NFT',
+        decimals: 0,
+        balance: '1'
+      });
+
       resetForm();
       onClose();
     } catch (error) {
       console.error('Failed to import NFT:', error);
+      setErrors(prev => ({ ...prev, address: ERROR_MESSAGES.IMPORT_FAILED }));
     } finally {
       setIsLoading(false);
     }
-  }, [validateForm, addNFTToMetaMask, formData, resetForm, onClose]);
+  }, [validateForm, addNFTToMetaMask, formData, resetForm, onClose, hasToken, addToken, setErrors]);
 
-  const handleClose = useCallback(() => {
-    resetForm();
-    onClose();
-  }, [resetForm, onClose]);
-
-  const handleBackdropClick = useCallback((e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      handleClose();
-    }
-  }, [handleClose]);
-
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      handleClose();
-    }
-  }, [handleClose]);
 
   if (!open) return null;
 

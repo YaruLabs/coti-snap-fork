@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { BrowserProvider } from '@coti-io/coti-ethers';
+import { useImportedTokens } from '../../hooks/useImportedTokens';
 import { 
   HeaderBar, 
   NetworkBadge, 
@@ -33,6 +34,7 @@ import { ImportTokenModal } from './ImportTokenModal';
 import { ImportNFTModal } from './ImportNFTModal';
 import { useSnap } from '../../hooks/SnapContext';
 import { useDropdown } from '../../hooks/useDropdown';
+import { ImportedToken } from '../../types/token';
 
 import {
   DownArrow,
@@ -45,13 +47,6 @@ import {
   RefreshBlueIcon
 } from '../../assets/icons';
 
-interface ImportedToken {
-  address: string;
-  name: string;
-  symbol: string;
-  decimals: number;
-  balance: string;
-}
 
 interface TokensProps {
   balance: string;
@@ -151,11 +146,12 @@ const NFTCardComponent: React.FC<{ index: number }> = React.memo(({ index }) => 
 NFTCardComponent.displayName = 'NFTCardComponent';
 
 const NFTsTabContent: React.FC<{ 
-  onOpenImportNFTModal: () => void; 
-}> = React.memo(({ onOpenImportNFTModal }) => {
+  onOpenImportNFTModal: () => void;
+  onRefreshNFTs: () => void;
+}> = React.memo(({ onOpenImportNFTModal, onRefreshNFTs }) => {
   const handleRefreshList = useCallback(() => {
-    console.log('Refresh NFT list');
-  }, []);
+    onRefreshNFTs();
+  }, [onRefreshNFTs]);
 
   const containerStyle = useMemo(() => ({
     boxShadow: 'none', 
@@ -235,9 +231,9 @@ export const Tokens: React.FC<TokensProps> = React.memo(({ balance, provider }) 
   const [sort, setSort] = useState<SortType>('decline');
   const [showImportTokenModal, setShowImportTokenModal] = useState(false);
   const [showImportNFTModal, setShowImportNFTModal] = useState(false);
-  const [importedTokens, setImportedTokens] = useState<ImportedToken[]>([]);
 
   const { userAESKey, userHasAESKey, getAESKey } = useSnap();
+  const { importedTokens, isLoading, refreshTokens } = useImportedTokens();
   const menuDropdown = useDropdown();
   const sortDropdown = useDropdown();
 
@@ -266,9 +262,6 @@ export const Tokens: React.FC<TokensProps> = React.memo(({ balance, provider }) 
     sortDropdown.close();
   }, [sortDropdown]);
 
-  const handleImportToken = useCallback((token: ImportedToken) => {
-    setImportedTokens(prev => [...prev, token]);
-  }, []);
 
   const handleImportTokensClick = useCallback(() => {
     if (userHasAESKey && !userAESKey) {
@@ -291,9 +284,9 @@ export const Tokens: React.FC<TokensProps> = React.memo(({ balance, provider }) 
   }, []);
 
   const handleRefreshTokens = useCallback(() => {
-    console.log('Refresh token list');
+    refreshTokens();
     menuDropdown.close();
-  }, [menuDropdown]);
+  }, [refreshTokens, menuDropdown]);
 
   const headerActionsStyle = useMemo(() => ({ position: 'relative' as const }), []);
 
@@ -358,14 +351,25 @@ export const Tokens: React.FC<TokensProps> = React.memo(({ balance, provider }) 
         </HeaderBar>
 
         {activeTab === 'tokens' ? (
-          <TokensTabContent 
-            tokens={sortedTokens}
-            userHasAESKey={userHasAESKey}
-            userAESKey={userAESKey}
-            getAESKey={getAESKey}
-          />
+          isLoading ? (
+            <TransferContainer>
+              <div style={{ textAlign: 'center', padding: '20px' }}>
+                Loading tokens...
+              </div>
+            </TransferContainer>
+          ) : (
+            <TokensTabContent 
+              tokens={sortedTokens}
+              userHasAESKey={userHasAESKey}
+              userAESKey={userAESKey}
+              getAESKey={getAESKey}
+            />
+          )
         ) : (
-          <NFTsTabContent onOpenImportNFTModal={handleOpenImportNFTModal} />
+          <NFTsTabContent 
+            onOpenImportNFTModal={handleOpenImportNFTModal} 
+            onRefreshNFTs={refreshTokens}
+          />
         )}
       </CenteredTabsWrapper>
 
@@ -373,7 +377,6 @@ export const Tokens: React.FC<TokensProps> = React.memo(({ balance, provider }) 
         open={showImportTokenModal} 
         onClose={handleCloseImportTokenModal} 
         provider={provider} 
-        onImport={handleImportToken} 
       />
       <ImportNFTModal 
         open={showImportNFTModal} 
