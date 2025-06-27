@@ -11,6 +11,7 @@ import { DepositTokens } from './DepositTokens';
 import SendIcon from '../../assets/send.svg';
 import ReceiveIcon from '../../assets/receive.svg';
 import { useMetaMaskContext } from '../../hooks/MetamaskContext';
+import { useSnap } from '../../hooks/SnapContext';
 import { truncateString } from '../../utils';
 import { Loading } from '../Loading';
 
@@ -85,10 +86,15 @@ const DepositModal = ({ isOpen, onClose, address }: {
   );
 };
 
-export const ContentManageToken = () => {
+interface ContentManageTokenProps {
+  aesKey?: string | null;
+}
+
+export const ContentManageToken: React.FC<ContentManageTokenProps> = ({ aesKey }) => {
   const { address } = useAccount();
   const { data: balance } = useBalance({ address });
   const { provider } = useMetaMaskContext();
+  const { getAESKey } = useSnap();
 
   const [modalState, setModalState] = useState<ModalState>({
     transfer: false,
@@ -132,6 +138,21 @@ export const ContentManageToken = () => {
     setModalState(prev => ({ ...prev, deposit: false }));
   };
 
+  const handleToggleDecryption = async () => {
+    if (!aesKey) {
+      try {
+        await getAESKey();
+      } catch (error) {
+        console.error('Error getting AES key:', error);
+      }
+    }
+    // If already decrypted, we don't "hide" it as the AES key is needed for token operations
+    // This just shows the current state
+  };
+
+  // AES key is available (decrypted state)
+  const isDecrypted = !!aesKey;
+
   if (shouldShowConnectWallet) {
     return <Loading title="Loading..." actionText="" />;
   }
@@ -149,7 +170,11 @@ export const ContentManageToken = () => {
   return (
     <>
       <MainStack>
-        <Balance balance={formattedBalance} />
+        <Balance 
+          balance={formattedBalance} 
+          isDecrypted={isDecrypted}
+          onToggleDecryption={handleToggleDecryption}
+        />
         
         <QuickAccessActions 
           onSendClick={handleSendClick}
@@ -159,7 +184,8 @@ export const ContentManageToken = () => {
         {browserProvider && (
           <Tokens 
             balance={formattedBalance} 
-            provider={browserProvider} 
+            provider={browserProvider}
+            aesKey={aesKey}
           />
         )}
       </MainStack>

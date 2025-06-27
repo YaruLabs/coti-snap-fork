@@ -36,7 +36,6 @@ interface ImportTokenModalProps {
   onImport?: (token: ImportedToken) => void;
 }
 
-
 interface TokenInfo {
   name: string;
   symbol: string;
@@ -182,9 +181,17 @@ export const ImportTokenModal: React.FC<ImportTokenModalProps> = React.memo(({
     updateState({ step: 2, balanceLoading: true });
     
     try {
+      // Get decrypted balance for display
       const balance = await decryptERC20Balance(state.address, userAESKey || undefined);
       console.log("balance", balance);
-      updateState({ balance: `${balance}` });
+      
+      // Get encrypted balance for storage
+      const encryptedBalance = await decryptERC20Balance(state.address);
+      console.log("encryptedBalance", encryptedBalance);
+      
+      updateState({ 
+        balance: `${balance}`
+      });
     } catch (error) {
       console.error('Error getting balance:', error);
       updateState({ balance: '0' });
@@ -229,7 +236,6 @@ export const ImportTokenModal: React.FC<ImportTokenModalProps> = React.memo(({
           name: state.tokenInfo.name,
           symbol: state.tokenInfo.symbol,
           decimals,
-          balance: state.balance,
         };
         
         // Add to localStorage

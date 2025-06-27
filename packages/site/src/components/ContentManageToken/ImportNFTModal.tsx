@@ -170,7 +170,6 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
         name: `NFT #${formData.tokenId}`,
         symbol: 'NFT',
         decimals: 0,
-        balance: '1'
       });
 
       resetForm();

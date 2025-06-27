@@ -3,7 +3,6 @@ export interface ImportedToken {
   name: string;
   symbol: string;
   decimals: number;
-  balance: string;
 }
 
 export interface NFTFormData {

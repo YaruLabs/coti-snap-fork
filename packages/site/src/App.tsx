@@ -32,7 +32,7 @@ const Container = styled.div`
 function App() {
   const { installedSnap } = useMetaMask();
 
-  const { userHasAESKey } = useSnap();
+  const { userHasAESKey, userAESKey } = useSnap();
   const { isConnected } = useAccount();
   const { wrongChain } = useWrongChain();
 
@@ -47,7 +47,7 @@ function App() {
         wrongChain ? (
           <ContentSwitchNetwork />
         ) : installedSnap ? (
-          <ContentManageAESKey userHasAESKey={userHasAESKey} />
+          <ContentManageAESKey userHasAESKey={userHasAESKey} userAESKey={userAESKey} />
         ) : (
           <ContentInstallAESKeyManager />
         )

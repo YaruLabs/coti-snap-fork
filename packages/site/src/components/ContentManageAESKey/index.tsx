@@ -8,6 +8,7 @@ import { ContentManageToken } from '../ContentManageToken';
 
 interface ContentManageAESKeyProps {
   userHasAESKey: boolean;
+  userAESKey: string | null;
 }
 
 interface AESKeyState {
@@ -15,7 +16,7 @@ interface AESKeyState {
   showManage: boolean;
 }
 
-export const ContentManageAESKey: React.FC<ContentManageAESKeyProps> = ({ userHasAESKey }) => {
+export const ContentManageAESKey: React.FC<ContentManageAESKeyProps> = ({ userHasAESKey, userAESKey }) => {
   const [aesKeyState, setAesKeyState] = useState<AESKeyState>({
     showDelete: false,
     showManage: false
@@ -61,7 +62,7 @@ export const ContentManageAESKey: React.FC<ContentManageAESKeyProps> = ({ userHa
     }
 
     if (shouldShowTokenManagement) {
-      return <ContentManageToken />;
+      return <ContentManageToken aesKey={userAESKey} />;
     }
 
     return null;

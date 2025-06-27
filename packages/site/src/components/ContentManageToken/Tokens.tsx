@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { BrowserProvider } from '@coti-io/coti-ethers';
 import { useImportedTokens } from '../../hooks/useImportedTokens';
+import { useTokenOperations } from '../../hooks/useTokenOperations';
 import { 
   HeaderBar, 
   NetworkBadge, 
@@ -51,6 +52,7 @@ import {
 interface TokensProps {
   balance: string;
   provider: BrowserProvider;
+  aesKey?: string | null | undefined;
 }
 
 type TabType = 'tokens' | 'nfts';
@@ -74,18 +76,68 @@ const sortTokens = (tokens: ImportedToken[], sortType: SortType): ImportedToken[
     return sortedTokens.sort((a, b) => a.name.localeCompare(b.name));
   }
   
-  return sortedTokens.sort((a, b) => {
-    const balanceA = parseFloat(a.balance) || 0;
-    const balanceB = parseFloat(b.balance) || 0;
-    return balanceB - balanceA;
-  });
+  // For balance sorting, we'll just return alphabetical order since decrypting 
+  // all balances would be expensive. Could be enhanced later with caching.
+  return sortedTokens.sort((a, b) => a.name.localeCompare(b.name));
 };
 
 const TokenRowComponent: React.FC<{ 
   token: ImportedToken; 
   index: number; 
-}> = React.memo(({ token, index }) => {
-  const formattedBalance = useMemo(() => formatBalance(token.balance), [token.balance]);
+  provider: BrowserProvider;
+  cotiBalance?: string | undefined;
+  propAESKey?: string | null | undefined;
+}> = React.memo(({ token, index, provider, cotiBalance, propAESKey }) => {
+  const { userAESKey } = useSnap();
+  
+  // Use prop AES key if available, otherwise use context AES key
+  const effectiveAESKey = propAESKey || userAESKey;
+  const { decryptERC20Balance } = useTokenOperations(provider);
+  const [decryptedBalance, setDecryptedBalance] = useState<string>('');
+  const [isDecrypting, setIsDecrypting] = useState(false);
+
+  const decryptBalance = useCallback(async () => {
+    // Special case for COTI native token (address is empty)
+    if (!token.address) {
+      setDecryptedBalance(cotiBalance || '0');
+      return;
+    }
+    
+    if (!effectiveAESKey) {
+      setDecryptedBalance('(encrypted)');
+      return;
+    }
+    
+    setIsDecrypting(true);
+    try {
+      // Decrypt balance directly from the blockchain using the token address and AES key
+      const balance = await decryptERC20Balance(token.address, effectiveAESKey);
+      setDecryptedBalance(`${balance}`);
+    } catch (error) {
+      console.error('Error decrypting balance:', error);
+      setDecryptedBalance('(encrypted)');
+    } finally {
+      setIsDecrypting(false);
+    }
+  }, [token.address, effectiveAESKey, decryptERC20Balance, cotiBalance]);
+
+  React.useEffect(() => {
+    // Reset state when token changes
+    setDecryptedBalance('');
+    setIsDecrypting(false);
+  }, [token.address]);
+
+  React.useEffect(() => {
+    decryptBalance();
+  }, [decryptBalance]);
+
+
+  const formattedBalance = useMemo(() => {
+    if (isDecrypting) return 'Loading...';
+    return formatBalance(decryptedBalance || '0');
+  }, [decryptedBalance, isDecrypting]);
+
+  
   const tokenKey = useMemo(() => 
     token.address || `${token.symbol}-${index}`, 
     [token.address, token.symbol, index]
@@ -116,13 +168,19 @@ const TokensTabContent: React.FC<{
   userHasAESKey: boolean;
   userAESKey: string | null; 
   getAESKey: () => void;
-}> = React.memo(({ tokens }) => (
+  provider: BrowserProvider;
+  cotiBalance?: string | undefined;
+  propAESKey?: string | null | undefined;
+}> = React.memo(({ tokens, provider, cotiBalance, propAESKey }) => (
   <TransferContainer>
     {tokens.map((token, index) => (
       <TokenRowComponent 
         key={`${token.address}-${index}`} 
         token={token} 
-        index={index} 
+        index={index}
+        provider={provider}
+        cotiBalance={cotiBalance}
+        propAESKey={propAESKey}
       />
     ))}
   </TransferContainer>
@@ -226,7 +284,7 @@ const MenuOptions: React.FC<{
 
 MenuOptions.displayName = 'MenuOptions';
 
-export const Tokens: React.FC<TokensProps> = React.memo(({ balance, provider }) => {
+export const Tokens: React.FC<TokensProps> = React.memo(({ balance, provider, aesKey }) => {
   const [activeTab, setActiveTab] = useState<TabType>('tokens');
   const [sort, setSort] = useState<SortType>('decline');
   const [showImportTokenModal, setShowImportTokenModal] = useState(false);
@@ -237,16 +295,16 @@ export const Tokens: React.FC<TokensProps> = React.memo(({ balance, provider }) 
   const menuDropdown = useDropdown();
   const sortDropdown = useDropdown();
 
+
   const allTokens = useMemo(() => {
     const cotiToken: ImportedToken = {
       address: '',
       name: 'COTI',
       symbol: 'COTI',
       decimals: 18,
-      balance: balance || '0',
     };
     return [cotiToken, ...importedTokens];
-  }, [balance, importedTokens]);
+  }, [importedTokens]);
 
   const sortedTokens = useMemo(() => 
     sortTokens(allTokens, sort), 
@@ -264,12 +322,9 @@ export const Tokens: React.FC<TokensProps> = React.memo(({ balance, provider }) 
 
 
   const handleImportTokensClick = useCallback(() => {
-    if (userHasAESKey && !userAESKey) {
-      getAESKey();
-    }
     setShowImportTokenModal(true);
     menuDropdown.close();
-  }, [userHasAESKey, userAESKey, getAESKey, menuDropdown]);
+  }, [menuDropdown]);
 
   const handleOpenImportNFTModal = useCallback(() => {
     setShowImportNFTModal(true);
@@ -278,6 +333,11 @@ export const Tokens: React.FC<TokensProps> = React.memo(({ balance, provider }) 
   const handleCloseImportTokenModal = useCallback(() => {
     setShowImportTokenModal(false);
   }, []);
+
+  const handleTokenImport = useCallback((_importedToken: ImportedToken) => {
+    // The token is already added by the modal, just refresh the list
+    refreshTokens();
+  }, [refreshTokens]);
 
   const handleCloseImportNFTModal = useCallback(() => {
     setShowImportNFTModal(false);
@@ -363,6 +423,9 @@ export const Tokens: React.FC<TokensProps> = React.memo(({ balance, provider }) 
               userHasAESKey={userHasAESKey}
               userAESKey={userAESKey}
               getAESKey={getAESKey}
+              provider={provider}
+              cotiBalance={balance}
+              propAESKey={aesKey}
             />
           )
         ) : (
@@ -376,7 +439,8 @@ export const Tokens: React.FC<TokensProps> = React.memo(({ balance, provider }) 
       <ImportTokenModal 
         open={showImportTokenModal} 
         onClose={handleCloseImportTokenModal} 
-        provider={provider} 
+        provider={provider}
+        onImport={handleTokenImport}
       />
       <ImportNFTModal 
         open={showImportNFTModal} 
