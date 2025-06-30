@@ -6,6 +6,9 @@ import styled, { keyframes } from 'styled-components';
 import { QuickAccessButton, QuickAccessGroup, QuickAccessItem, QuickAccessLabel, MainStack } from './styles';
 import { Balance } from './Balance';
 import { Tokens } from './Tokens';
+import NFTDetails from './NFTDetails';
+import TokenDetails from './TokenDetails';
+import { ImportedToken } from '../../types/token';
 import { TransferTokens } from './TransferTokens';
 import { DepositTokens } from './DepositTokens';
 import SendIcon from '../../assets/send.svg';
@@ -101,6 +104,9 @@ export const ContentManageToken: React.FC<ContentManageTokenProps> = ({ aesKey }
     deposit: false
   });
 
+  const [selectedNFT, setSelectedNFT] = useState<ImportedToken | null>(null);
+  const [selectedToken, setSelectedToken] = useState<ImportedToken | null>(null);
+
   const formattedBalance = useMemo(() => {
     if (!balance) return '0';
     try {
@@ -146,11 +152,8 @@ export const ContentManageToken: React.FC<ContentManageTokenProps> = ({ aesKey }
         console.error('Error getting AES key:', error);
       }
     }
-    // If already decrypted, we don't "hide" it as the AES key is needed for token operations
-    // This just shows the current state
   };
 
-  // AES key is available (decrypted state)
   const isDecrypted = !!aesKey;
 
   if (shouldShowConnectWallet) {
@@ -163,6 +166,33 @@ export const ContentManageToken: React.FC<ContentManageTokenProps> = ({ aesKey }
         onBack={handleCloseTransfer} 
         address={truncateString(address!)} 
         balance={formattedBalance} 
+      />
+    );
+  }
+
+  if (selectedNFT) {
+    return (
+      <NFTDetails 
+        nft={selectedNFT} 
+        open={true} 
+        onClose={() => setSelectedNFT(null)} 
+        setActiveTab={(tab) => setSelectedNFT(null)}
+        setSelectedNFT={setSelectedNFT}
+      />
+    );
+  }
+
+  if (selectedToken) {
+    return (
+      <TokenDetails 
+        token={selectedToken} 
+        open={true} 
+        onClose={() => setSelectedToken(null)} 
+        setActiveTab={(tab) => setSelectedToken(null)}
+        setSelectedToken={setSelectedToken}
+        provider={browserProvider!}
+        cotiBalance={formattedBalance}
+        aesKey={aesKey}
       />
     );
   }
@@ -186,6 +216,8 @@ export const ContentManageToken: React.FC<ContentManageTokenProps> = ({ aesKey }
             balance={formattedBalance} 
             provider={browserProvider}
             aesKey={aesKey}
+            onSelectNFT={setSelectedNFT}
+            onSelectToken={setSelectedToken}
           />
         )}
       </MainStack>

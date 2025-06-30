@@ -38,7 +38,7 @@ const colors = {
     primary: '#e5e7eb',
     secondary: '#d0d0d0'
   }
-};
+} as const;
 
 const spacing = {
   xs: '4px',
@@ -49,7 +49,7 @@ const spacing = {
   xxl: '24px',
   xxxl: '32px',
   xxxxl: '40px'
-};
+} as const;
 
 const typography = {
   sizes: {
@@ -71,7 +71,7 @@ const typography = {
     semibold: 600,
     bold: 700
   }
-};
+} as const;
 
 const borderRadius = {
   sm: '6px',
@@ -82,20 +82,20 @@ const borderRadius = {
   xxxl: '32px',
   xxxxl: '24px',
   full: '50%'
-};
+} as const;
 
 const shadows = {
   sm: '0 1px 4px rgba(0,0,0,0.04)',
   md: '0 2px 8px rgba(0, 0, 0, 0.1)',
   lg: '0 4px 32px 0 rgba(0,0,0,0.12)',
   dropdown: '0 2px 12px rgba(0,0,0,0.10)'
-};
+} as const;
 
 const transitions = {
   fast: '0.15s ease',
   normal: '0.2s ease',
   slow: '0.32s cubic-bezier(0.4, 0.8, 0.4, 1)'
-};
+} as const;
 
 const buttonBase = `
   border: none;
@@ -189,11 +189,12 @@ export const QuickAccessLabel = styled.span`
   text-align: center;
 `;
 
-export const BalanceAmount = styled.span`
-  font-size: ${typography.sizes.huge};
-  font-weight: ${typography.weights.bold};
-  color: ${colors.text.primary};
-  letter-spacing: 0.01em;
+export const BalanceAmount = styled.div`
+  font-weight: 600;
+  font-size: 32px;
+  color: #000;
+  margin-top: 2px;
+  white-space: nowrap;
   text-align: center;
 `;
 
@@ -531,77 +532,58 @@ export const TokenAmount = styled.span`
 `;
 
 export const NFTGrid = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: ${spacing.xxxl};
-  justify-content: flex-start;
   width: 100%;
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 export const NFTCard = styled.div`
   background: ${colors.background.tertiary};
   border-radius: ${spacing.lg};
-  width: 180px;
+  width: 100%;
   aspect-ratio: 1 / 1;
   position: relative;
   overflow: hidden;
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
+  cursor: pointer;
 `;
 
-export const NFTImagePattern = styled.div`
+export const NFTCardImage = styled.img`
   position: absolute;
-  inset: 0;
-  opacity: 0.5;
-  display: flex;
-  flex-wrap: wrap;
-  align-content: flex-start;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  opacity: 0.9;
 `;
 
 export const NFTLogo = styled.div`
   position: absolute;
-  right: ${spacing.lg};
-  bottom: ${spacing.lg};
-  width: 32px;
-  height: 32px;
+  right: 10px;
+  bottom: 10px;
+  width: 22px;
+  height: 22px;
   background: ${colors.background.primary};
   border-radius: ${borderRadius.full};
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: ${typography.sizes.md};
+  font-size: 13px;
   color: ${colors.text.primary};
   font-weight: ${typography.weights.medium};
   box-shadow: ${shadows.sm};
   border: 1.5px solid ${colors.border.primary};
-`;
-
-export const NFTActionsWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: ${spacing.xxl};
-  margin-top: ${spacing.xxxl};
-`;
-
-export const NFTActionButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  background: none;
-  border: none;
-  outline: none;
-  color: ${colors.primary};
-  font-size: ${typography.sizes.md};
-  font-weight: ${typography.weights.semibold};
-  cursor: pointer;
-  padding: 0;
-  transition: text-decoration ${transitions.fast};
-  
-  &:hover {
-    text-decoration: underline;
-    text-underline-offset: ${spacing.xs};
-  }
 `;
 
 export const TransferContainer = styled.div`
@@ -1217,4 +1199,767 @@ export const LabelRow = styled.div`
   font-weight: ${typography.weights.semibold};
   color: ${colors.text.primary};
   margin: 25px ${spacing.xxxl} 0 ${spacing.xxxl};
+`;
+
+export const NFTCornerIcon = styled.div`
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  width: 18px;
+  height: 18px;
+  background: #f3f4f6;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: ${colors.text.primary};
+  font-weight: 500;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  border: 2px solid #fff;
+`;
+
+export const NFTDetailsContainer = styled.div`
+  background: ${colors.background.primary};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding-top: ${spacing.xxxl};
+  width: 100%;
+`;
+
+export const DetailsBackButton = styled.button`
+  position: absolute;
+  left: ${spacing.xs};
+  top: ${spacing.xxxl};
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  ${buttonBase}
+  
+  svg {
+    width: ${spacing.xxl};
+    height: ${spacing.xxl};
+    color: ${colors.text.primary};
+  }
+`;
+
+export const NFTDetailsImageContainer = styled.div`
+  margin: 0 auto ${spacing.xxl};
+  margin-top: ${spacing.xxl};
+`;
+
+export const NFTDetailsContent = styled.div`
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 0 ${spacing.md};
+  display: flex;
+  flex-direction: column;
+  gap: ${spacing.xxl};
+`;
+
+export const NFTDetailsRow = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 0;
+`;
+
+export const NFTDetailsLabel = styled.span`
+  color: ${colors.text.secondary};
+  font-weight: ${typography.weights.semibold};
+  font-size: ${typography.sizes.xl};
+  flex: 1;
+`;
+
+export const NFTDetailsValue = styled.span`
+  color: ${colors.text.primary};
+  font-weight: ${typography.weights.bold};
+  font-size: ${typography.sizes.xxl};
+`;
+
+export const NFTDetailsLink = styled.a`
+  color: ${colors.primary};
+  font-weight: ${typography.weights.semibold};
+  font-size: ${typography.sizes.xxl};
+  text-decoration: none;
+  margin-right: ${spacing.sm};
+  
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+export const NFTDetailsCopyButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: ${colors.primary};
+  padding: 0;
+  ${buttonBase}
+  
+  svg {
+    width: ${spacing.xl};
+    height: ${spacing.xl};
+  }
+`;
+
+export const NFTDetailsDisclaimer = styled.div`
+  color: ${colors.text.secondary};
+  font-size: ${typography.sizes.xs};
+  margin: 0;
+  text-align: left;
+  line-height: 1.4;
+`;
+
+export const SendButton = styled.button`
+  background: #aab6fe;
+  color: ${colors.background.primary};
+  border: none;
+  border-radius: ${borderRadius.xl};
+  font-size: ${typography.sizes.lg};
+  font-weight: ${typography.weights.semibold};
+  padding: ${typography.sizes.xxl} 0;
+  cursor: pointer;
+  margin-top: ${spacing.xl};
+  margin-bottom: 0;
+  width: 100%;
+  ${buttonBase}
+  
+  &:hover:not(:disabled) {
+    background: #9aa5fd;
+  }
+`;
+
+// TokenDetails components
+export const TokenDetailsContainer = styled.div`
+  background: ${colors.background.primary};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding-top: ${spacing.xxxl};
+  gap: ${spacing.xl};
+  width: 100%;
+`;
+
+export const TokenDetailsBackButton = styled.button`
+  position: absolute;
+  left: ${spacing.xxl};
+  top: ${spacing.xxxl};
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  ${buttonBase}
+  
+  svg {
+    width: ${spacing.xxl};
+    height: ${spacing.xxl};
+    color: ${colors.text.primary};
+  }
+`;
+
+export const TokenDetailsLogoContainer = styled.div`
+  margin: 0 auto ${spacing.xxl};
+  margin-top: ${spacing.xxl};
+`;
+
+export const TokenDetailsLogo = styled.div`
+  width: 140px;
+  height: 140px;
+  background: ${colors.background.tertiary};
+  border-radius: ${borderRadius.full};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: ${typography.sizes.huge};
+  color: ${colors.text.primary};
+  font-weight: ${typography.weights.bold};
+  position: relative;
+  box-shadow: ${shadows.md};
+`;
+
+export const TokenDetailsLogoSmall = styled.div`
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  width: 35px;
+  height: 35px;
+  background: ${colors.background.primary};
+  border-radius: ${borderRadius.full};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: ${typography.sizes.lg};
+  color: ${colors.text.primary};
+  font-weight: ${typography.weights.bold};
+  border: 3px solid ${colors.border.primary};
+  box-shadow: ${shadows.sm};
+`;
+
+export const TokenDetailsContent = styled.div`
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: ${spacing.lg};
+`;
+
+export const TokenDetailsRow = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 0;
+`;
+
+export const TokenDetailsLabel = styled.span`
+  color: ${colors.text.secondary};
+  font-weight: ${typography.weights.semibold};
+  font-size: ${typography.sizes.lg};
+  flex: 1;
+`;
+
+export const TokenDetailsValue = styled.span`
+  color: ${colors.text.primary};
+  font-weight: ${typography.weights.bold};
+  font-size: ${typography.sizes.lg};
+  text-align: right;
+  word-break: break-all;
+  max-width: 200px;
+`;
+
+export const TokenDetailsLink = styled.a`
+  color: #4664ff;
+  font-weight: 500;
+  font-size: ${typography.sizes.lg};
+  text-decoration: none;
+  margin-right: ${spacing.sm};
+  
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+export const TokenDetailsCopyButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: ${colors.primary};
+  padding: 0;
+  ${buttonBase}
+  
+  svg {
+    width: ${spacing.xl};
+    height: ${spacing.xl};
+  }
+`;
+
+export const TokenDetailsSendButton = styled.button`
+  background: ${colors.primary};
+  color: ${colors.background.primary};
+  border: none;
+  border-radius: ${borderRadius.xl};
+  font-size: ${typography.sizes.lg};
+  font-weight: ${typography.weights.semibold};
+  padding: ${typography.sizes.xxl} 0;
+  cursor: pointer;
+  margin-top: 0;
+  margin-bottom: 0;
+  ${buttonBase}
+  
+  &:hover:not(:disabled) {
+    background: ${colors.primaryHover};
+  }
+`;
+
+export const TokenDetailsActionButtons = styled.div`
+  display: flex;
+  gap: ${spacing.lg};
+  width: 100%;
+`;
+
+export const TokenDetailsSecondaryButton = styled.button`
+  flex: 1;
+  background: none;
+  border: 2px solid ${colors.primary};
+  color: ${colors.primary};
+  border-radius: ${borderRadius.xl};
+  font-size: ${typography.sizes.lg};
+  font-weight: ${typography.weights.semibold};
+  padding: ${typography.sizes.xxl} 0;
+  cursor: pointer;
+  ${buttonBase}
+  
+  &:hover:not(:disabled) {
+    background: ${colors.background.hover};
+  }
+`;
+
+// Snap TokenDetails styles - Consistent spacing and structure
+export const snapSpacing = {
+  container: spacing.xxl,
+  section: spacing.xl,
+  item: spacing.lg,
+  small: spacing.md
+} as const;
+
+export const SnapTokenDetailsContainer = {
+  padding: snapSpacing.container,
+  background: colors.background.secondary,
+  minHeight: '100vh',
+  maxWidth: '400px',
+  margin: '0 auto'
+};
+
+export const SnapHeader = {
+  display: 'flex',
+  alignItems: 'center',
+  padding: snapSpacing.container,
+  paddingTop: '48px',
+  gap: snapSpacing.small
+};
+
+export const SnapBackButton = {
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
+  padding: '0',
+  display: 'flex',
+  alignItems: 'center'
+};
+
+export const SnapHeaderTitle = {
+  fontSize: typography.sizes.xxxl,
+  fontWeight: typography.weights.medium,
+  color: colors.text.primary,
+  marginLeft: snapSpacing.small
+};
+
+export const SnapSection = {
+  padding: `0 ${snapSpacing.container}`,
+  marginTop: snapSpacing.section
+};
+
+export const SnapSectionTitle = {
+  fontSize: typography.sizes.xxxxl,
+  fontWeight: typography.weights.semibold,
+  color: colors.text.primary,
+  marginBottom: snapSpacing.section
+};
+
+export const SnapBalanceRow = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: snapSpacing.item
+};
+
+export const SnapTokenInfo = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: snapSpacing.item
+};
+
+export const SnapTokenLogo = {
+  width: '40px',
+  height: '40px',
+  backgroundColor: colors.primary,
+  borderRadius: borderRadius.lg,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center'
+};
+
+export const SnapTokenLogoDiamond = {
+  width: '24px',
+  height: '24px',
+  backgroundColor: colors.background.primary,
+  borderRadius: borderRadius.sm,
+  transform: 'rotate(45deg)'
+};
+
+export const SnapTokenDetails = {
+  display: 'flex',
+  flexDirection: 'column' as const
+};
+
+export const SnapTokenName = {
+  fontSize: typography.sizes.xl,
+  fontWeight: typography.weights.medium,
+  color: colors.text.primary
+};
+
+export const SnapTokenSymbol = {
+  fontSize: typography.sizes.base,
+  color: colors.text.secondary
+};
+
+export const SnapBalanceValues = {
+  textAlign: 'right' as const,
+  display: 'flex',
+  flexDirection: 'column' as const
+};
+
+export const SnapBalanceUSD = {
+  fontSize: typography.sizes.xl,
+  fontWeight: typography.weights.medium,
+  color: colors.text.primary
+};
+
+export const SnapBalanceAmount = {
+  fontSize: typography.sizes.base,
+  color: colors.text.secondary
+};
+
+export const SnapDetailsSection = {
+  padding: `0 ${snapSpacing.container}`,
+  marginTop: '48px'
+};
+
+export const SnapDetailRow = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  marginBottom: snapSpacing.section
+};
+
+export const SnapDetailLabel = {
+  fontSize: typography.sizes.lg,
+  fontWeight: typography.weights.medium,
+  color: colors.text.primary
+};
+
+export const SnapDetailValue = {
+  fontSize: typography.sizes.lg,
+  fontWeight: typography.weights.medium,
+  color: colors.text.primary
+};
+
+export const SnapCopyContainer = {
+  display: 'flex',
+  alignItems: 'center',
+  backgroundColor: '#e8f2ff',
+  padding: `${snapSpacing.small} ${snapSpacing.item}`,
+  borderRadius: borderRadius.xxl,
+  gap: snapSpacing.small
+};
+
+export const SnapCopyText = {
+  fontSize: typography.sizes.base,
+  fontWeight: typography.weights.medium,
+  color: colors.primary
+};
+
+export const SnapCopyIcon = {
+  width: spacing.lg,
+  height: spacing.lg,
+  color: colors.primary
+};
+
+export const SnapButtonSection = {
+  padding: `0 ${snapSpacing.container}`,
+  marginTop: '48px'
+};
+
+export const SnapButton = {
+  width: '100%',
+  padding: `${snapSpacing.item} 0`,
+  borderRadius: borderRadius.xxl,
+  fontSize: typography.sizes.lg,
+  fontWeight: typography.weights.medium,
+  cursor: 'pointer',
+  transition: transitions.normal
+};
+
+export const SnapOutlineButton = {
+  ...SnapButton,
+  backgroundColor: 'transparent',
+  border: `2px solid ${colors.primary}`,
+  color: colors.primary
+};
+
+export const BalanceContainer = styled.div`
+  padding-top: ${spacing.xxxl};
+  margin: 0 auto ${spacing.xxl};
+  width: 100%;
+  box-sizing: border-box;
+`;
+
+export const BalanceTitle = styled.div`
+  font-weight: 700;
+  font-size: 18px;
+  margin-top: ${spacing.xl};
+`;
+
+export const BalanceRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+export const BalanceLogoBox = styled.div`
+  position: relative;
+  width: 44px;
+  height: 44px;
+  margin-right: 16px;
+`;
+
+export const BalanceLogoMain = styled.div`
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #f5f7fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 500;
+  color: #222;
+  position: absolute;
+  top: 0;
+  left: 0;
+`;
+
+export const BalanceLogoSmall = styled.div`
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 400;
+  color: #222;
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+`;
+
+export const BalanceTokenName = styled.div`
+  font-weight: 600;
+  font-size: 20px;
+  color: #222;
+`;
+
+export const BalanceValues = styled.div`
+  text-align: right;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+`;
+
+export const BalanceUsd = styled.div`
+  font-weight: 700;
+  font-size: 20px;
+  color: #111;
+  white-space: nowrap;
+`;
+
+export const TokenDetailsMainContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+export const TokenDetailsHeader = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+`;
+
+export const TokenDetailsHeaderContent = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+export const TokenDetailsButtonWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+  width: 100%;
+`;
+
+export const TokenDetailsDetailsBlock = styled.div`
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+`;
+
+export const TokenDetailsDetailsTitle = styled.div`
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 12px;
+`;
+
+export const TokenDetailsDetailsRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 12px;
+`;
+
+export const TokenBalanceRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 14px 0 14px 0;
+`;
+
+export const TokenBalanceLeft = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 16px;
+`;
+
+export const TokenBalanceLogoBox = styled.div`
+  position: relative;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const TokenBalanceLogoBig = styled.div`
+  width: 40px;
+  height: 40px;
+  background: #f5f7fa;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 500;
+  color: #222;
+  z-index: 1;
+`;
+
+export const TokenBalanceLogoSmall = styled.div`
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 400;
+  color: #222;
+  position: absolute;
+  text-align: center;
+  right: 2px;
+  bottom: 1px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  border: 1.5px solid #e5e7eb;
+  z-index: 2;
+`;
+
+export const TokenBalanceName = styled.span`
+  font-weight: 600;
+  font-size: 16px;
+  color: #222;
+  display: flex;
+  align-items: center;
+  height: 48px;
+`;
+
+export const TokenBalanceRight = styled.div`  display: flex;
+  align-items: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: #7c8191;
+  white-space: nowrap;
+  gap: 6px;
+  margin-left: 16px;
+`;
+
+export const TokenBalanceAmount = styled.span`
+  font-size: 16px;
+  font-weight: 700;
+  color: #7c8191;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  vertical-align: middle;
+`;
+
+export const TokenBalanceSymbol = styled.span`
+  font-size: 16px;
+  font-weight: 700;
+  color: #7c8191;
+  margin-left: 2px;
+`;
+
+export const TokenCircle = styled.div`
+  width: 18px;
+  height: 18px;
+  background: #f5f7fa;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: #222;
+  text-align: center;
+`;
+
+export const TokenNameRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
+export const TokenNameText = styled.span`
+  font-weight: 600;
+  font-size: 18px;
+  color: #222;
+`;
+
+export const AddressBadge = styled.div`
+  display: inline-flex;
+  align-items: center;
+  background: #f5f7ff;
+  border-radius: 24px;
+  padding: 8px 18px;
+  font-size: 18px;
+  font-weight: 500;
+  color: #4664ff;
+  gap: 8px;
+  user-select: none;
+  cursor: pointer;
+`;
+
+export const AddressCopyButton = styled.button`
+  background: none;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+    display: block;
+  }
+`;
+
+export const TokensLoadingContainer = styled.div`
+  text-align: center;
+  padding: 20px;
 `;

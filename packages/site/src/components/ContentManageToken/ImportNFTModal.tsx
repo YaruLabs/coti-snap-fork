@@ -24,8 +24,8 @@ interface ImportNFTModalProps {
   open: boolean;
   onClose: () => void;
   provider: BrowserProvider;
+  onImport?: () => void;
 }
-
 
 const useImportNFTForm = () => {
   const [formData, setFormData] = useState<NFTFormData>({
@@ -93,7 +93,8 @@ const useImportNFTForm = () => {
 export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({ 
   open, 
   onClose, 
-  provider 
+  provider, 
+  onImport
 }) => {
   const { addNFTToMetaMask } = useTokenOperations(provider);
   const { addToken, hasToken } = useImportedTokens();
@@ -149,7 +150,6 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
     
     setIsLoading(true);
     try {
-      // Check if token already exists
       const tokenKey = `${formData.address}-${formData.tokenId}`;
       if (hasToken(tokenKey)) {
         setErrors(prev => ({ ...prev, address: ERROR_MESSAGES.NFT_ALREADY_IMPORTED }));
@@ -164,7 +164,6 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
         tokenId: formData.tokenId 
       });
 
-      // Add NFT to localStorage
       addToken({
         address: tokenKey,
         name: `NFT #${formData.tokenId}`,
@@ -172,6 +171,7 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
         decimals: 0,
       });
 
+      if (onImport) onImport();
       resetForm();
       onClose();
     } catch (error) {
@@ -180,7 +180,7 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
     } finally {
       setIsLoading(false);
     }
-  }, [validateForm, addNFTToMetaMask, formData, resetForm, onClose, hasToken, addToken, setErrors]);
+  }, [validateForm, addNFTToMetaMask, formData, resetForm, onClose, hasToken, addToken, setErrors, onImport]);
 
 
   if (!open) return null;

@@ -1,5 +1,6 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { QRCode } from 'react-qrcode-logo';
+import { useCopyToClipboard } from '../../hooks/useCopyToClipboard';
 import CopyIcon from '../../assets/copy.svg';
 import CopySuccessIcon from '../../assets/copy-success.svg';
 import MetamaskLogo from '../../assets/images/metamask-fox.png';
@@ -20,56 +21,16 @@ interface DepositTokensProps {
   accountName?: string;
 }
 
-const COPY_TIMEOUT = 1500;
 const QR_SIZE = 150;
 const LOGO_SIZE = 32;
 const LOGO_PADDING = 5;
-
-const useCopyToClipboard = (text: string, timeout: number = COPY_TIMEOUT) => {
-  const [copied, setCopied] = useState(false);
-
-  const copyToClipboard = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      
-      const timer = setTimeout(() => {
-        setCopied(false);
-      }, timeout);
-      
-      return () => clearTimeout(timer);
-    } catch (error) {
-      console.error('Failed to copy to clipboard:', error);
-      
-      try {
-        const clipboardItem = new ClipboardItem({
-          'text/plain': new Blob([text], { type: 'text/plain' })
-        });
-        await navigator.clipboard.write([clipboardItem]);
-        setCopied(true);
-      } catch (fallbackError) {
-        console.error('Fallback clipboard method failed:', fallbackError);
-        alert('No se pudo copiar al portapapeles. Por favor, copia manualmente la dirección.');
-        return;
-      }
-      
-      const timer = setTimeout(() => {
-        setCopied(false);
-      }, timeout);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [text, timeout]);
-
-  return { copied, copyToClipboard };
-};
 
 export const DepositTokens: React.FC<DepositTokensProps> = React.memo(({ 
   onClose, 
   address, 
   accountName 
 }) => {
-  const { copied, copyToClipboard } = useCopyToClipboard(address);
+  const { copied, copyToClipboard } = useCopyToClipboard({ successDuration: 1500 });
 
   const formattedAddress = useMemo(() => {
     if (!address) return '';
@@ -79,8 +40,8 @@ export const DepositTokens: React.FC<DepositTokensProps> = React.memo(({
   const qrCodeValue = useMemo(() => address, [address]);
 
   const handleCopy = useCallback(() => {
-    copyToClipboard();
-  }, [copyToClipboard]);
+    copyToClipboard(address);
+  }, [copyToClipboard, address]);
 
   const handleClose = useCallback(() => {
     onClose();

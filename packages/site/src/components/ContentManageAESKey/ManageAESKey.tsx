@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 import CheckIcon from '../../assets/check.svg';
 import CopyIcon from '../../assets/copy.svg';
 import { useSnap } from '../../hooks/SnapContext';
+import { useCopyToClipboard } from '../../hooks/useCopyToClipboard';
 import { Button } from '../Button';
 import { Loading } from '../Loading';
 import { ContentText, ContentTitle } from '../styles';
@@ -22,24 +23,10 @@ export const ManageAESKey = ({
 }) => {
   const { userAESKey, setUserAesKEY, getAESKey, loading } = useSnap();
 
-  const [isCopied, setIsCopied] = useState<boolean>(false);
-
-  const copyToClipboard = useCallback((text: string) => {
-    navigator.clipboard.writeText(text).then(
-      () => {
-        setIsCopied(true);
-        setUserAesKEY(null);
-        setTimeout(() => setIsCopied(false), 2000);
-      },
-      (error) => {
-        console.error(
-          'Failed to copy text: ',
-          error === undefined ? '' : error,
-        );
-        setIsCopied(false);
-      },
-    );
-  }, []);
+  const { copied: isCopied, copyToClipboard } = useCopyToClipboard({ 
+    successDuration: 2000,
+    onSuccess: () => setUserAesKEY(null)
+  });
 
   if (loading) {
     <Loading
