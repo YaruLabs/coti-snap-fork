@@ -7,13 +7,13 @@ import { OnboardAccount } from './OnboardAccount';
 import { ContentManageToken } from '../ContentManageToken';
 
 interface ContentManageAESKeyProps {
-  userHasAESKey: boolean;
-  userAESKey: string | null;
+  readonly userHasAESKey: boolean;
+  readonly userAESKey: string | null;
 }
 
 interface AESKeyState {
-  showDelete: boolean;
-  showManage: boolean;
+  readonly showDelete: boolean;
+  readonly showManage: boolean;
 }
 
 export const ContentManageAESKey: React.FC<ContentManageAESKeyProps> = ({ userHasAESKey, userAESKey }) => {
@@ -41,14 +41,8 @@ export const ContentManageAESKey: React.FC<ContentManageAESKeyProps> = ({ userHa
     }));
   };
 
-  const handleCloseModals = () => {
-    setAesKeyState({
-      showDelete: false,
-      showManage: false
-    });
-  };
 
-  const renderContent = () => {
+  const renderContent = (): JSX.Element | null => {
     if (shouldShowOnboarding) {
       return <OnboardAccount />;
     }

@@ -15,7 +15,8 @@ const slideUpFadeIn = keyframes`
 export const SectionTitle = styled.div`
   font-size: 1.7rem;
   font-weight: 700;
-  margin-top: 16px;
+  margin-top: 18px;
+  margin-bottom: 8px;
 `;
 
 export const AccountBox = styled.div.withConfig({
@@ -25,9 +26,9 @@ export const AccountBox = styled.div.withConfig({
   align-items: center;
   background: #fff;
   border-radius: 12px;
-  border: 1.5px solid
+  border: 1px solid
     ${({ error, active }) =>
-      error ? '#e53935' : active ? '#4664ff' : '#e5e7eb'};
+      error ? '#e53935' : active ? '#4664ff' : '#d0d0d0'};
   padding: 14px 18px;
   gap: 14px;
   margin-bottom: 8px;
@@ -94,7 +95,7 @@ export const AmountInput = styled.input`
   font-size: 1.5rem;
   font-weight: 400;
   color: #18191d;
-  width: 100px;
+  width: auto;
   text-align: right;
   padding: 0 4px;
   appearance: textfield;
@@ -115,7 +116,6 @@ export const BottomActions = styled.div`
   display: flex;
   justify-content: space-between;
   gap: 16px;
-  margin-top: 40px;
 `;
 
 export const CancelButton = styled.button`
@@ -159,10 +159,13 @@ export const ContinueButton = styled.button`
 `;
 
 export const HeaderBarSlotLeft = styled.div`
-  width: 40px;
+  width: auto;
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  padding: 0;
+  margin: 0;
+  position: relative;
 `;
 
 export const HeaderBarSlotTitle = styled.div`
@@ -192,6 +195,7 @@ export const BalanceSub = styled.div.withConfig({
   color: ${({ error }) => (error ? '#e53935' : '#8a8f98')};
   font-weight: 400;
   flex: 1;
+  margin-bottom: 12px;
 `;
 
 export const MaxButton = styled.button`
@@ -287,11 +291,13 @@ export const TokenModalContainer = styled.div`
   box-shadow: 0 4px 32px 0 rgba(0,0,0,0.12);
   width: 420px;
   max-width: 98vw;
+  max-height: 60vh;
   padding: 0 0 24px 0;
   position: relative;
   display: flex;
   flex-direction: column;
   animation: ${slideUpFadeIn} 0.32s cubic-bezier(0.4, 0.8, 0.4, 1) both;
+  overflow: hidden;
 `;
 
 export const TokenModalHeader = styled.div`
@@ -373,6 +379,9 @@ export const TokenSearchInput = styled.input`
 
 export const TokenList = styled.div`
   margin: 0 0px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
 `;
 
 export const TokenListItemBar = styled.div`
@@ -416,6 +425,8 @@ export const TokenListSymbol = styled.div`
   font-size: 1.3rem;
   color: #bfc2c6;
   font-weight: 400;
+  align-self: flex-start;
+  margin-top: 4px;
 `;
 
 export const TokenListAmount = styled.div`

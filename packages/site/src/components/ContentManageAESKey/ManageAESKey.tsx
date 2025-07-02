@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
 import CheckIcon from '../../assets/check.svg';
 import CopyIcon from '../../assets/copy.svg';
@@ -16,23 +16,40 @@ import {
   SuccessAlertIconContainer,
 } from './styles';
 
-export const ManageAESKey = ({
+interface ManageAESKeyProps {
+  readonly handleShowDelete: () => void;
+}
+
+export const ManageAESKey: React.FC<ManageAESKeyProps> = ({
   handleShowDelete,
-}: {
-  handleShowDelete: () => void;
 }) => {
-  const { userAESKey, setUserAesKEY, getAESKey, loading } = useSnap();
+  const { userAESKey, getAESKey, loading } = useSnap();
 
   const { copied: isCopied, copyToClipboard } = useCopyToClipboard({ 
-    successDuration: 2000,
-    onSuccess: () => setUserAesKEY(null)
+    successDuration: 2000
   });
 
+  const handleCopyClick = (): void => {
+    if (userAESKey) {
+      copyToClipboard(userAESKey);
+    }
+  };
+
+  const handleRevealClick = async (): Promise<void> => {
+    try {
+      await getAESKey();
+    } catch (error) {
+      console.error('Error revealing AES key:', error);
+    }
+  };
+
   if (loading) {
-    <Loading
-      title="Manage your AES Key"
-      actionText="Approve in your wallet to reveal your AES key"
-    />;
+    return (
+      <Loading
+        title="Manage your AES Key"
+        actionText="Approve in your wallet to reveal your AES key"
+      />
+    );
   }
 
   return (
@@ -49,13 +66,22 @@ export const ManageAESKey = ({
         <AESKeyContainer>
           {userAESKey ? (
             <>
-              <AESInput type="text" value={userAESKey ?? ''} readOnly={true} />
-              <IconContainer onClick={() => copyToClipboard(userAESKey ?? '')}>
+              <AESInput 
+                type="text" 
+                value={userAESKey ?? ''} 
+                readOnly={true}
+                aria-label="Your AES Key"
+              />
+              <IconContainer 
+                onClick={handleCopyClick}
+                aria-label={isCopied ? "AES Key copied to clipboard" : "Copy AES Key to clipboard"}
+                title={isCopied ? "Copied!" : "Copy to clipboard"}
+              >
                 {isCopied ? <CheckIcon /> : <CopyIcon />}
               </IconContainer>
             </>
           ) : (
-            <ContentText>**************************************</ContentText>
+            <ContentText id="aes-key-description">Hidden AES key - click Reveal to show</ContentText>
           )}
         </AESKeyContainer>
       </ContentInput>
@@ -63,9 +89,16 @@ export const ManageAESKey = ({
         disabled={userAESKey !== null}
         text="Reveal AES Key"
         primary={true}
-        onClick={getAESKey}
+        onClick={handleRevealClick}
+        aria-label="Reveal your AES key"
+        aria-describedby="aes-key-description"
       />
-      <Button text="Delete" primary={false} onClick={handleShowDelete} />
+      <Button 
+        text="Delete" 
+        primary={false} 
+        onClick={handleShowDelete}
+        aria-label="Delete AES key"
+      />
     </>
   );
 };

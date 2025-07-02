@@ -165,7 +165,8 @@ export const ContentManageToken: React.FC<ContentManageTokenProps> = ({ aesKey }
       <TransferTokens 
         onBack={handleCloseTransfer} 
         address={truncateString(address!)} 
-        balance={formattedBalance} 
+        balance={formattedBalance}
+        aesKey={aesKey}
       />
     );
   }

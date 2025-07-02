@@ -1,8 +1,11 @@
+export type TokenType = 'ERC20' | 'ERC721' | 'ERC1155';
+
 export interface ImportedToken {
   address: string;
   name: string;
   symbol: string;
   decimals: number;
+  type: TokenType;
 }
 
 export interface NFTFormData {

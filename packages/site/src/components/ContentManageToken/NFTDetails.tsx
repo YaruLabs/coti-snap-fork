@@ -1,14 +1,15 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { BrowserProvider } from '@coti-io/coti-ethers';
 import { ImportedToken } from '../../types/token';
 import { useCopyToClipboard } from '../../hooks/useCopyToClipboard';
+import { useDropdown } from '../../hooks/useDropdown';
+import { useImportedTokens } from '../../hooks/useImportedTokens';
 import { parseNFTAddress, formatAddressForDisplay } from '../../utils/tokenValidation';
 import { 
   NFTCard, 
   NFTCardImage, 
   NFTCornerIcon,
   NFTDetailsContainer,
-  DetailsBackButton,
   NFTDetailsImageContainer,
   NFTDetailsContent,
   NFTDetailsRow,
@@ -19,11 +20,19 @@ import {
   AddressBadge,
   AddressCopyButton,
   TokenDetailsLink,
+  IconButton,
+  MenuDropdown,
+  MenuItem,
 } from './styles';
 import DefaultNFTImage from '../../assets/images/default_nft.png';
 import ArrowBack from '../../assets/arrow-back.svg';
 import CopyIcon from '../../assets/copy.svg';
 import CopySuccessIcon from '../../assets/copy-success.svg';
+import VerticalMenuIcon from '../../assets/icons/vertical-menu.svg';
+import TrashIcon from '../../assets/icons/trash.svg';
+import { HeaderBarSlotRight } from './TransferTokens.styles';
+import { HeaderBar } from './styles';
+import { HeaderBarSlotLeft } from './TransferTokens.styles';
 
 interface NFTDetailModalProps {
   nft: ImportedToken | null;
@@ -32,11 +41,13 @@ interface NFTDetailModalProps {
   setActiveTab: React.Dispatch<React.SetStateAction<'tokens' | 'nfts'>>;
   setSelectedNFT: React.Dispatch<React.SetStateAction<ImportedToken | null>>;
   provider?: BrowserProvider;
+  onNFTRemoved?: () => void;
 }
 
-const NFTDetails: React.FC<NFTDetailModalProps> = ({ nft, open, onClose, setActiveTab, setSelectedNFT, provider }) => {
+const NFTDetails: React.FC<NFTDetailModalProps> = ({ nft, open, onClose, setActiveTab, setSelectedNFT, provider, onNFTRemoved }) => {
   const { copyToClipboard, copied } = useCopyToClipboard();
-  const [showSendModal, setShowSendModal] = useState(false);
+  const { removeToken } = useImportedTokens();
+  const menuDropdown = useDropdown();
 
   if (!open || !nft) return null;
 
@@ -49,18 +60,48 @@ const NFTDetails: React.FC<NFTDetailModalProps> = ({ nft, open, onClose, setActi
   }, [copyToClipboard]);
 
   const handleSendClick = useCallback(() => {
-    setShowSendModal(true);
+    // TODO: Implement send NFT functionality
+    console.log('Send NFT clicked');
   }, []);
 
-  const handleCloseSendModal = useCallback(() => {
-    setShowSendModal(false);
-  }, []);
+  const handleRemoveToken = useCallback(() => {
+    if (nft) {
+      removeToken(nft.address);
+      onClose();
+      onNFTRemoved?.();
+    }
+    menuDropdown.close();
+  }, [nft, removeToken, onClose, onNFTRemoved, menuDropdown]);
+
 
   return (
     <NFTDetailsContainer>
-      <DetailsBackButton onClick={onClose} style={{ marginRight: 12 }}>
-        <ArrowBack />
-      </DetailsBackButton>
+      <HeaderBar>
+        <HeaderBarSlotLeft>
+          <IconButton onClick={onClose} type="button" aria-label="Go back">
+            <ArrowBack />
+          </IconButton>
+        </HeaderBarSlotLeft>
+          <HeaderBarSlotRight style={{ position: 'relative' }}>
+          <IconButton 
+            onClick={menuDropdown.toggle}
+            selected={menuDropdown.isOpen}
+            type="button" 
+            aria-label="Menu"
+          >
+            <VerticalMenuIcon />
+          </IconButton>
+          
+          {menuDropdown.isOpen && nft?.symbol !== 'COTI' && (
+            <MenuDropdown ref={menuDropdown.ref}>
+              <MenuItem onClick={handleRemoveToken} type="button">
+                <TrashIcon />
+                Hide {nft.symbol}
+              </MenuItem>
+            </MenuDropdown>
+          )}
+        </HeaderBarSlotRight>
+      </HeaderBar>
       <NFTDetailsImageContainer>
         <NFTCard style={{ width: 140, height: 140, borderRadius: 16 }}>
           <NFTCardImage src={DefaultNFTImage} alt="NFT" />
@@ -98,8 +139,6 @@ const NFTDetails: React.FC<NFTDetailModalProps> = ({ nft, open, onClose, setActi
           Send
         </SendButton>
       </NFTDetailsContent>
-      
-      
     </NFTDetailsContainer>
   );
 };

@@ -104,7 +104,7 @@ export const parseNFTAddress = (compositeAddress: string): { contractAddress: st
   }
   
   return {
-    contractAddress: parts[0],
+    contractAddress: parts[0] || '',
     tokenId: parts.slice(1).join('-'), // In case token ID contains hyphens
   };
 };
@@ -112,7 +112,7 @@ export const parseNFTAddress = (compositeAddress: string): { contractAddress: st
 /**
  * Formats an address for display (truncated version)
  */
-export const formatAddressForDisplay = (address: string, startLength = 6, endLength = 4): string => {
+export const formatAddressForDisplay = (address: string | undefined, startLength = 6, endLength = 4): string => {
   if (!address) return 'Unknown Address';
   if (address.length <= startLength + endLength) return address;
   

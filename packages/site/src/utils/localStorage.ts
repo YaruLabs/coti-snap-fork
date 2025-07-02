@@ -1,4 +1,4 @@
-import { ImportedToken } from '../types/token';
+import { ImportedToken, TokenType } from '../types/token';
 import { IMPORTED_TOKENS_KEY, ERROR_MESSAGES } from '../constants/token';
 
 /**
@@ -98,4 +98,34 @@ export const removeImportedToken = (address: string) => {
     token => token.address.toLowerCase() !== normalizedAddress
   );
   setImportedTokens(updatedTokens);
+};
+
+/**
+ * Get imported tokens filtered by type.
+ *
+ * @param tokenType - The type of tokens to filter by.
+ * @returns Array of imported tokens of the specified type.
+ */
+export const getImportedTokensByType = (tokenType: TokenType): ImportedToken[] => {
+  const allTokens = getImportedTokens();
+  return allTokens.filter(token => token.type === tokenType);
+};
+
+/**
+ * Get all ERC20 tokens from local storage.
+ *
+ * @returns Array of ERC20 tokens.
+ */
+export const getERC20Tokens = (): ImportedToken[] => {
+  return getImportedTokensByType('ERC20');
+};
+
+/**
+ * Get all NFT tokens (ERC721 and ERC1155) from local storage.
+ *
+ * @returns Array of NFT tokens (both ERC721 and ERC1155).
+ */
+export const getNFTTokens = (): ImportedToken[] => {
+  const allTokens = getImportedTokens();
+  return allTokens.filter(token => token.type === 'ERC721' || token.type === 'ERC1155');
 };

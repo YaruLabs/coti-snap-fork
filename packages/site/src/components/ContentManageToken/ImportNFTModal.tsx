@@ -17,7 +17,8 @@ import {
   ModalInput,
   ErrorMsg,
   ModalActions,
-  ModalActionButton
+  ImportTokenContent,
+  SendButton
 } from './styles';
 
 interface ImportNFTModalProps {
@@ -169,6 +170,7 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
         name: `NFT #${formData.tokenId}`,
         symbol: 'NFT',
         decimals: 0,
+        type: 'ERC721'
       });
 
       if (onImport) onImport();
@@ -199,62 +201,65 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
           </ModalClose>
         </ModalHeader>
         
-        <LabelRow>
-          Address{' '}
-          <Tooltip text="On OpenSea, for example, on the NFT's page under Details, there is a blue hyperlinked value labeled 'Contract Address'. If you click on this, it will take you to the contract's address on Etherscan; at the top-left of that page, there should be an icon labeled 'Contract', and to the right, a long string of letters and numbers. This is the address of the contract that created your NFT. Click on the 'copy' icon to the right of the address, and you'll have it on your clipboard.">
-            <InfoIcon />
-          </Tooltip>
-        </LabelRow>
-        
-        <ModalInput
-          placeholder="0x..."
-          value={formData.address}
-          onChange={handleAddressChange}
-          onBlur={handleAddressBlur}
-          disabled={isLoading}
-          aria-describedby={errors.address ? 'address-error' : undefined}
-        />
-        <ErrorMsg id="address-error" role="alert">
-          {errors.address}
-        </ErrorMsg>
-        
-        <LabelRow>
-          Token ID{' '}
-          <Tooltip text="An NFT's ID is a unique identifier since no two NFTs are alike. Again, on OpenSea this number is under 'Details'. Make a note of it, or copy it onto your clipboard.">
-            <InfoIcon />
-          </Tooltip>
-        </LabelRow>
-        
-        <ModalInput
-          placeholder="Enter the token ID"
-          value={formData.tokenId}
-          onChange={handleTokenIdChange}
-          onBlur={handleTokenIdBlur}
-          type="number"
-          disabled={isLoading}
-          aria-describedby={errors.tokenId ? 'tokenid-error' : undefined}
-        />
-        <ErrorMsg id="tokenid-error" role="alert">
-          {errors.tokenId}
-        </ErrorMsg>
-        
-        <ModalActions>
-          <ModalActionButton 
-            onClick={handleClose}
+        <ImportTokenContent>
+          <LabelRow>
+            Address{' '}
+            <Tooltip text="On OpenSea, for example, on the NFT's page under Details, there is a blue hyperlinked value labeled 'Contract Address'. If you click on this, it will take you to the contract's address on Etherscan; at the top-left of that page, there should be an icon labeled 'Contract', and to the right, a long string of letters and numbers. This is the address of the contract that created your NFT. Click on the 'copy' icon to the right of the address, and you'll have it on your clipboard.">
+              <InfoIcon />
+            </Tooltip>
+          </LabelRow>
+          
+          <ModalInput
+            placeholder="0x..."
+            value={formData.address}
+            onChange={handleAddressChange}
+            onBlur={handleAddressBlur}
             disabled={isLoading}
-            type="button"
-          >
-            Cancel
-          </ModalActionButton>
-          <ModalActionButton 
-            primary 
-            onClick={handleImport} 
-            disabled={isButtonDisabled}
-            type="button"
-          >
-            {isLoading ? 'Importing...' : 'Import'}
-          </ModalActionButton>
-        </ModalActions>
+            aria-describedby={errors.address ? 'address-error' : undefined}
+          />
+          <ErrorMsg id="address-error" role="alert">
+            {errors.address}
+          </ErrorMsg>
+          
+          <LabelRow>
+            Token ID{' '}
+            <Tooltip text="An NFT's ID is a unique identifier since no two NFTs are alike. Again, on OpenSea this number is under 'Details'. Make a note of it, or copy it onto your clipboard.">
+              <InfoIcon />
+            </Tooltip>
+          </LabelRow>
+          
+          <ModalInput
+            placeholder="Enter the token ID"
+            value={formData.tokenId}
+            onChange={handleTokenIdChange}
+            onBlur={handleTokenIdBlur}
+            type="number"
+            disabled={isLoading}
+            aria-describedby={errors.tokenId ? 'tokenid-error' : undefined}
+          />
+          <ErrorMsg id="tokenid-error" role="alert">
+            {errors.tokenId}
+          </ErrorMsg>
+          
+          <ModalActions>
+            <SendButton 
+              onClick={handleClose}
+              disabled={isLoading}
+              backgroundColor="#fff"
+              textColor="#4664ff"
+              type="button"
+            >
+              Cancel
+            </SendButton>
+            <SendButton 
+              onClick={handleImport} 
+              disabled={isButtonDisabled}
+              type="button"
+            >
+              {isLoading ? 'Importing...' : 'Import'}
+            </SendButton>
+          </ModalActions>
+        </ImportTokenContent>
       </AnimatedModalContainer>
     </ModalBackdrop>
   );

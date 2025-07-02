@@ -4,6 +4,7 @@ import styled from 'styled-components';
 const TooltipContainer = styled.div`
   position: relative;
   display: inline-block;
+  margin-left: 5px;
 `;
 
 const TooltipText = styled.div`

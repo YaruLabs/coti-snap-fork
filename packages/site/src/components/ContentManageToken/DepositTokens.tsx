@@ -67,7 +67,7 @@ export const DepositTokens: React.FC<DepositTokensProps> = React.memo(({
         ×
       </DepositCloseButton>
       
-      <DepositTitle>Recibir</DepositTitle>
+      <DepositTitle>Receive</DepositTitle>
       
       <DepositQRWrapper>
         <QRCode 
@@ -101,7 +101,7 @@ export const DepositTokens: React.FC<DepositTokensProps> = React.memo(({
         <DepositCopyIconWrapper>
           {copied ? <CopySuccessIcon /> : <CopyIcon />}
         </DepositCopyIconWrapper>
-        {copied ? 'Copied' : 'Copy address'}
+        Copy address
       </DepositCopyButton>
     </DepositModalContainer>
   );

@@ -3,7 +3,9 @@ import {
   getImportedTokens,
   addImportedToken,
   removeImportedToken,
-  setImportedTokens
+  setImportedTokens,
+  getERC20Tokens,
+  getNFTTokens
 } from '../utils/localStorage';
 import { ImportedToken } from '../types/token';
 
@@ -86,6 +88,16 @@ export const useImportedTokens = () => {
     }
   }, []);
 
+  // Get ERC20 tokens
+  const getERC20TokensList = useCallback(() => {
+    return getERC20Tokens();
+  }, []);
+
+  // Get NFT tokens (ERC721 and ERC1155)
+  const getNFTTokensList = useCallback(() => {
+    return getNFTTokens();
+  }, []);
+
   return {
     importedTokens,
     isLoading,
@@ -94,6 +106,8 @@ export const useImportedTokens = () => {
     updateTokenBalance,
     clearAllTokens,
     hasToken,
-    refreshTokens
+    refreshTokens,
+    getERC20TokensList,
+    getNFTTokensList
   };
 };

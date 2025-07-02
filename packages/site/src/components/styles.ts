@@ -6,6 +6,7 @@ export const ContentContainer = styled.div`
   justify-content: space-between;
   align-items: left;
   padding: 80px;
+  overflow-y: auto;
   gap: 16px;
   background-color: ${(props) => props.theme.colors.background?.content};
   box-shadow: ${({ theme }) => theme.shadows.default};

@@ -15,7 +15,6 @@ import {
   ModalInput,
   ErrorMsg,
   ModalLabel,
-  NextButton,
   TokenInfoBox,
   TokenInfoRow,
   TokenInfoValue,
@@ -25,8 +24,9 @@ import {
   TokenSummaryName,
   TokenSummaryBalance,
   StepActions,
-  StepButton,
-  CenteredText
+  CenteredText,
+  SendButton,
+  ImportTokenContent
 } from './styles';
 
 interface ImportTokenModalProps {
@@ -236,6 +236,7 @@ export const ImportTokenModal: React.FC<ImportTokenModalProps> = React.memo(({
           name: state.tokenInfo.name,
           symbol: state.tokenInfo.symbol,
           decimals,
+          type: 'ERC20'
         };
         
         // Add to localStorage
@@ -279,53 +280,54 @@ export const ImportTokenModal: React.FC<ImportTokenModalProps> = React.memo(({
               </ModalClose>
             </ModalHeader>
             
-            <ModalLabel>Token contract address</ModalLabel>
-            <ModalInput
-              placeholder="0x..."
-              value={state.address}
-              onChange={handleAddressChange}
-              onBlur={handleAddressBlur}
-              disabled={state.importLoading}
-              aria-describedby={state.addressStatus === 'error' ? 'address-error' : undefined}
-            />
-            
-            {state.addressStatus === 'error' && state.address && (
-              <ErrorMsg id="address-error" role="alert">
-                {ERROR_MESSAGES.INVALID_ADDRESS}
-              </ErrorMsg>
-            )}
-            
-            {state.tokenInfo && (
-              <>
-                <ModalLabel>Name</ModalLabel>
-                <TokenInfoBox>
-                  <TokenInfoRow>
-                    <TokenInfoValue>{state.tokenInfo.name}</TokenInfoValue>
-                  </TokenInfoRow>
-                </TokenInfoBox>
-                
-                <ModalLabel>Symbol</ModalLabel>
-                <TokenInfoBox>
-                  <TokenInfoRow>
-                    <TokenInfoValue>{state.tokenInfo.symbol}</TokenInfoValue>
-                  </TokenInfoRow>
-                </TokenInfoBox>
-              </>
-            )}
-            
-            {state.tokenInfoError && (
-              <ErrorMsg role="alert">
-                {state.tokenInfoError}
-              </ErrorMsg>
-            )}
-            
-            <NextButton 
-              disabled={isNextButtonDisabled} 
-              onClick={handleNext}
-              type="button"
-            >
-              Next
-            </NextButton>
+            <ImportTokenContent>
+              <ModalLabel>Token contract address</ModalLabel>
+              <ModalInput
+                placeholder="0x..."
+                value={state.address}
+                onChange={handleAddressChange}
+                onBlur={handleAddressBlur}
+                disabled={state.importLoading}
+                aria-describedby={state.addressStatus === 'error' ? 'address-error' : undefined}
+              />
+              
+              {state.addressStatus === 'error' && state.address && (
+                <ErrorMsg id="address-error" role="alert">
+                  {ERROR_MESSAGES.INVALID_ADDRESS}
+                </ErrorMsg>
+              )}
+              
+              {state.tokenInfo && (
+                <>
+                  <ModalLabel>Name</ModalLabel>
+                  <TokenInfoBox>
+                    <TokenInfoRow>
+                      <TokenInfoValue>{state.tokenInfo.name}</TokenInfoValue>
+                    </TokenInfoRow>
+                  </TokenInfoBox>
+                  
+                  <ModalLabel>Symbol</ModalLabel>
+                  <TokenInfoBox>
+                    <TokenInfoRow>
+                      <TokenInfoValue>{state.tokenInfo.symbol}</TokenInfoValue>
+                    </TokenInfoRow>
+                  </TokenInfoBox>
+                </>
+              )}
+              
+              {state.tokenInfoError && (
+                <ErrorMsg role="alert">
+                  {state.tokenInfoError}
+                </ErrorMsg>
+              )}
+              
+              <SendButton 
+                disabled={isNextButtonDisabled} 
+                onClick={handleNext}
+              >
+                Next
+              </SendButton>
+            </ImportTokenContent>
           </>
         )}
         
@@ -362,21 +364,22 @@ export const ImportTokenModal: React.FC<ImportTokenModalProps> = React.memo(({
             </TokenSummaryBox>
             
             <StepActions>
-              <StepButton 
+              <SendButton 
                 onClick={handleBack}
                 disabled={state.importLoading}
                 type="button"
+                backgroundColor="#fff"
+                textColor="#4664ff"
               >
                 Back
-              </StepButton>
-              <StepButton 
-                primary={true} 
+              </SendButton>
+              <SendButton
                 onClick={handleImportClick} 
                 disabled={isImportButtonDisabled}
                 type="button"
               >
                 {state.importLoading ? 'Importing...' : 'Import'}
-              </StepButton>
+              </SendButton>
             </StepActions>
           </>
         )}

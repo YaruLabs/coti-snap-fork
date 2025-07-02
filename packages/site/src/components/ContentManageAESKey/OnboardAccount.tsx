@@ -1,15 +1,15 @@
 import { useState, useMemo } from 'react';
 import { Button } from '../Button';
 import { ContentText, ContentTitle } from '../styles';
-import { OnboardAccountWizzard } from './OnboardAccountWizzard';
+import { OnboardAccountWizard } from './OnboardAccountWizard';
 
 interface OnboardAccountProps {
-  onOnboardingComplete?: () => void;
+  readonly onOnboardingComplete?: () => void;
 }
 
 interface OnboardingState {
-  isOnboarding: boolean;
-  isCompleted: boolean;
+  readonly isOnboarding: boolean;
+  readonly isCompleted: boolean;
 }
 
 const ONBOARDING_DESCRIPTION = `Start with onboarding your account so that your wallet could interact with private chain data, for example: your balance in a private ERC20 token.`;
@@ -32,14 +32,14 @@ export const OnboardAccount: React.FC<OnboardAccountProps> = ({
     [onboardingState]
   );
 
-  const handleStartOnboarding = () => {
+  const handleStartOnboarding = (): void => {
     setOnboardingState(prev => ({
       ...prev,
       isOnboarding: true
     }));
   };
 
-  const handleOnboardingComplete = () => {
+  const handleOnboardingComplete = (): void => {
     setOnboardingState({
       isOnboarding: false,
       isCompleted: true
@@ -48,16 +48,10 @@ export const OnboardAccount: React.FC<OnboardAccountProps> = ({
     onOnboardingComplete?.();
   };
 
-  const handleOnboardingCancel = () => {
-    setOnboardingState({
-      isOnboarding: false,
-      isCompleted: false
-    });
-  };
 
   if (shouldShowWizard) {
     return (
-      <OnboardAccountWizzard 
+      <OnboardAccountWizard 
         handleOnboardAccount={handleOnboardingComplete}
       />
     );

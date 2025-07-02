@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { BrowserProvider } from '@coti-io/coti-ethers';
 import { useImportedTokens } from '../../hooks/useImportedTokens';
 import { useSnap } from '../../hooks/SnapContext';
@@ -49,6 +49,7 @@ export const Tokens: React.FC<TokensProps> = React.memo(({ balance, provider, ae
   const [showImportNFTModal, setShowImportNFTModal] = useState(false);
   const [selectedNFT, setSelectedNFT] = useState<ImportedToken | null>(null);
   const [selectedToken, setSelectedToken] = useState<ImportedToken | null>(null);
+  const [showNFTRemovedToast, setShowNFTRemovedToast] = useState(false);
 
   const { userAESKey, userHasAESKey, getAESKey } = useSnap();
   const { importedTokens, isLoading, refreshTokens } = useImportedTokens();
@@ -56,12 +57,13 @@ export const Tokens: React.FC<TokensProps> = React.memo(({ balance, provider, ae
   const sortDropdown = useDropdown();
 
   const { regularTokens, nftTokens } = useMemo(() => {
-    const cotiToken: ImportedToken = {
-      address: '',
-      name: 'COTI',
-      symbol: 'COTI',
-      decimals: 18,
-    };
+      const cotiToken: ImportedToken = {
+        address: '',
+        name: 'COTI',
+        symbol: 'COTI',
+        decimals: 18,
+        type: 'ERC20'
+      };
     
     const regular = [cotiToken, ...importedTokens.filter(t => !(t.symbol === 'NFT' && t.address.includes('-')))];
     const nfts = importedTokens.filter(t => t.symbol === 'NFT' && t.address.includes('-'));

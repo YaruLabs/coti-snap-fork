@@ -332,12 +332,13 @@ export const IconButton = styled.button.withConfig({
 })<{ selected?: boolean }>`
   background: ${({ selected }) => (selected ? colors.background.tertiary : 'none')};
   border: none;
-  padding: ${spacing.lg};
+  padding: ${spacing.xs};
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   color: ${colors.text.primary};
-  border-radius: ${spacing.lg};
+  border-radius: ${spacing.sm};
   transition: background ${transitions.fast};
   
   &:hover {
@@ -779,12 +780,12 @@ export const ModalLabel = styled.div`
   font-size: ${typography.sizes.md};
   font-weight: ${typography.weights.semibold};
   color: ${colors.text.primary};
-  margin: 25px ${spacing.xxxl} 0 ${spacing.xxxl};
+  margin: 25px 0 0 0;
 `;
 
 export const ModalInput = styled.input`
   width: auto;
-  margin: ${spacing.sm} ${spacing.xxxl} 0 ${spacing.xxxl};
+  margin: ${spacing.sm} 0 0 0;
   padding: ${spacing.md} ${spacing.lg};
   ${inputBase}
 `;
@@ -792,16 +793,14 @@ export const ModalInput = styled.input`
 export const ErrorMsg = styled.div`
   color: ${colors.error};
   font-size: ${typography.sizes.base};
-  margin: ${spacing.sm} ${spacing.xxxl} 0 ${spacing.xxxl};
+  margin: ${spacing.sm} 0 0 0;
   min-height: ${typography.sizes.base};
 `;
 
 export const ModalActions = styled.div`
   display: flex;
   justify-content: space-between;
-  gap: ${spacing.lg};
-  margin-top: ${spacing.xxxxl};
-  padding: 0 ${spacing.xxl};
+  gap: ${spacing.md};
 `;
 
 export const ModalActionButton = styled.button.withConfig({
@@ -1050,7 +1049,7 @@ export const NextButton = styled.button.withConfig({
 `;
 
 export const TokenInfoBox = styled.div`
-  margin: ${spacing.sm} ${spacing.xxxl} 0 ${spacing.xxxl};
+  margin: ${spacing.sm} 0 0 0;
   padding: ${spacing.md} ${spacing.lg};
   border-radius: ${borderRadius.sm};
   border: 1.5px solid ${colors.border.primary};
@@ -1194,11 +1193,9 @@ export const CenteredText = styled.div`
 export const LabelRow = styled.div`
   display: flex;
   align-items: center;
-  gap: ${spacing.sm};
   font-size: ${typography.sizes.md};
   font-weight: ${typography.weights.semibold};
   color: ${colors.text.primary};
-  margin: 25px ${spacing.xxxl} 0 ${spacing.xxxl};
 `;
 
 export const NFTCornerIcon = styled.div`
@@ -1248,7 +1245,6 @@ export const DetailsBackButton = styled.button`
 
 export const NFTDetailsImageContainer = styled.div`
   margin: 0 auto ${spacing.xxl};
-  margin-top: ${spacing.xxl};
 `;
 
 export const NFTDetailsContent = styled.div`
@@ -1314,22 +1310,35 @@ export const NFTDetailsDisclaimer = styled.div`
   line-height: 1.4;
 `;
 
-export const SendButton = styled.button`
-  background: #aab6fe;
-  color: ${colors.background.primary};
-  border: none;
-  border-radius: ${borderRadius.xl};
-  font-size: ${typography.sizes.lg};
-  font-weight: ${typography.weights.semibold};
-  padding: ${typography.sizes.xxl} 0;
+export const SendButton = styled.button.withConfig({
+  shouldForwardProp: (prop) => prop !== 'backgroundColor' && prop !== 'textColor'
+})<{ backgroundColor?: string; textColor?: string }>`
+  background: ${({ backgroundColor }) => backgroundColor || '#4664ff'};
+  color: ${({ textColor }) => textColor || '#fff'};
+  border-radius: 12px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  padding: 14px 0;
   cursor: pointer;
   margin-top: ${spacing.xl};
   margin-bottom: 0;
   width: 100%;
+  transition: background 0.2s, opacity 0.2s;
   ${buttonBase}
+  border: 2px solid #4664ff !important;
   
   &:hover:not(:disabled) {
-    background: #9aa5fd;
+    background: ${({ backgroundColor }) => 
+      backgroundColor === '#fff' || backgroundColor === 'white' 
+        ? '#f8fafc' 
+        : backgroundColor ? `${backgroundColor}dd` : '#3350e6'
+    };
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: ${({ backgroundColor }) => backgroundColor || '#4664ff'};
   }
 `;
 
@@ -1343,6 +1352,17 @@ export const TokenDetailsContainer = styled.div`
   padding-top: ${spacing.xxxl};
   gap: ${spacing.xl};
   width: 100%;
+`;
+
+export const TokenDetailsBackButtonContainer = styled.div`
+  position: absolute;
+  left: 0;
+  top: ${spacing.xxxl};
+  width: 40px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 `;
 
 export const TokenDetailsBackButton = styled.button`
@@ -1683,8 +1703,8 @@ export const SnapOutlineButton = {
 };
 
 export const BalanceContainer = styled.div`
-  padding-top: ${spacing.xxxl};
-  margin: 0 auto ${spacing.xxl};
+  padding-top: 0;
+  margin: 0 auto 0;
   width: 100%;
   box-sizing: border-box;
 `;
@@ -1692,7 +1712,7 @@ export const BalanceContainer = styled.div`
 export const BalanceTitle = styled.div`
   font-weight: 700;
   font-size: 18px;
-  margin-top: ${spacing.xl};
+  margin-top: 0;
 `;
 
 export const BalanceRow = styled.div`
@@ -1935,7 +1955,7 @@ export const AddressBadge = styled.div`
   align-items: center;
   background: #f5f7ff;
   border-radius: 24px;
-  padding: 8px 18px;
+  padding: 4px 18px;
   font-size: 18px;
   font-weight: 500;
   color: #4664ff;
@@ -1962,4 +1982,11 @@ export const AddressCopyButton = styled.button`
 export const TokensLoadingContainer = styled.div`
   text-align: center;
   padding: 20px;
+`;
+
+export const ImportTokenContent = styled.div`
+  padding: 0 ${spacing.xxxl};
+  display: flex;
+  flex-direction: column;
+  gap: ${spacing.sm};
 `;
