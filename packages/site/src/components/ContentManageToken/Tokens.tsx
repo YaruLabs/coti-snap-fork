@@ -64,8 +64,8 @@ export const Tokens: React.FC<TokensProps> = React.memo(({ balance, provider, ae
         type: 'ERC20'
       };
     
-    const regular = [cotiToken, ...importedTokens.filter(t => !(t.type === 'ERC721' && t.address.includes('-')))];
-    const nfts = importedTokens.filter(t => t.type === 'ERC721' && t.address.includes('-'));
+    const regular = [cotiToken, ...importedTokens.filter(t => !((t.type === 'ERC721' || t.type === 'ERC1155') && t.address.includes('-')))];
+    const nfts = importedTokens.filter(t => (t.type === 'ERC721' || t.type === 'ERC1155') && t.address.includes('-'));
     
     return {
       regularTokens: regular,
@@ -226,6 +226,7 @@ export const Tokens: React.FC<TokensProps> = React.memo(({ balance, provider, ae
           }}
           setActiveTab={setActiveTab}
           setSelectedNFT={setSelectedNFT}
+          provider={provider}
         />
       )}
       {!onSelectToken && (

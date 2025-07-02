@@ -30,7 +30,6 @@ import {
   TokenRowFlex,
   ArrowDownStyled,
   ClearIconButton,
-  CloseButton,
   TokenModalBackdrop,
   TokenModalContainer,
   TokenModalHeader,
@@ -80,6 +79,7 @@ interface Token {
   address?: string;
   contractAddress?: string;
   tokenId?: string;
+  type?: 'ERC20' | 'ERC721' | 'ERC1155';
 }
 
 type AddressStatus = 'idle' | 'loading' | 'error';
@@ -419,19 +419,20 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
 
     const allTokens = [cotiToken, ...importedTokensFormatted];
     
-    // Filter NFTs from imported tokens (by type ERC721 and address format)
+    // Filter NFTs from imported tokens (by type ERC721/ERC1155 and address format)
     let nftTokens: Token[] = importedTokens.filter(t => 
-      t.type === 'ERC721' && t.address.includes('-')
+      (t.type === 'ERC721' || t.type === 'ERC1155') && t.address.includes('-')
     ).map(nft => {
       const [contractAddress, tokenId] = nft.address.split('-');
       return {
         symbol: nft.symbol,
         name: nft.name,
-        amount: '1',
+        amount: nft.type === 'ERC1155' ? '1' : '1',
         usd: 0,
         address: nft.address,
         contractAddress: contractAddress || '',
-        tokenId: tokenId || ''
+        tokenId: tokenId || '',
+        type: nft.type as 'ERC721' | 'ERC1155'
       };
     });
 
@@ -461,11 +462,11 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
   const amountNum = useMemo(() => parseAmount(amount), [amount]);
   const insufficientFunds = useMemo(() => amountNum > balanceNum, [amountNum, balanceNum]);
   const isAmountValid = useMemo(() => {
-    if (currentToken?.tokenId) {
+    if (currentToken?.tokenId && currentToken?.type === 'ERC721') {
       return true;
     }
     return !!amount && !isNaN(amountNum) && amountNum > 0 && amountNum <= balanceNum;
-  }, [amount, amountNum, balanceNum, currentToken?.tokenId]);
+  }, [amount, amountNum, balanceNum, currentToken?.tokenId, currentToken?.type]);
 
   const canContinue = useMemo(() => 
     addressValidation.isValid && isAmountValid && txStatus !== 'loading',
@@ -550,7 +551,14 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
     try {
       if (token.symbol === 'COTI' || !token.address) {
         setCurrentBalance(balance);
+      } else if (token.type === 'ERC1155' && token.contractAddress && token.tokenId) {
+        // For ERC1155 tokens, use getERC1155Balance
+        const signer = await browserProvider.getSigner();
+        const userAddress = await signer.getAddress();
+        const tokenBalance = await tokenOps.getERC1155Balance(token.contractAddress, userAddress, token.tokenId);
+        setCurrentBalance(tokenBalance);
       } else {
+        // For ERC20 tokens, use decryptERC20Balance
         const tokenBalance = await tokenOps.decryptERC20Balance(token.address, aesKey || '');
         setCurrentBalance(tokenBalance.toString());
       }
@@ -577,7 +585,14 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
         try {
           if (currentToken.symbol === 'COTI' || !currentToken.address) {
             setCurrentBalance(balance);
+          } else if (currentToken.type === 'ERC1155' && currentToken.contractAddress && currentToken.tokenId) {
+            // For ERC1155 tokens, use getERC1155Balance
+            const signer = await browserProvider.getSigner();
+            const userAddress = await signer.getAddress();
+            const tokenBalance = await tokenOps.getERC1155Balance(currentToken.contractAddress, userAddress, currentToken.tokenId);
+            setCurrentBalance(tokenBalance);
           } else {
+            // For ERC20 tokens, use decryptERC20Balance
             const tokenBalance = await tokenOps.decryptERC20Balance(currentToken.address, aesKey || '');
             setCurrentBalance(tokenBalance.toString());
           }
@@ -592,7 +607,7 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
       
       loadBalance();
     }
-  }, [currentToken?.symbol, currentToken?.address, browserProvider, tokenOps, balance, aesKey, loadedTokenAddress]);
+  }, [currentToken?.symbol, currentToken?.address, currentToken?.type, currentToken?.contractAddress, currentToken?.tokenId, browserProvider, tokenOps, balance, aesKey, loadedTokenAddress]);
 
   const handleContinue = useCallback(async () => {
     if (!provider || !canContinue || !tokenOps) return;
@@ -608,11 +623,21 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
           to: addressInput, 
           amount 
         });
-      } else if (currentToken.tokenId) {
+      } else if (currentToken.tokenId && currentToken.type === 'ERC721') {
         success = await tokenOps.transferERC721({
           tokenAddress: currentToken.contractAddress || currentToken.address?.split('-')[0] || '',
           to: addressInput,
           tokenId: currentToken.tokenId
+        });
+      } else if (currentToken.tokenId && currentToken.type === 'ERC1155') {
+        if (!amount || amount === '0') {
+          throw new Error('Please enter a valid amount for ERC1155 transfer');
+        }
+        success = await tokenOps.transferERC1155({
+          tokenAddress: currentToken.contractAddress || currentToken.address?.split('-')[0] || '',
+          to: addressInput,
+          tokenId: currentToken.tokenId,
+          amount: amount
         });
       } else {
         success = await tokenOps.transferERC20({
@@ -629,12 +654,10 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
         onBack();
       } else {
         setTxStatus('error');
-        console.log('tokenOps.error', tokenOps.error);
         setTxError(tokenOps.error || `Error transferring ${currentToken.symbol}`);
       }
     } catch (error: any) {
       setTxStatus('error');
-      console.log('tokenOps.error', tokenOps.error);
       setTxError(error.message || `Error transferring ${currentToken.symbol}`);
     }
   }, [provider, canContinue, tokenOps, addressInput, amount, currentToken, fetchTokenBalance, onBack]);
@@ -683,7 +706,7 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
                 <ArrowDownStyled />
               </TokenInfo>
               <SendAmount>
-                {currentToken.tokenId ? (
+                {currentToken.tokenId && currentToken.type === 'ERC721' ? (
                   '1 NFT'
                 ) : (
                   <>
@@ -694,7 +717,7 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
                       value={amount}
                       onChange={handleAmountChange}
                     />
-                    {currentToken.symbol}
+                    {currentToken.tokenId && currentToken.type === 'ERC1155' ? 'NFT' : currentToken.symbol}
                   </>
                 )}
               </SendAmount>
@@ -703,11 +726,11 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
           
           <BalanceRow>
             <BalanceSub error={insufficientFunds}>
-              {currentToken?.tokenId ? (
+              {currentToken?.tokenId && currentToken?.type === 'ERC721' ? (
                 `Balance: 1 NFT`
               ) : (
                 <>
-                  {loadingBalance ? 'Loading balance...' : `Balance: ${currentBalance}`}
+                  {loadingBalance ? 'Loading balance...' : `Balance: ${currentBalance}${currentToken?.tokenId && currentToken?.type === 'ERC1155' ? ` Tokens` : ''}`}
                   {insufficientFunds && (
                     <ErrorText>
                       {' '}Insufficient funds
@@ -716,7 +739,7 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
                 </>
               )}
             </BalanceSub>
-            {!currentToken?.tokenId && (
+            {!(currentToken?.tokenId && currentToken?.type === 'ERC721') && (
               amount === currentBalance && amount !== '' ? (
                 <MaxButton onClick={handleClearAmount} type="button">
                   Clear
@@ -775,10 +798,10 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
               </TokenName>
             </TokenInfo>
             <SendAmount>
-              {currentToken?.tokenId ? (
+              {currentToken?.tokenId && currentToken?.type === 'ERC721' ? (
                 '1 NFT'
               ) : (
-                `${amount || '0'} ${currentToken.symbol}`
+                `${amount || '0'} NFT`
               )}
             </SendAmount>
           </TokenRowFlex>

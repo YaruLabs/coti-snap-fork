@@ -234,22 +234,27 @@ export const useTokenOperations = (provider: BrowserProvider) => {
   const transferERC1155 = useCallback(async ({ tokenAddress, to, tokenId, amount }: TransferParams & { tokenId: string; amount: string }) => {
     return withLoading(async () => {
       if (!tokenId || !amount) throw new Error('Token ID and amount are required for ERC1155 transfer');
-      
-      const contract = await getContract(tokenAddress, ERC1155_ABI, true);
+      if (!ethers.isAddress(to)) throw new Error('Invalid recipient address');
       const signer = await getBrowserProvider().getSigner();
-      const tx = await (contract as any).safeTransferFrom(await signer.getAddress(), to, tokenId, amount, '0x');
-      
-      if (!tx) throw new Error('Transaction could not be initiated');
+      const contract = new ethers.Contract(tokenAddress, ERC1155_ABI, signer);
+      const fromAddress = await signer.getAddress();
+      const tx = await (contract as any).safeTransferFrom(
+        fromAddress,
+        to,
+        tokenId,
+        amount,
+        '0x',
+        { gasLimit: 12000000 }
+      );
       await tx.wait();
       return true;
     });
-  }, [withLoading, getContract, getBrowserProvider]);
+  }, [withLoading, getBrowserProvider]);
 
   const getERC1155Balance = useCallback(async (tokenAddress: string, account: string, tokenId: string): Promise<string> => {
     return withLoading(async () => {
       const contract = await getContract(tokenAddress, ERC1155_ABI);
       const balance = await (contract as any).balanceOf(account, tokenId);
-      
       if (!balance) throw new Error('Could not retrieve balance');
       return balance.toString();
     });
@@ -342,7 +347,7 @@ export const useTokenOperations = (provider: BrowserProvider) => {
     });
   }, []);
 
-  const addERC1155ToMetaMask = useCallback(async ({ address, symbol, decimals, image }: ImportTokenParams) => {
+  const addERC1155ToMetaMask = useCallback(async ({ address, symbol, decimals, image, tokenId }: ImportTokenParams & { tokenId: string }) => {
     if (!window.ethereum) {
       throw new Error('MetaMask is not installed');
     }
@@ -350,7 +355,7 @@ export const useTokenOperations = (provider: BrowserProvider) => {
       method: 'wallet_watchAsset',
       params: {
         type: 'ERC1155',
-        options: { address, symbol, decimals, image },
+        options: { address, symbol, decimals, image, tokenId },
       },
     });
   }, []);

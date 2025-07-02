@@ -224,6 +224,7 @@ export const ContentManageToken: React.FC<ContentManageTokenProps> = ({ aesKey }
         onClose={() => setSelectedNFT(null)} 
         setActiveTab={(tab) => setSelectedNFT(null)}
         setSelectedNFT={setSelectedNFT}
+        provider={browserProvider!}
         onSendClick={handleNFTSendClick}
       />
     );

@@ -36,7 +36,6 @@ export const useImportedTokens = () => {
       // Reload tokens from localStorage to ensure consistency
       const updatedTokens = getImportedTokens();
       setImportedTokensState(updatedTokens);
-      console.log('Updated tokens:', updatedTokens);
     } catch (error) {
       console.error('Error adding token:', error);
     }

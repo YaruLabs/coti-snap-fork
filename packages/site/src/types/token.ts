@@ -11,11 +11,13 @@ export interface ImportedToken {
 export interface NFTFormData {
   address: string;
   tokenId: string;
+  tokenType: 'ERC721' | 'ERC1155';
 }
 
 export interface NFTFormErrors {
   address: string;
   tokenId: string;
+  tokenType?: string;
 }
 
 export interface TokenFormData {

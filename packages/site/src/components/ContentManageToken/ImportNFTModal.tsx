@@ -31,17 +31,20 @@ interface ImportNFTModalProps {
 const useImportNFTForm = () => {
   const [formData, setFormData] = useState<NFTFormData>({
     address: '',
-    tokenId: ''
+    tokenId: '',
+    tokenType: 'ERC721'
   });
   
   const [errors, setErrors] = useState<NFTFormErrors>({
     address: '',
-    tokenId: ''
+    tokenId: '',
+    tokenType: ''
   });
   
   const [isLoading, setIsLoading] = useState(false);
   const [nftInfo, setNftInfo] = useState<NFTInfo | null>(null);
   const [nftInfoError, setNftInfoError] = useState<string | null>(null);
+  const [tokenTypeDetected, setTokenTypeDetected] = useState<'ERC721' | 'ERC1155' | null>(null);
 
   const updateField = useCallback((field: keyof NFTFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -75,9 +78,10 @@ const useImportNFTForm = () => {
   }, [formData, validateField]);
 
   const resetForm = useCallback(() => {
-    setFormData({ address: '', tokenId: '' });
-    setErrors({ address: '', tokenId: '' });
+    setFormData({ address: '', tokenId: '', tokenType: 'ERC721' });
+    setErrors({ address: '', tokenId: '', tokenType: '' });
     setIsLoading(false);
+    setTokenTypeDetected(null);
   }, []);
 
   return {
@@ -85,6 +89,7 @@ const useImportNFTForm = () => {
     errors,
     isLoading,
     nftInfo,
+    tokenTypeDetected,
     updateField,
     validateField,
     validateForm,
@@ -92,7 +97,8 @@ const useImportNFTForm = () => {
     resetForm,
     setErrors,
     setNftInfo,
-    setNftInfoError
+    setNftInfoError,
+    setTokenTypeDetected
   };
 };
 
@@ -102,7 +108,7 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
   provider, 
   onImport
 }) => {
-  const { addNFTToMetaMask, getNFTInfo } = useTokenOperations(provider);
+  const { addNFTToMetaMask, addERC1155ToMetaMask, getNFTInfo } = useTokenOperations(provider);
   const { addToken, hasToken } = useImportedTokens();
   const {
     formData,
@@ -116,7 +122,8 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
     resetForm,
     setErrors,
     setNftInfo,
-    setNftInfoError
+    setNftInfoError,
+    setTokenTypeDetected
   } = useImportNFTForm();
   
   const { handleClose, handleBackdropClick, handleKeyDown } = useModal({
@@ -144,6 +151,31 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
     }
   }, [updateField]);
 
+
+  const detectTokenType = useCallback(async (address: string): Promise<'ERC721' | 'ERC1155'> => {
+    const browserProvider = provider;
+    const contract = new (await import('ethers')).Contract(address, [
+      'function supportsInterface(bytes4 interfaceId) view returns (bool)'
+    ], browserProvider);
+    
+    try {
+      const ERC721_INTERFACE = '0x80ac58cd';
+      const ERC1155_INTERFACE = '0xd9b67a26';
+      
+      const [isERC721, isERC1155] = await Promise.all([
+        (contract as any).supportsInterface(ERC721_INTERFACE),
+        (contract as any).supportsInterface(ERC1155_INTERFACE)
+      ]);
+      
+      if (isERC1155) return 'ERC1155';
+      if (isERC721) return 'ERC721';
+      return 'ERC721';
+    } catch (error) {
+      console.warn('Failed to detect token type, defaulting to ERC721:', error);
+      return 'ERC721';
+    }
+  }, [provider]);
+
   const handleAddressBlur = useCallback(async () => {
     const error = validateField('address', formData.address);
     setErrors((prev: NFTFormErrors) => ({ ...prev, address: error }));
@@ -151,18 +183,25 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
     if (!error && formData.address) {
       try {
         setNftInfoError(null);
+        
+        const detectedType = await detectTokenType(formData.address);
+        setTokenTypeDetected(detectedType);
+        updateField('tokenType', detectedType);
+        
         const info = await getNFTInfo(formData.address);
         setNftInfo(info);
       } catch (error) {
         console.error('Failed to fetch NFT info:', error);
         setNftInfoError('Failed to fetch NFT information from contract');
         setNftInfo(null);
+        setTokenTypeDetected(null);
       }
     } else {
       setNftInfo(null);
       setNftInfoError(null);
+      setTokenTypeDetected(null);
     }
-  }, [formData.address, validateField, setErrors, getNFTInfo, setNftInfo, setNftInfoError]);
+  }, [formData.address, validateField, setErrors, getNFTInfo, setNftInfo, setNftInfoError, detectTokenType, updateField]);
 
   const handleTokenIdBlur = useCallback(() => {
     const error = validateField('tokenId', formData.tokenId);
@@ -180,22 +219,32 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
         return;
       }
 
-      const nftSymbol = nftInfo?.symbol || 'NFT';
-      const nftName = nftInfo?.name || 'Unknown NFT';
+      const nftSymbol = nftInfo?.symbol || (formData.tokenType === 'ERC1155' ? 'ERC1155' : 'NFT');
+      const nftName = nftInfo?.name || `${formData.tokenType}`;
 
-      await addNFTToMetaMask({ 
-        address: formData.address, 
-        symbol: nftSymbol, 
-        decimals: 0, 
-        image: '', 
-        tokenId: formData.tokenId 
-      });
+      if (formData.tokenType === 'ERC721') {
+        await addNFTToMetaMask({ 
+          address: formData.address, 
+          symbol: nftSymbol, 
+          decimals: 0, 
+          image: '', 
+          tokenId: formData.tokenId 
+        });
+      } else {
+        await addERC1155ToMetaMask({ 
+          address: formData.address, 
+          symbol: nftSymbol, 
+          decimals: 0, 
+          image: '',
+          tokenId: formData.tokenId
+        });
+      }
 
       addToken({
         address: tokenKey,
         name: `${nftName} #${formData.tokenId}`,
         symbol: nftSymbol,
-        type: 'ERC721'
+        type: formData.tokenType
       });
 
       if (onImport) onImport();
@@ -216,7 +265,7 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
     <ModalBackdrop onClick={handleBackdropClick}>
       <AnimatedModalContainer onClick={e => e.stopPropagation()} onKeyDown={handleKeyDown} tabIndex={-1}>
         <ModalHeader>
-          Import NFT
+          Import Token
           <ModalClose 
             onClick={handleClose} 
             aria-label="Close modal"
@@ -229,7 +278,7 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
         <ImportTokenContent>
           <LabelRow>
             Address{' '}
-            <Tooltip text="On OpenSea, for example, on the NFT's page under Details, there is a blue hyperlinked value labeled 'Contract Address'. If you click on this, it will take you to the contract's address on Etherscan; at the top-left of that page, there should be an icon labeled 'Contract', and to the right, a long string of letters and numbers. This is the address of the contract that created your NFT. Click on the 'copy' icon to the right of the address, and you'll have it on your clipboard.">
+            <Tooltip text="The contract address of the token. For NFTs on OpenSea, this is under Details as 'Contract Address'. For ERC1155 tokens, this is the main contract address that manages all token IDs.">
               <InfoIcon />
             </Tooltip>
           </LabelRow>
@@ -249,7 +298,7 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
           
           <LabelRow>
             Token ID{' '}
-            <Tooltip text="An NFT's ID is a unique identifier since no two NFTs are alike. Again, on OpenSea this number is under 'Details'. Make a note of it, or copy it onto your clipboard.">
+            <Tooltip text="The unique token ID. For ERC721, each ID represents a unique NFT. For ERC1155, multiple copies of the same ID can exist. On OpenSea, this number is under 'Details'.">
               <InfoIcon />
             </Tooltip>
           </LabelRow>
