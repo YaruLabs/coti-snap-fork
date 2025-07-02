@@ -1,9 +1,15 @@
 import { useState, useCallback } from 'react';
 import { Eip1193Provider, ethers } from 'ethers';
-import { BrowserProvider, ctUint } from '@coti-io/coti-ethers';
+import { BrowserProvider, ctUint, Contract, itUint } from '@coti-io/coti-ethers';
 import { abi as PRIVATE_ERC20_ABI } from '../abis/ERC20Confidential.json';
 import { abi as PRIVATE_ERC721_ABI } from '../abis/ERC721Confidential.json';
 import { abi as ERC1155_ABI } from '../abis/ERC1155.json';
+import { removeImportedToken } from '../utils/localStorage';
+
+// Helper function to get function selector
+const getSelector = (functionSignature: string): string => {
+  return ethers.id(functionSignature).slice(0, 10);
+};
 
 export type TokenType = 'ERC20' | 'ERC721' | 'ERC1155';
 
@@ -36,6 +42,7 @@ export interface TransferParams {
   to: string;
   amount?: string;
   tokenId?: string;
+  aesKey?: string;
 }
 
 export interface ImportTokenParams {
@@ -116,18 +123,28 @@ export const useTokenOperations = (provider: BrowserProvider) => {
   }, [getBrowserProvider]);
 
   // ERC20 Operations
-  const transferERC20 = useCallback(async ({ tokenAddress, to, amount }: TransferParams & { amount: string }) => {
+  const transferERC20 = useCallback(async ({ tokenAddress, to, amount, aesKey }: TransferParams & { amount: string; aesKey: string }) => {
     return withLoading(async () => {
       if (!amount) throw new Error('Amount is required for ERC20 transfer');
-      
-      const contract = await getContract(tokenAddress, PRIVATE_ERC20_ABI, true);
-      const tx = await (contract as any).transfer(to, ethers.parseEther(amount));
-      
-      if (!tx) throw new Error('Transaction could not be initiated');
+      if (!aesKey) throw new Error('AES key is required for ERC20 transfer');
+      if (!ethers.isAddress(to)) throw new Error('Invalid recipient address');
+      const signer = await getBrowserProvider().getSigner();
+      signer.setAesKey(aesKey);
+      const contract = new Contract(tokenAddress, PRIVATE_ERC20_ABI, signer);
+      const encryptedAmount = await signer.encryptValue(
+        ethers.toBigInt(amount),
+        tokenAddress,
+        getSelector("transfer(address,(uint256,bytes))")
+      ) as itUint;
+      const tx = await (contract as any)["transfer(address,(uint256,bytes))"](
+        to, 
+        encryptedAmount, 
+        { gasLimit: 12000000 }
+      );
       await tx.wait();
       return true;
     });
-  }, [withLoading, getContract]);
+  }, [withLoading, getBrowserProvider]);
 
   const getERC20Details = useCallback(async (tokenAddress: string): Promise<TokenDetails> => {
     return withLoading(async () => {
@@ -184,6 +201,8 @@ export const useTokenOperations = (provider: BrowserProvider) => {
       
       if (!tx) throw new Error('Transaction could not be initiated');
       await tx.wait();
+      const nftKey = tokenAddress + '-' + tokenId;
+      removeImportedToken(nftKey);
       return true;
     });
   }, [withLoading, getContract, getBrowserProvider]);

@@ -100,7 +100,6 @@ export const ContentManageToken: React.FC<ContentManageTokenProps> = ({ aesKey }
   const { provider } = useMetaMaskContext();
   const { getAESKey, userAESKey, userHasAESKey } = useSnap();
   
-  // Use local state to track current AES key, prioritizing userAESKey from context
   const currentAESKey = userAESKey || aesKey;
   const [isRequestingAESKey, setIsRequestingAESKey] = useState(false);
 
@@ -194,7 +193,6 @@ export const ContentManageToken: React.FC<ContentManageTokenProps> = ({ aesKey }
     return <Loading title="Loading..." actionText="" />;
   }
 
-  // Show AES key request screen if no AES key is available
   if (!currentAESKey && userHasAESKey) {
     return (
       <MainStack>

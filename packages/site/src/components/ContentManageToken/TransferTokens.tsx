@@ -276,7 +276,7 @@ const TokenModal: React.FC<{
         <TokenSearchBox className={searchActive || (search && search.length > 0) ? 'active' : ''}>
           <SearchIcon />
           <TokenSearchInput
-            placeholder="Search tokens by name or address"
+            placeholder={tokenTab === 'tokens' ? "Search tokens by name or address" : "Search NFTs by name, address or token ID"}
             value={search}
             onChange={handleSearchChange}
             onFocus={handleSearchFocus}
@@ -618,7 +618,8 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
         success = await tokenOps.transferERC20({
           tokenAddress: currentToken.address,
           to: addressInput,
-          amount
+          amount,
+          aesKey: aesKey || ''
         });
       }
 
@@ -628,10 +629,12 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
         onBack();
       } else {
         setTxStatus('error');
+        console.log('tokenOps.error', tokenOps.error);
         setTxError(tokenOps.error || `Error transferring ${currentToken.symbol}`);
       }
     } catch (error: any) {
       setTxStatus('error');
+      console.log('tokenOps.error', tokenOps.error);
       setTxError(error.message || `Error transferring ${currentToken.symbol}`);
     }
   }, [provider, canContinue, tokenOps, addressInput, amount, currentToken, fetchTokenBalance, onBack]);
@@ -681,9 +684,7 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
               </TokenInfo>
               <SendAmount>
                 {currentToken.tokenId ? (
-                  <TokenId variant="badge" showHash={false}>
-                    1 NFT
-                  </TokenId>
+                  '1 NFT'
                 ) : (
                   <>
                     <AmountInput
@@ -753,9 +754,7 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
             aria-label="Clear address"
             type="button"
           >
-            <CloseButton>
-              <XIcon />
-            </CloseButton>
+            <XIcon />
           </ClearIconButton>
         </AccountBox>
       )}
