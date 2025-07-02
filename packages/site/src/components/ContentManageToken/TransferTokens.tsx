@@ -698,7 +698,7 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
                   <TokenLogoSmall>{currentToken.symbol[0]}</TokenLogoSmall>
                 </TokenLogos>
                 <TokenName>
-                  {currentToken.symbol}
+                  {currentToken.tokenId && currentToken.type === 'ERC1155' ? 'NFT' : currentToken.symbol}
                   {currentToken.tokenId && (
                     <TokenId tokenId={currentToken.tokenId} />
                   )}
@@ -791,7 +791,7 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
                 <TokenLogoSmall>{currentToken.symbol[0]}</TokenLogoSmall>
               </TokenLogos>
               <TokenName>
-                {currentToken.symbol}
+                {currentToken.tokenId && currentToken.type === 'ERC1155' ? 'NFT' : currentToken.symbol}
                 {currentToken.tokenId && (
                   <TokenId tokenId={currentToken.tokenId} />
                 )}
@@ -800,8 +800,10 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
             <SendAmount>
               {currentToken?.tokenId && currentToken?.type === 'ERC721' ? (
                 '1 NFT'
-              ) : (
+              ) : currentToken?.tokenId && currentToken?.type === 'ERC1155' ? (
                 `${amount || '0'} NFT`
+              ) : (
+                `${amount || '0'} ${currentToken.symbol}`
               )}
             </SendAmount>
           </TokenRowFlex>

@@ -78,6 +78,11 @@ export const Tokens: React.FC<TokensProps> = React.memo(({ balance, provider, ae
     [regularTokens, sort]
   );
 
+  const sortedNFTs = useMemo(() => 
+    sortTokens(nftTokens, sort), 
+    [nftTokens, sort]
+  );
+
   const handleTabChange = useCallback((tab: TabType) => {
     setActiveTab(tab);
   }, []);
@@ -109,10 +114,14 @@ export const Tokens: React.FC<TokensProps> = React.memo(({ balance, provider, ae
     setShowImportNFTModal(false);
   }, []);
 
-  const handleRefreshTokens = useCallback(() => {
+  const refreshTokensList = useCallback(() => {
     refreshTokens();
+  }, [refreshTokens]);
+
+  const handleRefreshTokens = useCallback(() => {
+    refreshTokensList();
     menuDropdown.close();
-  }, [refreshTokens, menuDropdown]);
+  }, [refreshTokensList, menuDropdown]);
 
   const headerActionsStyle = useMemo(() => ({ position: 'relative' as const }), []);
 
@@ -196,7 +205,7 @@ export const Tokens: React.FC<TokensProps> = React.memo(({ balance, provider, ae
           )
         ) : (
           <NFTsTabContent 
-            nfts={nftTokens}
+            nfts={sortedNFTs}
             onOpenImportNFTModal={handleOpenImportNFTModal} 
             onRefreshNFTs={refreshTokens}
             onSelectNFT={onSelectNFT || setSelectedNFT}
