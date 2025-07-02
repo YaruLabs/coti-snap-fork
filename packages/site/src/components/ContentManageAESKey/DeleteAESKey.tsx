@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { useSnap } from '../../hooks/SnapContext';
 import { Button } from '../Button';
 import { Loading } from '../Loading';

@@ -1,7 +1,6 @@
 import React from 'react';
 import { BalanceAmount } from './styles';
-import EyeIcon from '../../assets/eye.svg';
-import EyeOffIcon from '../../assets/eye-off.svg';
+import { ToggleIcon } from './components/ToggleIcon';
 
 interface BalanceProps {
   balance: string;
@@ -36,22 +35,11 @@ export const Balance: React.FC<BalanceProps> = ({
     <BalanceAmount className={className}>
       {displayText}
       {onToggleDecryption && (
-        <span 
+        <ToggleIcon
           onClick={onToggleDecryption}
-          style={{ 
-            marginLeft: '12px', 
-            cursor: 'pointer', 
-            color: '#007bff',
-            fontSize: '16px',
-            display: 'inline-flex',
-            alignItems: 'center',
-            width: '16px',
-            height: '16px'
-          }}
           title={isDecrypted ? "Hide token balances" : "Show token balances"}
         >
-          {isDecrypted ? <EyeOffIcon /> : <EyeIcon />}
-        </span>
+        </ToggleIcon>
       )}
     </BalanceAmount>
   );

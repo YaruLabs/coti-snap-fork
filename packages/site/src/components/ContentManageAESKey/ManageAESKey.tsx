@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React from 'react';
 
 import CheckIcon from '../../assets/check.svg';
 import CopyIcon from '../../assets/copy.svg';
@@ -7,13 +7,12 @@ import { useCopyToClipboard } from '../../hooks/useCopyToClipboard';
 import { Button } from '../Button';
 import { Loading } from '../Loading';
 import { ContentText, ContentTitle } from '../styles';
+import { Alert } from '../ContentManageToken/Alert';
 import {
   AESInput,
   AESKeyContainer,
   ContentInput,
   IconContainer,
-  SuccessAlertContainer,
-  SuccessAlertIconContainer,
 } from './styles';
 
 interface ManageAESKeyProps {
@@ -54,16 +53,13 @@ export const ManageAESKey: React.FC<ManageAESKeyProps> = ({
 
   return (
     <>
-      <SuccessAlertContainer>
-        <SuccessAlertIconContainer> 
-        <CheckIcon />
-        </SuccessAlertIconContainer>
-        <ContentText>Account onboarded successfully</ContentText>
-      </SuccessAlertContainer>
+      <Alert type="success">
+        Account onboarded successfully
+      </Alert>
       <ContentTitle>Manage your AES Key</ContentTitle>
       <ContentInput>
-        <ContentText>AES Key</ContentText>
-        <AESKeyContainer>
+        <ContentText id="aes-key-label">AES Key</ContentText>
+        <AESKeyContainer role="group" aria-labelledby="aes-key-label">
           {userAESKey ? (
             <>
               <AESInput 
@@ -71,17 +67,21 @@ export const ManageAESKey: React.FC<ManageAESKeyProps> = ({
                 value={userAESKey ?? ''} 
                 readOnly={true}
                 aria-label="Your AES Key"
+                aria-describedby="aes-key-label"
               />
               <IconContainer 
                 onClick={handleCopyClick}
                 aria-label={isCopied ? "AES Key copied to clipboard" : "Copy AES Key to clipboard"}
                 title={isCopied ? "Copied!" : "Copy to clipboard"}
+                aria-live="polite"
               >
-                {isCopied ? <CheckIcon /> : <CopyIcon />}
+                {isCopied ? <CheckIcon aria-hidden="true" /> : <CopyIcon aria-hidden="true" />}
               </IconContainer>
             </>
           ) : (
-            <ContentText id="aes-key-description">Hidden AES key - click Reveal to show</ContentText>
+            <ContentText id="aes-key-description" role="status">
+              Hidden AES key - click Reveal to show
+            </ContentText>
           )}
         </AESKeyContainer>
       </ContentInput>

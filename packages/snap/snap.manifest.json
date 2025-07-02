@@ -7,7 +7,7 @@
     "url": "https://github.com/YaruLabs/coti-snap.git"
   },
   "source": {
-    "shasum": "jn4o/h2FU6LFTdYWwUBuQKuujTfZPzw1gTSF49VXHLM=",
+    "shasum": "U8xqzDB4QQeoHWXX1DNzCD3naBfDNIXD5mcfxvcZa5E=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
@@ -29,6 +29,6 @@
       "snaps": false
     }
   },
-  "platformVersion": "6.16.0",
+  "platformVersion": "6.24.0",
   "manifestVersion": "0.1"
 }

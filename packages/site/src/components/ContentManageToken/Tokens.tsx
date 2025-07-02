@@ -49,7 +49,6 @@ export const Tokens: React.FC<TokensProps> = React.memo(({ balance, provider, ae
   const [showImportNFTModal, setShowImportNFTModal] = useState(false);
   const [selectedNFT, setSelectedNFT] = useState<ImportedToken | null>(null);
   const [selectedToken, setSelectedToken] = useState<ImportedToken | null>(null);
-  const [showNFTRemovedToast, setShowNFTRemovedToast] = useState(false);
 
   const { userAESKey, userHasAESKey, getAESKey } = useSnap();
   const { importedTokens, isLoading, refreshTokens } = useImportedTokens();
@@ -65,8 +64,8 @@ export const Tokens: React.FC<TokensProps> = React.memo(({ balance, provider, ae
         type: 'ERC20'
       };
     
-    const regular = [cotiToken, ...importedTokens.filter(t => !(t.symbol === 'NFT' && t.address.includes('-')))];
-    const nfts = importedTokens.filter(t => t.symbol === 'NFT' && t.address.includes('-'));
+    const regular = [cotiToken, ...importedTokens.filter(t => !(t.type === 'ERC721' && t.address.includes('-')))];
+    const nfts = importedTokens.filter(t => t.type === 'ERC721' && t.address.includes('-'));
     
     return {
       regularTokens: regular,

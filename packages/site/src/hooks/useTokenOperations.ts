@@ -25,6 +25,12 @@ export interface TokenInfo {
   decimals: number;
 }
 
+export interface NFTInfo {
+  address: string;
+  name: string;
+  symbol: string;
+}
+
 export interface TransferParams {
   tokenAddress: string;
   to: string;
@@ -46,6 +52,14 @@ interface IERC20 {
   symbol(): Promise<string>;
   decimals(): Promise<number>;
   balanceOf(account: string): Promise<string>;
+}
+
+// Interface for ERC721 contract
+interface IERC721 {
+  name(): Promise<string>;
+  symbol(): Promise<string>;
+  balanceOf(account: string): Promise<string>;
+  ownerOf(tokenId: string): Promise<string>;
 }
 
 // Error types
@@ -265,6 +279,23 @@ export const useTokenOperations = (provider: BrowserProvider) => {
     });
   }, [withLoading, getContract]);
 
+  // NFT Information
+  const getNFTInfo = useCallback(async (address: string): Promise<NFTInfo> => {
+    return withLoading(async () => {
+      const contract = await getContract(address, PRIVATE_ERC721_ABI, true) as unknown as IERC721;
+      const [name, symbol] = await Promise.all([
+        contract.name(),
+        contract.symbol()
+      ]);
+      
+      if (!name || !symbol) {
+        throw new Error('Invalid NFT contract');
+      }
+      
+      return { address, name, symbol };
+    });
+  }, [withLoading, getContract]);
+
   // MetaMask Integration
   const addTokenToMetaMask = useCallback(async ({ address, symbol, decimals, image }: ImportTokenParams) => {
     if (!window.ethereum) {
@@ -325,6 +356,7 @@ export const useTokenOperations = (provider: BrowserProvider) => {
     getERC1155Details,
     transferCOTI,
     getTokenInfo,
+    getNFTInfo,
     addTokenToMetaMask,
     addNFTToMetaMask,
     addERC1155ToMetaMask,

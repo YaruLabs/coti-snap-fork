@@ -769,23 +769,17 @@ export const ModalClose = styled.button`
     background: ${colors.background.tertiary};
     border-radius: ${borderRadius.sm};
   }
-  
-  &:focus {
-    outline: 2px solid ${colors.primary};
-    outline-offset: 2px;
-  }
 `;
 
 export const ModalLabel = styled.div`
   font-size: ${typography.sizes.md};
   font-weight: ${typography.weights.semibold};
   color: ${colors.text.primary};
-  margin: 25px 0 0 0;
+  margin: ${spacing.sm} 0 0 0;
 `;
 
 export const ModalInput = styled.input`
   width: auto;
-  margin: ${spacing.sm} 0 0 0;
   padding: ${spacing.md} ${spacing.lg};
   ${inputBase}
 `;
@@ -864,11 +858,6 @@ export const DepositCloseButton = styled.button`
     background: ${colors.background.tertiary};
     border-radius: ${spacing.xs};
   }
-  
-  &:focus {
-    outline: 2px solid ${colors.primary};
-    outline-offset: 2px;
-  }
 `;
 
 export const DepositTitle = styled.h2`
@@ -925,30 +914,17 @@ export const DepositCopyButton = styled.button<{ $copied: boolean }>`
   gap: ${spacing.lg};
   background: none;
   border: none;
-  color: ${({ $copied }) => ($copied ? colors.success : colors.primary)};
+  color: ${colors.primary};
   font-size: ${typography.sizes.base};
   font-weight: ${typography.weights.semibold};
   cursor: pointer;
   margin: 0 auto;
   padding: ${spacing.sm} ${spacing.lg};
   border-radius: ${borderRadius.sm};
-  transition: all ${transitions.fast};
-  
-  &:hover {
-    color: ${({ $copied }) => ($copied ? colors.successHover : colors.primaryHover)};
-    background: ${({ $copied }) => ($copied ? colors.background.success : colors.background.hover)};
-  }
-  
-  &:focus {
-    outline: 2px solid ${colors.primary};
-    outline-offset: 2px;
-  }
-  
   svg {
     color: inherit;
     fill: currentColor;
     stroke: currentColor;
-    transition: all ${transitions.fast};
   }
 `;
 
@@ -1196,6 +1172,7 @@ export const LabelRow = styled.div`
   font-size: ${typography.sizes.md};
   font-weight: ${typography.weights.semibold};
   color: ${colors.text.primary};
+  margin-top: ${spacing.md};
 `;
 
 export const NFTCornerIcon = styled.div`

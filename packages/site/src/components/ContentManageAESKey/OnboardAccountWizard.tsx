@@ -10,9 +10,9 @@ import { ContentConnectYourWallet } from '../ContentConnectYourWallet';
 import { ContentSwitchNetwork } from '../ContentSwitchNetwork';
 import { Loading } from '../Loading';
 import { ContentText, ContentTitle } from '../styles';
+import { Alert } from '../ContentManageToken/Alert';
 import {
   ContentButtons,
-  ContentErrorText,
   ContentInput,
   Edit,
   EditableInput,
@@ -131,23 +131,23 @@ export const OnboardAccountWizard: React.FC<OnboardAccountWizardProps> = ({
         </ContentButtons>
 
         {settingAESKeyError === 'accountBalanceZero' && (
-          <ContentErrorText>
+          <Alert type="error">
             Error onboarding account: Insufficient funds. Fund your account and
             try again. Testnet funds available at{' '}
             <Link target="_blank" href={COTI_FAUCET_LINK}>
               https://faucet.coti.io
             </Link>
-          </ContentErrorText>
+          </Alert>
         )}
         {settingAESKeyError === 'invalidAddress' && (
-          <ContentErrorText>
+          <Alert type="error">
             Error to onboard account, check the contract address
-          </ContentErrorText>
+          </Alert>
         )}
         {settingAESKeyError === 'unknownError' && (
-          <ContentErrorText>
+          <Alert type="error">
             Error to onboard account, try again
-          </ContentErrorText>
+          </Alert>
         )}
       </>
     )

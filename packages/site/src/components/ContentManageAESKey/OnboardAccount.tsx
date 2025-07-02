@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
+
 import { Button } from '../Button';
 import { ContentText, ContentTitle } from '../styles';
 import { OnboardAccountWizard } from './OnboardAccountWizard';

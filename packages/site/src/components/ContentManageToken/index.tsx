@@ -5,6 +5,7 @@ import { BrowserProvider } from '@coti-io/coti-ethers';
 import styled, { keyframes } from 'styled-components';
 import { QuickAccessButton, QuickAccessGroup, QuickAccessItem, QuickAccessLabel, MainStack } from './styles';
 import { Balance } from './Balance';
+import { RequestAESKey } from './RequestAESKey';
 import { Tokens } from './Tokens';
 import NFTDetails from './NFTDetails';
 import TokenDetails from './TokenDetails';
@@ -97,7 +98,11 @@ export const ContentManageToken: React.FC<ContentManageTokenProps> = ({ aesKey }
   const { address } = useAccount();
   const { data: balance } = useBalance({ address });
   const { provider } = useMetaMaskContext();
-  const { getAESKey } = useSnap();
+  const { getAESKey, userAESKey, userHasAESKey } = useSnap();
+  
+  // Use local state to track current AES key, prioritizing userAESKey from context
+  const currentAESKey = userAESKey || aesKey;
+  const [isRequestingAESKey, setIsRequestingAESKey] = useState(false);
 
   const [modalState, setModalState] = useState<ModalState>({
     transfer: false,
@@ -106,6 +111,7 @@ export const ContentManageToken: React.FC<ContentManageTokenProps> = ({ aesKey }
 
   const [selectedNFT, setSelectedNFT] = useState<ImportedToken | null>(null);
   const [selectedToken, setSelectedToken] = useState<ImportedToken | null>(null);
+  const [transferToken, setTransferToken] = useState<ImportedToken | null>(null);
 
   const formattedBalance = useMemo(() => {
     if (!balance) return '0';
@@ -113,7 +119,6 @@ export const ContentManageToken: React.FC<ContentManageTokenProps> = ({ aesKey }
       const formatted = formatUnits(balance.value, 18);
       return formatted || '0';
     } catch (error) {
-      console.error('Error formatting balance:', error);
       return '0';
     }
   }, [balance]);
@@ -132,32 +137,73 @@ export const ContentManageToken: React.FC<ContentManageTokenProps> = ({ aesKey }
     setModalState(prev => ({ ...prev, transfer: true }));
   };
 
+  const handleTokenSendClick = (token: ImportedToken) => {
+    setTransferToken(token);
+    setModalState(prev => ({ ...prev, transfer: true }));
+  };
+
+  const handleNFTSendClick = (nft: ImportedToken) => {
+    // Siempre pasar el token COTI
+    setTransferToken({
+      address: '',
+      name: 'COTI',
+      symbol: 'COTI',
+      decimals: 18,
+      type: 'ERC20'
+    });
+    setModalState(prev => ({ ...prev, transfer: true }));
+  };
+
   const handleReceiveClick = () => {
     setModalState(prev => ({ ...prev, deposit: true }));
   };
 
   const handleCloseTransfer = () => {
     setModalState(prev => ({ ...prev, transfer: false }));
+    setTransferToken(null);
   };
 
   const handleCloseDeposit = () => {
     setModalState(prev => ({ ...prev, deposit: false }));
   };
 
-  const handleToggleDecryption = async () => {
-    if (!aesKey) {
+  const handleRequestAESKey = async () => {
+    if (!currentAESKey && userHasAESKey) {
+      setIsRequestingAESKey(true);
       try {
         await getAESKey();
       } catch (error) {
-        console.error('Error getting AES key:', error);
+      } finally {
+        setIsRequestingAESKey(false);
       }
     }
   };
 
-  const isDecrypted = !!aesKey;
+  const handleToggleDecryption = async () => {
+    if (!currentAESKey) {
+      try {
+        await getAESKey();
+      } catch (error) {
+      }
+    }
+  };
+
+  const isDecrypted = !!currentAESKey;
 
   if (shouldShowConnectWallet) {
     return <Loading title="Loading..." actionText="" />;
+  }
+
+  // Show AES key request screen if no AES key is available
+  if (!currentAESKey && userHasAESKey) {
+    return (
+      <MainStack>
+        <RequestAESKey 
+          onRequestAESKey={handleRequestAESKey}
+          isRequesting={isRequestingAESKey}
+        />
+      </MainStack>
+    );
   }
 
   if (modalState.transfer) {
@@ -166,7 +212,8 @@ export const ContentManageToken: React.FC<ContentManageTokenProps> = ({ aesKey }
         onBack={handleCloseTransfer} 
         address={truncateString(address!)} 
         balance={formattedBalance}
-        aesKey={aesKey}
+        aesKey={currentAESKey}
+        initialToken={transferToken}
       />
     );
   }
@@ -179,6 +226,7 @@ export const ContentManageToken: React.FC<ContentManageTokenProps> = ({ aesKey }
         onClose={() => setSelectedNFT(null)} 
         setActiveTab={(tab) => setSelectedNFT(null)}
         setSelectedNFT={setSelectedNFT}
+        onSendClick={handleNFTSendClick}
       />
     );
   }
@@ -193,7 +241,8 @@ export const ContentManageToken: React.FC<ContentManageTokenProps> = ({ aesKey }
         setSelectedToken={setSelectedToken}
         provider={browserProvider!}
         cotiBalance={formattedBalance}
-        aesKey={aesKey}
+        aesKey={currentAESKey}
+        onSendClick={handleTokenSendClick}
       />
     );
   }
@@ -216,7 +265,7 @@ export const ContentManageToken: React.FC<ContentManageTokenProps> = ({ aesKey }
           <Tokens 
             balance={formattedBalance} 
             provider={browserProvider}
-            aesKey={aesKey}
+            aesKey={currentAESKey}
             onSelectNFT={setSelectedNFT}
             onSelectToken={setSelectedToken}
           />

@@ -4,7 +4,7 @@ export interface ImportedToken {
   address: string;
   name: string;
   symbol: string;
-  decimals: number;
+  decimals?: number; // Optional for NFTs (ERC721/ERC1155)
   type: TokenType;
 }
 

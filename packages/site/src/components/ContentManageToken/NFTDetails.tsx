@@ -30,9 +30,8 @@ import CopyIcon from '../../assets/copy.svg';
 import CopySuccessIcon from '../../assets/copy-success.svg';
 import VerticalMenuIcon from '../../assets/icons/vertical-menu.svg';
 import TrashIcon from '../../assets/icons/trash.svg';
-import { HeaderBarSlotRight } from './TransferTokens.styles';
 import { HeaderBar } from './styles';
-import { HeaderBarSlotLeft } from './TransferTokens.styles';
+import { HeaderBarSlotLeft, HeaderBarSlotRight } from './styles/transfer';
 
 interface NFTDetailModalProps {
   nft: ImportedToken | null;
@@ -42,9 +41,10 @@ interface NFTDetailModalProps {
   setSelectedNFT: React.Dispatch<React.SetStateAction<ImportedToken | null>>;
   provider?: BrowserProvider;
   onNFTRemoved?: () => void;
+  onSendClick?: (nft: ImportedToken) => void;
 }
 
-const NFTDetails: React.FC<NFTDetailModalProps> = ({ nft, open, onClose, setActiveTab, setSelectedNFT, provider, onNFTRemoved }) => {
+const NFTDetails: React.FC<NFTDetailModalProps> = ({ nft, open, onClose, setActiveTab, setSelectedNFT, provider, onNFTRemoved, onSendClick }) => {
   const { copyToClipboard, copied } = useCopyToClipboard();
   const { removeToken } = useImportedTokens();
   const menuDropdown = useDropdown();
@@ -58,11 +58,6 @@ const NFTDetails: React.FC<NFTDetailModalProps> = ({ nft, open, onClose, setActi
   const handleCopy = useCallback((text: string) => {
     copyToClipboard(text);
   }, [copyToClipboard]);
-
-  const handleSendClick = useCallback(() => {
-    // TODO: Implement send NFT functionality
-    console.log('Send NFT clicked');
-  }, []);
 
   const handleRemoveToken = useCallback(() => {
     if (nft) {
@@ -135,7 +130,7 @@ const NFTDetails: React.FC<NFTDetailModalProps> = ({ nft, open, onClose, setActi
         <NFTDetailsDisclaimer>
           Disclaimer: MetaMask pulls the media file from the source url. This url sometimes gets changed by the marketplace on which the NFT was minted.
         </NFTDetailsDisclaimer>
-        <SendButton onClick={handleSendClick} disabled={!provider}>
+        <SendButton onClick={() => nft && onSendClick && onSendClick(nft)}>
           Send
         </SendButton>
       </NFTDetailsContent>

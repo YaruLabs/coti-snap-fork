@@ -42,7 +42,7 @@ import CopyIcon from '../../assets/copy.svg';
 import CopySuccessIcon from '../../assets/copy-success.svg';
 import VerticalMenuIcon from '../../assets/icons/vertical-menu.svg';
 import { HeaderBar } from './styles';
-import { HeaderBarSlotLeft, HeaderBarSlotRight } from './TransferTokens.styles';
+import { HeaderBarSlotLeft, HeaderBarSlotRight } from './styles/transfer';
 import TrashIcon from '../../assets/icons/trash.svg';
 
 interface TokenDetailModalProps {
@@ -54,6 +54,7 @@ interface TokenDetailModalProps {
   provider: BrowserProvider;
   cotiBalance?: string;
   aesKey?: string | null | undefined;
+  onSendClick?: (token: ImportedToken) => void;
 }
 
 const TokenDetails: React.FC<TokenDetailModalProps> = ({ 
@@ -62,7 +63,8 @@ const TokenDetails: React.FC<TokenDetailModalProps> = ({
   onClose,
   provider, 
   cotiBalance, 
-  aesKey 
+  aesKey,
+  onSendClick
 }) => {
   const { userAESKey } = useSnap();
   const { decryptERC20Balance } = useTokenOperations(provider);
@@ -233,7 +235,7 @@ const TokenDetails: React.FC<TokenDetailModalProps> = ({
           <TokenDetailsValue>{token.decimals}</TokenDetailsValue>
         </TokenDetailsRow>
       </TokenDetailsContent>
-      <SendButton onClick={handleSendClick}>Send</SendButton>
+      <SendButton onClick={() => onSendClick && onSendClick(token)}>Send</SendButton>
     </TokenDetailsContainer>
     
     <ConfirmationModal

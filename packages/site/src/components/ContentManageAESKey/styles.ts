@@ -98,13 +98,6 @@ export const ContentBoldText = styled.p`
   margin: 0;
 `;
 
-export const ContentErrorText = styled.p`
-  font-size: ${(props) => props.theme.fontSizes.small};
-  line-height: 1.2;
-  font-weight: medium;
-  margin: 0;
-  color: ${(props) => props.theme.colors.error?.default};
-`;
 
 export const Link = styled.a`
   color: ${(props) => props.theme.colors.primary?.default};
@@ -144,9 +137,9 @@ export const EditableInputContainer = styled.div<EditableInputContainerProps>`
   color: ${(props) => props.theme.colors.text?.default};
   border: ${(props) => {
     if (props.$isError !== null) {
-      return '1px solid #F86E6E';
+      return `1px solid ${props.theme.colors.error?.default}`;
     } else if (props.$isEditable) {
-      return '1px solid #0EB592';
+      return `1px solid ${props.theme.colors.success?.default}`;
     }
     return 'none';
   }};
@@ -169,7 +162,7 @@ export const IconContainer = styled.button<IconContainerProps>`
   svg {
     ${commonIconStyles}
     fill: ${(props) =>
-      props.$isCopied ? props.theme.colors.primary?.default : '#8c8c8c'};
+      props.$isCopied ? props.theme.colors.primary?.default : props.theme.colors.text?.muted || '#8c8c8c'};
 
     &:hover {
       fill: ${(props) => props.theme.colors.primary?.default};
@@ -182,7 +175,7 @@ export const Edit = styled.button`
 
   svg {
     ${commonIconStyles}
-    fill: #8c8c8c;
+    fill: ${(props) => props.theme.colors.text?.muted || '#8c8c8c'};
 
     &:hover {
       fill: ${(props) => props.theme.colors.primary?.default};
@@ -190,21 +183,3 @@ export const Edit = styled.button`
   }
 `;
 
-export const SuccessAlertContainer = styled.div`
-  display: flex;
-  align-items: center;
-  background: #eafaf4;
-  border-radius: 10px;
-  padding: 18px 32px;
-  margin-bottom: 16px;
-  color: #222;
-  font-size: 22px;
-  font-weight: 400;
-  border: 1px solid #d1f2e1;
-`;
-
-export const SuccessAlertIconContainer = styled.span`
-  display: flex;
-  align-items: center;
-  margin-right: 16px;
-`;

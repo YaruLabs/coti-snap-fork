@@ -1,10 +1,10 @@
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 
 import { ContentContainer } from '../styles';
+import { ContentManageToken } from '../ContentManageToken';
 import { DeleteAESKey } from './DeleteAESKey';
 import { ManageAESKey } from './ManageAESKey';
 import { OnboardAccount } from './OnboardAccount';
-import { ContentManageToken } from '../ContentManageToken';
 
 interface ContentManageAESKeyProps {
   readonly userHasAESKey: boolean;

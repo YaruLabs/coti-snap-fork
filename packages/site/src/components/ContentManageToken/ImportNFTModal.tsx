@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { normalizeAddress } from '../../utils/normalizeAddress';
-import { useTokenOperations } from '../../hooks/useTokenOperations';
+import { useTokenOperations, NFTInfo } from '../../hooks/useTokenOperations';
 import { useImportedTokens } from '../../hooks/useImportedTokens';
 import { useModal } from '../../hooks/useModal';
 import { NFTFormData, NFTFormErrors } from '../../types/token';
@@ -15,11 +15,11 @@ import {
   ModalClose,
   LabelRow,
   ModalInput,
-  ErrorMsg,
   ModalActions,
   ImportTokenContent,
   SendButton
 } from './styles';
+import { ErrorText } from './components/ErrorText';
 
 interface ImportNFTModalProps {
   open: boolean;
@@ -40,6 +40,8 @@ const useImportNFTForm = () => {
   });
   
   const [isLoading, setIsLoading] = useState(false);
+  const [nftInfo, setNftInfo] = useState<NFTInfo | null>(null);
+  const [nftInfoError, setNftInfoError] = useState<string | null>(null);
 
   const updateField = useCallback((field: keyof NFTFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -82,12 +84,15 @@ const useImportNFTForm = () => {
     formData,
     errors,
     isLoading,
+    nftInfo,
     updateField,
     validateField,
     validateForm,
     setIsLoading,
     resetForm,
-    setErrors
+    setErrors,
+    setNftInfo,
+    setNftInfoError
   };
 };
 
@@ -97,18 +102,21 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
   provider, 
   onImport
 }) => {
-  const { addNFTToMetaMask } = useTokenOperations(provider);
+  const { addNFTToMetaMask, getNFTInfo } = useTokenOperations(provider);
   const { addToken, hasToken } = useImportedTokens();
   const {
     formData,
     errors,
     isLoading,
+    nftInfo,
     updateField,
     validateField,
     validateForm,
     setIsLoading,
     resetForm,
-    setErrors
+    setErrors,
+    setNftInfo,
+    setNftInfoError
   } = useImportNFTForm();
   
   const { handleClose, handleBackdropClick, handleKeyDown } = useModal({
@@ -136,10 +144,25 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
     }
   }, [updateField]);
 
-  const handleAddressBlur = useCallback(() => {
+  const handleAddressBlur = useCallback(async () => {
     const error = validateField('address', formData.address);
     setErrors((prev: NFTFormErrors) => ({ ...prev, address: error }));
-  }, [formData.address, validateField, setErrors]);
+    
+    if (!error && formData.address) {
+      try {
+        setNftInfoError(null);
+        const info = await getNFTInfo(formData.address);
+        setNftInfo(info);
+      } catch (error) {
+        console.error('Failed to fetch NFT info:', error);
+        setNftInfoError('Failed to fetch NFT information from contract');
+        setNftInfo(null);
+      }
+    } else {
+      setNftInfo(null);
+      setNftInfoError(null);
+    }
+  }, [formData.address, validateField, setErrors, getNFTInfo, setNftInfo, setNftInfoError]);
 
   const handleTokenIdBlur = useCallback(() => {
     const error = validateField('tokenId', formData.tokenId);
@@ -157,9 +180,12 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
         return;
       }
 
+      const nftSymbol = nftInfo?.symbol || 'NFT';
+      const nftName = nftInfo?.name || 'Unknown NFT';
+
       await addNFTToMetaMask({ 
         address: formData.address, 
-        symbol: 'NFT', 
+        symbol: nftSymbol, 
         decimals: 0, 
         image: '', 
         tokenId: formData.tokenId 
@@ -167,9 +193,8 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
 
       addToken({
         address: tokenKey,
-        name: `NFT #${formData.tokenId}`,
-        symbol: 'NFT',
-        decimals: 0,
+        name: `${nftName} #${formData.tokenId}`,
+        symbol: nftSymbol,
         type: 'ERC721'
       });
 
@@ -182,7 +207,7 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
     } finally {
       setIsLoading(false);
     }
-  }, [validateForm, addNFTToMetaMask, formData, resetForm, onClose, hasToken, addToken, setErrors, onImport]);
+  }, [validateForm, addNFTToMetaMask, formData, resetForm, onClose, hasToken, addToken, setErrors, onImport, nftInfo]);
 
 
   if (!open) return null;
@@ -217,9 +242,10 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
             disabled={isLoading}
             aria-describedby={errors.address ? 'address-error' : undefined}
           />
-          <ErrorMsg id="address-error" role="alert">
-            {errors.address}
-          </ErrorMsg>
+          <ErrorText 
+            message={errors.address}
+            className="address-error"
+          />
           
           <LabelRow>
             Token ID{' '}
@@ -237,9 +263,10 @@ export const ImportNFTModal: React.FC<ImportNFTModalProps> = React.memo(({
             disabled={isLoading}
             aria-describedby={errors.tokenId ? 'tokenid-error' : undefined}
           />
-          <ErrorMsg id="tokenid-error" role="alert">
-            {errors.tokenId}
-          </ErrorMsg>
+          <ErrorText 
+            message={errors.tokenId}
+            className="tokenid-error"
+          />
           
           <ModalActions>
             <SendButton 

@@ -13,7 +13,6 @@ import {
   ModalHeader,
   ModalClose,
   ModalInput,
-  ErrorMsg,
   ModalLabel,
   TokenInfoBox,
   TokenInfoRow,
@@ -28,6 +27,7 @@ import {
   SendButton,
   ImportTokenContent
 } from './styles';
+import { ErrorText } from './components/ErrorText';
 
 interface ImportTokenModalProps {
   open: boolean;
@@ -292,9 +292,10 @@ export const ImportTokenModal: React.FC<ImportTokenModalProps> = React.memo(({
               />
               
               {state.addressStatus === 'error' && state.address && (
-                <ErrorMsg id="address-error" role="alert">
-                  {ERROR_MESSAGES.INVALID_ADDRESS}
-                </ErrorMsg>
+                <ErrorText 
+                  message={ERROR_MESSAGES.INVALID_ADDRESS}
+                  className="address-error"
+                />
               )}
               
               {state.tokenInfo && (
@@ -316,9 +317,9 @@ export const ImportTokenModal: React.FC<ImportTokenModalProps> = React.memo(({
               )}
               
               {state.tokenInfoError && (
-                <ErrorMsg role="alert">
-                  {state.tokenInfoError}
-                </ErrorMsg>
+                <ErrorText 
+                  message={state.tokenInfoError}
+                />
               )}
               
               <SendButton 

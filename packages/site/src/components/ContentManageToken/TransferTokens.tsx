@@ -4,7 +4,6 @@ import { ContentTitle } from '../styles';
 import { IconButton, SendButton, TransferContainer } from './styles';
 import {
   HeaderBar,
-  TokenRow,
   TokenInfo,
   TokenName,
   TokenLogos,
@@ -22,8 +21,6 @@ import {
   AddressInput,
   AmountInput,
   BottomActions,
-  CancelButton,
-  ContinueButton,
   HeaderBarSlotLeft,
   HeaderBarSlotTitle,
   HeaderBarSlotRight,
@@ -53,13 +50,16 @@ import {
   NoNFTsWrapper,
   NoNFTsText,
   LearnMoreLink
-} from './TransferTokens.styles';
+} from './styles/transfer';
 import { useTokenOperations } from '../../hooks/useTokenOperations';
 import { useMetaMaskContext } from '../../hooks/MetamaskContext';
 import { normalizeAddress } from '../../utils/normalizeAddress';
 import { truncateString } from '../../utils';
 import { useImportedTokens } from '../../hooks/useImportedTokens';
+import { useSnap } from '../../hooks/SnapContext';
 import { JazziconComponent } from '../common';
+import { TokenId } from './components/TokenId';
+import { ErrorText } from './components/ErrorText';
 import ArrowBack from '../../assets/arrow-back.svg';
 import XIcon from '../../assets/x.svg';
 import SearchIcon from '../../assets/icons/search.svg';
@@ -69,6 +69,7 @@ interface TransferTokensProps {
   address: string;
   balance: string;
   aesKey?: string | null | undefined;
+  initialToken?: any;
 }
 
 interface Token {
@@ -77,6 +78,8 @@ interface Token {
   amount: string;
   usd: number;
   address?: string;
+  contractAddress?: string;
+  tokenId?: string;
 }
 
 type AddressStatus = 'idle' | 'loading' | 'error';
@@ -176,10 +179,11 @@ const TokenModal: React.FC<{
   isOpen: boolean;
   onClose: () => void;
   tokens: Token[];
+  nfts: Token[];
   onTokenSelect: (token: Token) => void;
   selectedToken: Token | null;
   getTokenBalance: (token: Token) => Promise<string>;
-}> = React.memo(({ isOpen, onClose, tokens, onTokenSelect, selectedToken, getTokenBalance }) => {
+}> = React.memo(({ isOpen, onClose, tokens, nfts, onTokenSelect, selectedToken, getTokenBalance }) => {
   const [tokenTab, setTokenTab] = useState<TokenTab>('tokens');
   const [search, setSearch] = useState('');
   const [searchActive, setSearchActive] = useState(false);
@@ -211,37 +215,36 @@ const TokenModal: React.FC<{
     onClose();
   }, [onTokenSelect, onClose]);
 
-  // Filter tokens based on search query
-  const filteredTokens = useMemo(() => {
+  const filteredItems = useMemo(() => {
+    const currentItems = tokenTab === 'tokens' ? tokens : nfts;
+    
     if (!search || search.trim() === '') {
-      return tokens;
+      return currentItems;
     }
 
     const searchTerm = search.toLowerCase().trim();
     
-    return tokens.filter(token => {
-      // Search by token name (partial match)
-      const nameMatch = token.name.toLowerCase().includes(searchTerm);
+    return currentItems.filter(item => {
+      const nameMatch = item.name.toLowerCase().includes(searchTerm);
+      const symbolMatch = item.symbol.toLowerCase().includes(searchTerm);
       
-      // Search by token symbol (partial match)
-      const symbolMatch = token.symbol.toLowerCase().includes(searchTerm);
-      
-      // Search by token address (if exists)
       let addressMatch = false;
-      if (token.address) {
-        // For address searches, be more flexible
+      if (item.address) {
         if (searchTerm.startsWith('0x')) {
-          // If search starts with 0x, match exactly
-          addressMatch = token.address.toLowerCase().startsWith(searchTerm);
+          addressMatch = item.address.toLowerCase().startsWith(searchTerm);
         } else {
-          // Otherwise, allow partial matches in the address
-          addressMatch = token.address.toLowerCase().includes(searchTerm);
+          addressMatch = item.address.toLowerCase().includes(searchTerm);
         }
       }
       
-      return nameMatch || symbolMatch || addressMatch;
+      let tokenIdMatch = false;
+      if (tokenTab === 'nfts' && item.tokenId) {
+        tokenIdMatch = item.tokenId.toLowerCase().includes(searchTerm);
+      }
+      
+      return nameMatch || symbolMatch || addressMatch || tokenIdMatch;
     });
-  }, [tokens, search]);
+  }, [tokens, nfts, tokenTab, search]);
 
   if (!isOpen) return null;
 
@@ -282,47 +285,58 @@ const TokenModal: React.FC<{
         </TokenSearchBox>
         
         <TokenList>
-          {tokenTab === 'tokens' ? (
-            filteredTokens.length > 0 ? (
-              filteredTokens.map((token, idx) => {
-                const isSelected = selectedToken?.symbol === token.symbol || (idx === 0 && !selectedToken && !search);
-                return (
-                  <TokenListItem 
-                    key={token.symbol} 
-                    selected={isSelected} 
-                    type="button"
-                    onClick={() => handleTokenSelect(token)}
-                  >
-                    {isSelected && <TokenListItemBar />}
-                    <TokenLogos>
-                      <TokenLogoBig>{token.symbol[0]}</TokenLogoBig>
-                      <TokenLogoSmall>{token.symbol[0]}</TokenLogoSmall>
-                    </TokenLogos>
-                    <TokenListInfo>
-                      <TokenListName>{token.name}</TokenListName>
-                      <TokenListSymbol>{token.symbol}</TokenListSymbol>
-                    </TokenListInfo>
-                    <TokenListAmount>
-                      <TokenBalanceDisplay token={token} getTokenBalance={getTokenBalance} />
-                    </TokenListAmount>
-                  </TokenListItem>
-                );
-              })
-            ) : (
-              <NoNFTsWrapper>
-                <NoNFTsText>No token found</NoNFTsText>
-              </NoNFTsWrapper>
-            )
+          {filteredItems.length > 0 ? (
+            filteredItems.map((item, idx) => {
+              const isSelected = tokenTab === 'nfts' 
+                ? (selectedToken?.address === item.address && selectedToken?.tokenId === item.tokenId)
+                : (selectedToken?.symbol === item.symbol || (idx === 0 && !selectedToken && !search));
+              const displayName = tokenTab === 'nfts' && item.tokenId 
+                ? item.name
+                : item.name;
+              const displaySymbol = tokenTab === 'nfts' && item.tokenId 
+                ? item.symbol
+                : item.symbol;
+              
+              return (
+                <TokenListItem 
+                  key={tokenTab === 'nfts' ? item.address : item.symbol} 
+                  selected={isSelected} 
+                  type="button"
+                  onClick={() => handleTokenSelect(item)}
+                >
+                  {isSelected && <TokenListItemBar />}
+                  <TokenLogos>
+                    <TokenLogoBig>{item.symbol[0] || 'N'}</TokenLogoBig>
+                    <TokenLogoSmall>{item.symbol[0] || 'N'}</TokenLogoSmall>
+                  </TokenLogos>
+                  <TokenListInfo>
+                    <TokenListName>{displayName}</TokenListName>
+                    <TokenListSymbol>{displaySymbol}</TokenListSymbol>
+                  </TokenListInfo>
+                  <TokenListAmount>
+                    {tokenTab === 'tokens' ? (
+                      <TokenBalanceDisplay token={item} getTokenBalance={getTokenBalance} />
+                    ) : (
+                      <TokenListValue>1 NFT</TokenListValue>
+                    )}
+                  </TokenListAmount>
+                </TokenListItem>
+              );
+            })
           ) : (
             <NoNFTsWrapper>
-              <NoNFTsText>No NFTs yet</NoNFTsText>
-              <LearnMoreLink 
-                href="https://support.metamask.io/manage-crypto/nfts/nft-tokens-in-your-metamask-wallet" 
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Learn more
-              </LearnMoreLink>
+              <NoNFTsText>
+                {tokenTab === 'tokens' ? 'No tokens found' : 'No NFTs imported yet'}
+              </NoNFTsText>
+              {tokenTab === 'nfts' && (
+                <LearnMoreLink 
+                  href="https://support.metamask.io/manage-crypto/nfts/nft-tokens-in-your-metamask-wallet" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Learn more
+                </LearnMoreLink>
+              )}
             </NoNFTsWrapper>
           )}
         </TokenList>
@@ -337,20 +351,37 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
   onBack, 
   address, 
   balance,
-  aesKey 
+  aesKey,
+  initialToken
 }) => {
-  console.log('TransferTokens - AES Key:', aesKey);
   const [addressInput, setAddressInput] = useState('');
   const [amount, setAmount] = useState('');
   const [showTokenModal, setShowTokenModal] = useState(false);
   const [selectedToken, setSelectedToken] = useState<Token | null>(null);
+  
+  // Initialize with the passed token if available
+  useEffect(() => {
+    if (initialToken && !selectedToken) {
+      const formattedToken: Token = {
+        symbol: initialToken.symbol,
+        name: initialToken.name,
+        amount: '0',
+        usd: 0,
+        address: initialToken.address,
+        contractAddress: initialToken.contractAddress,
+        tokenId: initialToken.tokenId
+      };
+      setSelectedToken(formattedToken);
+    }
+  }, [initialToken, selectedToken]);
   const [currentBalance, setCurrentBalance] = useState<string>(balance);
   const [loadingBalance, setLoadingBalance] = useState(false);
   const [loadedTokenAddress, setLoadedTokenAddress] = useState<string>('');
   const [tokenBalances, setTokenBalances] = useState<Record<string, string>>({});
   const [txStatus, setTxStatus] = useState<TransactionStatus>('idle');
   const [txError, setTxError] = useState<string | null>(null);
-  const { getERC20TokensList } = useImportedTokens();
+  const { getERC20TokensList, importedTokens } = useImportedTokens();
+  const { getAESKey, userHasAESKey } = useSnap();
 
   const accountBoxRef = useRef<HTMLDivElement>(null);
 
@@ -364,18 +395,18 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
 
   const tokenOps = browserProvider ? useTokenOperations(browserProvider) : null;
 
-  const tokens: Token[] = useMemo(() => {
+  const { tokens, nfts } = useMemo(() => {
     const erc20Tokens = getERC20TokensList();
     const cotiTokenKey = 'COTI-';
-    const cotiToken = { 
+    const cotiToken: Token = { 
       symbol: 'COTI', 
       name: 'COTI', 
       amount: tokenBalances[cotiTokenKey] || balance || '0', 
       usd: 0, 
-      address: '' 
+      address: ''
     };
     
-    const importedTokensFormatted = erc20Tokens.map(token => {
+    const importedTokensFormatted: Token[] = erc20Tokens.map(token => {
       const tokenKey = `${token.symbol}-${token.address}`;
       return {
         symbol: token.symbol,
@@ -388,36 +419,68 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
 
     const allTokens = [cotiToken, ...importedTokensFormatted];
     
-    // If a token is selected, move it to the front
-    if (selectedToken) {
-      const otherTokens = allTokens.filter(t => t.symbol !== selectedToken.symbol);
-      return [selectedToken, ...otherTokens];
+    // Filter NFTs from imported tokens (by type ERC721 and address format)
+    let nftTokens: Token[] = importedTokens.filter(t => 
+      t.type === 'ERC721' && t.address.includes('-')
+    ).map(nft => {
+      const [contractAddress, tokenId] = nft.address.split('-');
+      return {
+        symbol: nft.symbol,
+        name: nft.name,
+        amount: '1',
+        usd: 0,
+        address: nft.address,
+        contractAddress: contractAddress || '',
+        tokenId: tokenId || ''
+      };
+    });
+
+    if (selectedToken && selectedToken.tokenId) {
+      const selectedNFT = nftTokens.find(nft => nft.address === selectedToken.address);
+      if (selectedNFT) {
+        const otherNFTs = nftTokens.filter(nft => nft.address !== selectedToken.address);
+        nftTokens = [selectedNFT, ...otherNFTs];
+      }
     }
     
-    return allTokens;
-  }, [getERC20TokensList, selectedToken, tokenBalances, balance]);
+    let finalTokens = allTokens;
+    if (selectedToken && !selectedToken.tokenId) {
+      const otherTokens = allTokens.filter(t => t.symbol !== selectedToken.symbol);
+      finalTokens = [selectedToken, ...otherTokens];
+    }
+    
+    return {
+      tokens: finalTokens,
+      nfts: nftTokens
+    };
+  }, [getERC20TokensList, importedTokens, selectedToken, tokenBalances, balance]);
 
-  // Initialize with COTI as default selected token
   const currentToken = selectedToken || tokens[0] || { symbol: 'COTI', name: 'COTI', amount: '0', usd: 0 };
 
   const balanceNum = useMemo(() => parseAmount(currentBalance), [currentBalance]);
   const amountNum = useMemo(() => parseAmount(amount), [amount]);
   const insufficientFunds = useMemo(() => amountNum > balanceNum, [amountNum, balanceNum]);
-  const isAmountValid = useMemo(() => 
-    !!amount && !isNaN(amountNum) && amountNum > 0 && amountNum <= balanceNum,
-    [amount, amountNum, balanceNum]
-  );
+  const isAmountValid = useMemo(() => {
+    if (currentToken?.tokenId) {
+      return true;
+    }
+    return !!amount && !isNaN(amountNum) && amountNum > 0 && amountNum <= balanceNum;
+  }, [amount, amountNum, balanceNum, currentToken?.tokenId]);
 
   const canContinue = useMemo(() => 
     addressValidation.isValid && isAmountValid && txStatus !== 'loading',
     [addressValidation.isValid, isAmountValid, txStatus]
   );
 
-  const handleAddressChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAddressChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const newAddress = e.target.value;
     setAddressInput(newAddress);
     addressValidation.validate(newAddress);
-  }, [addressValidation]);
+    
+    if (!aesKey && newAddress.length > 0 && userHasAESKey) {
+      await getAESKey();
+    }
+  }, [addressValidation, aesKey, userHasAESKey, getAESKey]);
 
   const handleAddressBlur = useCallback(() => {
     if (!addressInput) return;
@@ -455,7 +518,6 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
     
     const tokenKey = `${token.symbol}-${token.address || ''}`;
     
-    // Return cached balance if available
     if (tokenBalances[tokenKey]) {
       return tokenBalances[tokenKey];
     }
@@ -470,7 +532,6 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
         tokenBalance = result.toString();
       }
       
-      // Cache the balance
       setTokenBalances(prev => ({
         ...prev,
         [tokenKey]: tokenBalance
@@ -478,7 +539,6 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
       
       return tokenBalance;
     } catch (error) {
-      console.error('Error fetching token balance for modal:', error);
       return '0';
     }
   }, [browserProvider, tokenOps, balance, aesKey, tokenBalances]);
@@ -486,22 +546,15 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
   const fetchTokenBalance = useCallback(async (token: Token) => {
     if (!browserProvider || !tokenOps) return;
     
-    console.log('fetchTokenBalance - Token:', token.symbol, 'Address:', token.address, 'AES Key:', aesKey);
     setLoadingBalance(true);
     try {
       if (token.symbol === 'COTI' || !token.address) {
-        // For COTI (native token), use the provided balance
-        console.log('Using COTI balance:', balance);
         setCurrentBalance(balance);
       } else {
-        // For ERC20 tokens, fetch the balance
-        console.log('Fetching ERC20 balance for:', token.address, 'with AES key:', aesKey);
         const tokenBalance = await tokenOps.decryptERC20Balance(token.address, aesKey || '');
-        console.log('Received token balance:', tokenBalance);
         setCurrentBalance(tokenBalance.toString());
       }
     } catch (error) {
-      console.error('Error fetching token balance:', error);
       setCurrentBalance('0');
     } finally {
       setLoadingBalance(false);
@@ -510,33 +563,26 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
 
   const handleTokenSelect = useCallback((token: Token) => {
     setSelectedToken(token);
-    setAmount(''); // Clear amount when changing tokens
-    setLoadedTokenAddress(''); // Reset to force reload of balance
+    setAmount('');
+    setLoadedTokenAddress('');
     fetchTokenBalance(token);
   }, [fetchTokenBalance]);
 
-  // Initialize balance when component mounts or when current token changes
   useEffect(() => {
     const tokenKey = `${currentToken?.symbol || 'COTI'}-${currentToken?.address || ''}`;
     
-    // Only load balance if we haven't loaded this token before or if it's different
     if (currentToken && browserProvider && tokenOps && loadedTokenAddress !== tokenKey) {
       const loadBalance = async () => {
-        console.log('useEffect - Loading balance for token:', currentToken.symbol);
         setLoadingBalance(true);
         try {
           if (currentToken.symbol === 'COTI' || !currentToken.address) {
-            console.log('Using COTI balance:', balance);
             setCurrentBalance(balance);
           } else {
-            console.log('Fetching ERC20 balance for:', currentToken.address, 'with AES key:', aesKey);
             const tokenBalance = await tokenOps.decryptERC20Balance(currentToken.address, aesKey || '');
-            console.log('Received token balance:', tokenBalance);
             setCurrentBalance(tokenBalance.toString());
           }
           setLoadedTokenAddress(tokenKey);
         } catch (error) {
-          console.error('Error fetching token balance:', error);
           setCurrentBalance('0');
           setLoadedTokenAddress(tokenKey);
         } finally {
@@ -558,13 +604,17 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
       let success = false;
       
       if (currentToken.symbol === 'COTI' || !currentToken.address) {
-        // Transfer native COTI
         success = await tokenOps.transferCOTI({ 
           to: addressInput, 
           amount 
         });
+      } else if (currentToken.tokenId) {
+        success = await tokenOps.transferERC721({
+          tokenAddress: currentToken.contractAddress || currentToken.address?.split('-')[0] || '',
+          to: addressInput,
+          tokenId: currentToken.tokenId
+        });
       } else {
-        // Transfer ERC20 token
         success = await tokenOps.transferERC20({
           tokenAddress: currentToken.address,
           to: addressInput,
@@ -574,7 +624,6 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
 
       if (success) {
         setTxStatus('success');
-        // Refresh balance after successful transfer
         fetchTokenBalance(currentToken);
         onBack();
       } else {
@@ -622,39 +671,60 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
                   <TokenLogoBig>{currentToken.symbol[0]}</TokenLogoBig>
                   <TokenLogoSmall>{currentToken.symbol[0]}</TokenLogoSmall>
                 </TokenLogos>
-                <TokenName>{currentToken.symbol}</TokenName>
+                <TokenName>
+                  {currentToken.symbol}
+                  {currentToken.tokenId && (
+                    <TokenId tokenId={currentToken.tokenId} />
+                  )}
+                </TokenName>
                 <ArrowDownStyled />
               </TokenInfo>
               <SendAmount>
-                <AmountInput
-                  type="number"
-                  min="0"
-                  placeholder="0"
-                  value={amount}
-                  onChange={handleAmountChange}
-                />
-                {currentToken.symbol}
+                {currentToken.tokenId ? (
+                  <TokenId variant="badge" showHash={false}>
+                    1 NFT
+                  </TokenId>
+                ) : (
+                  <>
+                    <AmountInput
+                      type="number"
+                      min="0"
+                      placeholder="0"
+                      value={amount}
+                      onChange={handleAmountChange}
+                    />
+                    {currentToken.symbol}
+                  </>
+                )}
               </SendAmount>
             </TokenRowFlex>
           </AccountBox>
           
           <BalanceRow>
             <BalanceSub error={insufficientFunds}>
-              {loadingBalance ? 'Loading balance...' : `Balance: ${currentBalance}`}
-              {insufficientFunds && (
-                <span style={{ color: '#e53935', marginLeft: 8 }}>
-                  Insufficient funds
-                </span>
+              {currentToken?.tokenId ? (
+                `Balance: 1 NFT`
+              ) : (
+                <>
+                  {loadingBalance ? 'Loading balance...' : `Balance: ${currentBalance}`}
+                  {insufficientFunds && (
+                    <ErrorText>
+                      {' '}Insufficient funds
+                    </ErrorText>
+                  )}
+                </>
               )}
             </BalanceSub>
-            {amount === currentBalance && amount !== '' ? (
-              <MaxButton onClick={handleClearAmount} type="button">
-                Clear
-              </MaxButton>
-            ) : (
-              <MaxButton onClick={handleSetMaxAmount} type="button">
-                Max
-              </MaxButton>
+            {!currentToken?.tokenId && (
+              amount === currentBalance && amount !== '' ? (
+                <MaxButton onClick={handleClearAmount} type="button">
+                  Clear
+                </MaxButton>
+              ) : (
+                <MaxButton onClick={handleSetMaxAmount} type="button">
+                  Max
+                </MaxButton>
+              )
             )}
           </BalanceRow>
         </>
@@ -698,10 +768,19 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
                 <TokenLogoBig>{currentToken.symbol[0]}</TokenLogoBig>
                 <TokenLogoSmall>{currentToken.symbol[0]}</TokenLogoSmall>
               </TokenLogos>
-              <TokenName>{currentToken.name}</TokenName>
+              <TokenName>
+                {currentToken.symbol}
+                {currentToken.tokenId && (
+                  <TokenId tokenId={currentToken.tokenId} />
+                )}
+              </TokenName>
             </TokenInfo>
             <SendAmount>
-              {amount || '0'} {currentToken.symbol}
+              {currentToken?.tokenId ? (
+                '1 NFT'
+              ) : (
+                `${amount || '0'} ${currentToken.symbol}`
+              )}
             </SendAmount>
           </TokenRowFlex>
         </AccountBox>
@@ -739,6 +818,7 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
         isOpen={showTokenModal}
         onClose={handleCloseTokenModal}
         tokens={tokens}
+        nfts={nfts}
         onTokenSelect={handleTokenSelect}
         selectedToken={selectedToken}
         getTokenBalance={getTokenBalance}

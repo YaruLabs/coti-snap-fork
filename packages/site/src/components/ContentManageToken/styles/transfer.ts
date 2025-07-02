@@ -1,22 +1,12 @@
-import styled, { keyframes } from 'styled-components';
-import ArrowDown from '../../assets/arrow-down.svg';
-
-const slideUpFadeIn = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(48px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
+import styled from 'styled-components';
+import ArrowDown from '../../../assets/arrow-down.svg';
+import { colors, spacing, typography, borderRadius, transitions, slideUpFadeIn } from './theme';
 
 export const SectionTitle = styled.div`
-  font-size: 1.7rem;
-  font-weight: 700;
-  margin-top: 18px;
-  margin-bottom: 8px;
+  font-size: ${typography.sizes.xl};
+  font-weight: ${typography.weights.bold};
+  margin-top: ${spacing.xxl};
+  margin-bottom: ${spacing.sm};
 `;
 
 export const AccountBox = styled.div.withConfig({
@@ -24,27 +14,27 @@ export const AccountBox = styled.div.withConfig({
 })<{ active?: boolean; error?: boolean }>`
   display: flex;
   align-items: center;
-  background: #fff;
-  border-radius: 12px;
+  background: ${colors.background.primary};
+  border-radius: ${borderRadius.lg};
   border: 1px solid
     ${({ error, active }) =>
-      error ? '#e53935' : active ? '#4664ff' : '#d0d0d0'};
+      error ? colors.error : active ? colors.primary : colors.border.secondary};
   padding: 14px 18px;
   gap: 14px;
-  margin-bottom: 8px;
+  margin-bottom: ${spacing.sm};
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background ${transitions.normal};
   
   &:hover {
-    background: rgb(248, 248, 248);
+    background: ${colors.background.hover};
   }
 `;
 
 export const AccountIcon = styled.div`
   width: 36px;
   height: 36px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #ffe14d 60%, #4664ff 40%);
+  border-radius: ${borderRadius.full};
+  background: linear-gradient(135deg, #ffe14d 60%, ${colors.primary} 40%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -57,33 +47,33 @@ export const AccountDetails = styled.div`
 `;
 
 export const AccountAddress = styled.div`
-  font-size: 1.5rem;
-  color: #6b7280;
-  font-weight: 400;
-  margin-top: 8px;
+  font-size: ${typography.sizes.md};
+  color: ${colors.text.secondary};
+  font-weight: ${typography.weights.normal};
+  margin-top: ${spacing.sm};
 `;
 
 export const InputBox = styled.div`
   display: flex;
   align-items: center;
-  background: #fff;
-  border-radius: 12px;
-  border: 1px solid #d0d0d0;
-  padding: 18px 16px;
-  gap: 8px;
+  background: ${colors.background.primary};
+  border-radius: ${borderRadius.lg};
+  border: 1px solid ${colors.border.secondary};
+  padding: 18px ${spacing.lg};
+  gap: ${spacing.sm};
   max-width: 420px;
-  margin-bottom: 8px;
-  transition: border 0.2s;
+  margin-bottom: ${spacing.sm};
+  transition: border ${transitions.normal};
   
   &:focus-within {
-    border: 1.5px solid #4664ff;
+    border: 1.5px solid ${colors.primary};
   }
 `;
 
 export const AddressInput = styled.input`
   border: none;
   outline: none;
-  font-size: 1.5rem;
+  font-size: ${typography.sizes.md};
   flex: 1;
   background: transparent;
 `;
@@ -92,9 +82,9 @@ export const AmountInput = styled.input`
   border: none;
   outline: none;
   background: transparent;
-  font-size: 1.5rem;
-  font-weight: 400;
-  color: #18191d;
+  font-size: ${typography.sizes.md};
+  font-weight: ${typography.weights.normal};
+  color: ${colors.text.primary};
   width: auto;
   text-align: right;
   padding: 0 4px;
@@ -115,46 +105,46 @@ export const AmountInput = styled.input`
 export const BottomActions = styled.div`
   display: flex;
   justify-content: space-between;
-  gap: 16px;
+  gap: ${spacing.lg};
 `;
 
 export const CancelButton = styled.button`
   flex: 1;
   background: none;
-  border: 2px solid #4664ff;
-  color: #4664ff;
-  font-size: 1.7rem;
-  font-weight: 600;
-  border-radius: 32px;
+  border: 2px solid ${colors.primary};
+  color: ${colors.primary};
+  font-size: ${typography.sizes.xl};
+  font-weight: ${typography.weights.semibold};
+  border-radius: ${borderRadius.xxxl};
   padding: 18px 0;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition: background ${transitions.normal}, color ${transitions.normal};
   
   &:hover {
-    background: #f3f5fa;
+    background: ${colors.background.tertiary};
   }
 `;
 
 export const ContinueButton = styled.button`
   flex: 1;
-  background: #4664ff;
+  background: ${colors.primary};
   border: none;
-  color: #fff;
-  font-size: 1.7rem;
-  font-weight: 600;
-  border-radius: 32px;
+  color: ${colors.background.primary};
+  font-size: ${typography.sizes.xl};
+  font-weight: ${typography.weights.semibold};
+  border-radius: ${borderRadius.xxxl};
   padding: 18px 0;
   cursor: pointer;
-  transition: background 0.2s, opacity 0.2s;
+  transition: background ${transitions.normal}, opacity ${transitions.normal};
   
   &:hover {
-    background: #3350e6;
+    background: ${colors.primaryHover};
   }
   
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    background: #4664ff;
+    background: ${colors.primary};
   }
 `;
 
@@ -171,8 +161,8 @@ export const HeaderBarSlotLeft = styled.div`
 export const HeaderBarSlotTitle = styled.div`
   flex: 1;
   text-align: center;
-  font-weight: 700;
-  font-size: 2.1rem;
+  font-weight: ${typography.weights.bold};
+  font-size: ${typography.sizes.xxxxl};
 `;
 
 export const HeaderBarSlotRight = styled.div`
@@ -191,21 +181,21 @@ export const BalanceRow = styled.div`
 export const BalanceSub = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== 'error'
 })<{ error?: boolean }>`
-  font-size: 1.4rem;
-  color: ${({ error }) => (error ? '#e53935' : '#8a8f98')};
-  font-weight: 400;
+  font-size: ${typography.sizes.base};
+  color: ${({ error }) => (error ? colors.error : colors.text.tertiary)};
+  font-weight: ${typography.weights.normal};
   flex: 1;
-  margin-bottom: 12px;
+  margin-bottom: ${spacing.md};
 `;
 
 export const MaxButton = styled.button`
   background: none;
   border: none;
-  color: #3559ff;
-  font-size: 1.4rem;
-  font-weight: 700;
+  color: ${colors.secondary};
+  font-size: ${typography.sizes.base};
+  font-weight: ${typography.weights.bold};
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: opacity ${transitions.normal};
   
   &:hover {
     opacity: 0.8;
@@ -220,10 +210,10 @@ export const TokenRowFlex = styled.div`
 `;
 
 export const ArrowDownStyled = styled(ArrowDown)`
-  margin-left: 8px;
+  margin-left: ${spacing.sm};
   width: 22px;
   height: 22px;
-  color: #18191d;
+  color: ${colors.text.primary};
 `;
 
 export const ClearIconButton = styled.button`
@@ -238,10 +228,10 @@ export const ClearIconButton = styled.button`
   height: 20px;
   justify-content: center;
   border-radius: 35%;
-  transition: background 0.15s;
+  transition: background ${transitions.fast};
   
   &:hover {
-    background: #f3f5fa;
+    background: ${colors.background.tertiary};
   }
 `;
 
@@ -251,17 +241,17 @@ export const CloseButton = styled.button`
   justify-content: center;
   background: none;
   border: none;
-  color: #18191d;
+  color: ${colors.text.primary};
   cursor: pointer;
   border-radius: 35%;
   height: 32px;
   width: 32px;
   margin-left: auto;
-  transition: background 0.15s;
+  transition: background ${transitions.fast};
   padding: 0;
   
   &:hover {
-    background: #f3f5fa;
+    background: ${colors.background.tertiary};
     border-radius: 35%;
   }
   
@@ -286,47 +276,47 @@ export const TokenModalBackdrop = styled.div`
 `;
 
 export const TokenModalContainer = styled.div`
-  background: #fff;
-  border-radius: 24px;
+  background: ${colors.background.primary};
+  border-radius: ${borderRadius.xxl};
   box-shadow: 0 4px 32px 0 rgba(0,0,0,0.12);
   width: 420px;
   max-width: 98vw;
   max-height: 60vh;
-  padding: 0 0 24px 0;
+  padding: 0 0 ${spacing.xxl} 0;
   position: relative;
   display: flex;
   flex-direction: column;
-  animation: ${slideUpFadeIn} 0.32s cubic-bezier(0.4, 0.8, 0.4, 1) both;
+  animation: ${slideUpFadeIn} ${transitions.slow} both;
   overflow: hidden;
 `;
 
 export const TokenModalHeader = styled.div`
-  font-size: 2.1rem;
-  font-weight: 700;
+  font-size: ${typography.sizes.xxxxl};
+  font-weight: ${typography.weights.bold};
   text-align: center;
-  padding: 32px 32px 0 32px;
+  padding: ${spacing.xxxl} ${spacing.xxxl} 0 ${spacing.xxxl};
 `;
 
 export const TokenModalClose = styled.button`
   position: absolute;
-  top: 32px;
-  right: 32px;
+  top: ${spacing.xxxl};
+  right: ${spacing.xxxl};
   background: none;
   border: none;
   font-size: 2.2rem;
-  color: #18191d;
+  color: ${colors.text.primary};
   cursor: pointer;
   
   &:hover {
-    background: #f3f5fa;
-    border-radius: 6px;
+    background: ${colors.background.tertiary};
+    border-radius: ${borderRadius.sm};
   }
 `;
 
 export const TokenTabs = styled.div`
   display: flex;
   width: 100%;
-  margin-top: 24px;
+  margin-top: ${spacing.xxl};
   border-bottom: 0.5px solid rgb(205, 205, 205);
 `;
 
@@ -336,28 +326,28 @@ export const TokenTab = styled.button.withConfig({
   flex: 1;
   background: none;
   border: none;
-  font-size: 1.7rem;
-  font-weight: 600;
-  color: ${({ active }) => (active ? '#222' : '#bfc2c6')};
-  border-bottom: 3px solid ${({ active }) => (active ? '#222' : '#e5e7eb')};
-  padding: 12px 0 10px 0;
+  font-size: ${typography.sizes.xl};
+  font-weight: ${typography.weights.semibold};
+  color: ${({ active }) => (active ? '#222' : colors.text.muted)};
+  border-bottom: 3px solid ${({ active }) => (active ? '#222' : colors.border.primary)};
+  padding: ${spacing.md} 0 10px 0;
   cursor: pointer;
-  transition: color 0.2s, border-bottom 0.2s;
+  transition: color ${transitions.normal}, border-bottom ${transitions.normal};
 `;
 
 export const TokenSearchBox = styled.div`
   display: flex;
   align-items: center;
-  background: #FFFFFF;
-  border-radius: 12px;
-  border: 2px solid #e5e7eb;
+  background: ${colors.background.primary};
+  border-radius: ${borderRadius.lg};
+  border: 2px solid ${colors.border.primary};
   padding: 0 18px;
-  margin: 14px 32px 18px 32px;
-  transition: border 0.2s;
+  margin: 14px ${spacing.xxxl} 18px ${spacing.xxxl};
+  transition: border ${transitions.normal};
   
   &:hover,
   &.active {
-    border: 2px solid #4664ff;
+    border: 2px solid ${colors.primary};
   }
 `;
 
@@ -366,13 +356,13 @@ export const TokenSearchInput = styled.input`
   background: transparent;
   border: none;
   outline: none;
-  color: #00000;
-  font-size: 1.5rem;
-  margin-left: 12px;
-  padding: 12px 0;
+  color: ${colors.text.primary};
+  font-size: ${typography.sizes.md};
+  margin-left: ${spacing.md};
+  padding: ${spacing.md} 0;
   
   &::placeholder {
-    color: #bfc2c6;
+    color: ${colors.text.muted};
     opacity: 1;
   }
 `;
@@ -390,8 +380,8 @@ export const TokenListItemBar = styled.div`
   top: 4px;
   bottom: 4px;
   width: 5px;
-  border-radius: 8px;
-  background: #3559ff;
+  border-radius: ${borderRadius.md};
+  background: ${colors.secondary};
 `;
 
 export const TokenListItem = styled.button.withConfig({
@@ -404,9 +394,9 @@ export const TokenListItem = styled.button.withConfig({
   border: none;
   padding: 14px 14px 14px 22px;
   position: relative;
-  margin-bottom: 8px;
+  margin-bottom: ${spacing.sm};
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background ${transitions.fast};
 `;
 
 export const TokenListInfo = styled.div`
@@ -416,15 +406,15 @@ export const TokenListInfo = styled.div`
 `;
 
 export const TokenListName = styled.div`
-  font-size: 1.7rem;
-  font-weight: 700;
-  color: #18191d;
+  font-size: ${typography.sizes.xl};
+  font-weight: ${typography.weights.bold};
+  color: ${colors.text.primary};
 `;
 
 export const TokenListSymbol = styled.div`
-  font-size: 1.3rem;
-  color: #bfc2c6;
-  font-weight: 400;
+  font-size: ${typography.sizes.sm};
+  color: ${colors.text.muted};
+  font-weight: ${typography.weights.normal};
   align-self: flex-start;
   margin-top: 4px;
 `;
@@ -435,9 +425,9 @@ export const TokenListAmount = styled.div`
 `;
 
 export const TokenListValue = styled.div`
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #18191d;
+  font-size: ${typography.sizes.lg};
+  font-weight: ${typography.weights.bold};
+  color: ${colors.text.primary};
 `;
 
 export const NoNFTsWrapper = styled.div`
@@ -450,20 +440,20 @@ export const NoNFTsWrapper = styled.div`
 `;
 
 export const NoNFTsText = styled.div`
-  color: #6b7280;
-  font-size: 1.8rem;
-  font-weight: 500;
+  color: ${colors.text.secondary};
+  font-size: ${typography.sizes.xxl};
+  font-weight: ${typography.weights.medium};
   margin-bottom: 18px;
 `;
 
 export const LearnMoreLink = styled.a`
-  color: #3559ff;
-  font-size: 1.8rem;
-  font-weight: 600;
+  color: ${colors.secondary};
+  font-size: ${typography.sizes.xxl};
+  font-weight: ${typography.weights.semibold};
   text-decoration: none;
   cursor: pointer;
   
   &:hover {
     text-decoration: underline;
   }
-`; 
+`;
