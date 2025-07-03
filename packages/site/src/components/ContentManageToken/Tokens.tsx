@@ -3,6 +3,7 @@ import { BrowserProvider } from '@coti-io/coti-ethers';
 import { useImportedTokens } from '../../hooks/useImportedTokens';
 import { useSnap } from '../../hooks/SnapContext';
 import { useDropdown } from '../../hooks/useDropdown';
+import { useTokenBalances } from '../../hooks/useTokenBalances';
 import { ImportedToken } from '../../types/token';
 import { ImportTokenModal } from './ImportTokenModal';
 import { ImportNFTModal } from './ImportNFTModal';
@@ -55,6 +56,8 @@ export const Tokens: React.FC<TokensProps> = React.memo(({ balance, provider, ae
   const menuDropdown = useDropdown();
   const sortDropdown = useDropdown();
 
+  const effectiveAESKey = aesKey || userAESKey;
+
   const { regularTokens, nftTokens } = useMemo(() => {
       const cotiToken: ImportedToken = {
         address: '',
@@ -73,9 +76,16 @@ export const Tokens: React.FC<TokensProps> = React.memo(({ balance, provider, ae
     };
   }, [importedTokens]);
 
+  const { balances } = useTokenBalances({
+    tokens: regularTokens,
+    provider,
+    aesKey: effectiveAESKey,
+    cotiBalance: balance
+  });
+
   const sortedTokens = useMemo(() => 
-    sortTokens(regularTokens, sort), 
-    [regularTokens, sort]
+    sortTokens(regularTokens, sort, balances), 
+    [regularTokens, sort, balances]
   );
 
   const sortedNFTs = useMemo(() => 
