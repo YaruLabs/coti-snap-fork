@@ -216,8 +216,8 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
             },
           });
         } catch {
-          // Settings interface update failed - continue silently
-          // Error is expected if settings component cannot be loaded
+          await returnToHomePage(id);
+          return;
         }
         return;
       case 'token-cancel':
@@ -269,6 +269,7 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
               ui: <ImportERC721 errorInForm={true} />,
             },
           });
+          return;
         }
         return;
       case 'token-erc20-submit':
@@ -312,6 +313,7 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
               ui: <ImportERC20 errorInForm={true} />,
             },
           });
+          return;
         }
     }
   } else if (event.type === UserInputEventType.InputChangeEvent) {

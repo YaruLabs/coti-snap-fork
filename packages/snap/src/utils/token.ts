@@ -177,13 +177,12 @@ export async function getTokenType(address: string): Promise<{
       return { type: TokenViewSelector.ERC20, confidential: true };
     } catch {
       // Confidential ERC20 check failed - token is standard ERC20
+      return { type: TokenViewSelector.ERC20, confidential: false };
     }
-    return { type: TokenViewSelector.ERC20, confidential: false };
   } catch {
     // Standard ERC20 check failed - token type unknown
+    return { type: TokenViewSelector.UNKNOWN, confidential: false };
   }
-
-  return { type: TokenViewSelector.UNKNOWN, confidential: false };
 }
 
 export const decryptBalance = (balance: ctUint, aesKey: string): bigint | null => {
