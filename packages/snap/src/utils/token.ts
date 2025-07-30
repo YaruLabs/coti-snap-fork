@@ -117,14 +117,20 @@ export async function getTokenType(address: string): Promise<{
   if (erc165Contract.supportsInterface) {
     try {
       isERC721 = await erc165Contract.supportsInterface(ERC721_INTERFACE_ID);
-    } catch {}
+    } catch {
+      // ERC721 interface check failed - expected for non-ERC721 contracts
+      isERC721 = false;
+    }
 
     if (!isERC721) {
       try {
         isERC1155 = await erc165Contract.supportsInterface(
           ERC1155_INTERFACE_ID,
         );
-      } catch {}
+      } catch {
+        // ERC1155 interface check failed - expected for non-ERC1155 contracts
+        isERC1155 = false;
+      }
     }
   }
 
@@ -142,7 +148,7 @@ export async function getTokenType(address: string): Promise<{
         return { type: TokenViewSelector.NFT, confidential: true };
       }
       return { type: TokenViewSelector.NFT, confidential: false };
-    } catch (e) {
+    } catch {
       return { type: TokenViewSelector.NFT, confidential: false };
     }
   }
@@ -169,16 +175,20 @@ export async function getTokenType(address: string): Promise<{
       if (!accountEncryptionMethod) throw new Error('accountEncryptionAddress method not available');
       await accountEncryptionMethod(address);
       return { type: TokenViewSelector.ERC20, confidential: true };
-    } catch {}
+    } catch {
+      // Confidential ERC20 check failed - token is standard ERC20
+    }
     return { type: TokenViewSelector.ERC20, confidential: false };
-  } catch {}
+  } catch {
+    // Standard ERC20 check failed - token type unknown
+  }
 
   return { type: TokenViewSelector.UNKNOWN, confidential: false };
 }
 
-export const decryptBalance = (balance: ctUint, AESkey: string): bigint | null => {
+export const decryptBalance = (balance: ctUint, aesKey: string): bigint | null => {
   try {
-    return decryptUint(balance, AESkey);
+    return decryptUint(balance, aesKey);
   } catch {
     return null;
   }

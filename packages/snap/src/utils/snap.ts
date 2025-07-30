@@ -84,20 +84,20 @@ export async function alertDialog(
  * Retrieves the current state data.
  * @returns A Promise that resolves to the current state data.
  */
-export async function getStateData<T>(): Promise<T> {
+export async function getStateData<StateType>(): Promise<StateType> {
   return (await snap.request({
     method: 'snap_manageState',
     params: {
       operation: 'get',
     },
-  })) as unknown as T;
+  })) as unknown as StateType;
 }
 
 /**
  * Sets the current state data to the specified data.
  * @param data - The new state data to set.
  */
-export async function setStateData<T>(data: T): Promise<void> {
+export async function setStateData<StateType>(data: StateType): Promise<void> {
   await snap.request({
     method: 'snap_manageState',
     params: {

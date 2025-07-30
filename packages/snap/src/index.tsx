@@ -215,9 +215,9 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
               ui: <Settings />,
             },
           });
-        } catch (error) {
-          // If settings interface update fails, continue silently
-          // The user can try again or navigate elsewhere
+        } catch {
+          // Settings interface update failed - continue silently
+          // Error is expected if settings component cannot be loaded
         }
         return;
       case 'token-cancel':
