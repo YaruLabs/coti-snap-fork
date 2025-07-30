@@ -41,7 +41,7 @@ export const getTokenURI = async (
     }
     return decryptedURI;
   } catch (e) {
-    console.error(e);
+    
     return null;
   }
 };
@@ -67,7 +67,7 @@ export const getERC20Details = async (
     const decimals = _decimals.toString();
     return { decimals, symbol, name };
   } catch (e) {
-    console.error(e);
+    
     return null;
   }
 };
@@ -89,7 +89,7 @@ export const getERC721Details = async (
 
     return { symbol, name };
   } catch (e) {
-    console.error(e);
+    
     return null;
   }
 };
@@ -113,7 +113,7 @@ export async function getTokenType(address: string): Promise<{
     try {
       isERC721 = await erc165Contract.supportsInterface(ERC721_INTERFACE_ID);
     } catch (e) {
-      console.error(`Error checking for ERC-721 support: ${e}`);
+      
     }
 
     if (!isERC721) {
@@ -122,7 +122,7 @@ export async function getTokenType(address: string): Promise<{
           ERC1155_INTERFACE_ID,
         );
       } catch (e) {
-        console.error(`Error checking for ERC-1155 support: ${e}`);
+        
       }
     }
   }
@@ -162,11 +162,11 @@ export async function getTokenType(address: string): Promise<{
       await erc20ConfidentialContract.accountEncryptionAddress!(address);
       return { type: TokenViewSelector.ERC20, confidential: true };
     } catch (err) {
-      console.error(`Error checking for ConfidentialERC20 support: ${err}`);
+      
     }
     return { type: TokenViewSelector.ERC20, confidential: false };
   } catch (e) {
-    console.error(`Error checking for standard ERC-20 support: ${e}`);
+    
   }
 
   return { type: TokenViewSelector.UNKNOWN, confidential: false };
@@ -176,7 +176,6 @@ export const decryptBalance = (balance: ctUint, AESkey: string) => {
   try {
     return decryptUint(balance, AESkey);
   } catch (e) {
-    console.error(e);
     return null;
   }
 };
@@ -280,15 +279,9 @@ export const importToken = async (
   const tokens = oldState.tokenBalances;
   const { type, confidential } = await getTokenType(address);
   if (type === TokenViewSelector.UNKNOWN) {
-    console.error(
-      `Token ${name} (${symbol}) at address ${address} with ${decimals} decimals is unknown`,
-    );
     return;
   }
   if (type === TokenViewSelector.NFT && !tokenId) {
-    console.error(
-      `Token ${name} (${symbol}) at address ${address} is an NFT but no tokenId was provided`,
-    );
     return;
   }
   tokens.push({

@@ -1,0 +1,568 @@
+{
+  "ConsoleLog": [
+    {
+      "type": "ConsoleLog",
+      "description": "Presence of console log function detected.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/index.tsx",
+        "lineNum": 219
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ConsoleLog",
+      "description": "Presence of console log function detected.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/index.tsx",
+        "lineNum": 264
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ConsoleLog",
+      "description": "Presence of console log function detected.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/index.tsx",
+        "lineNum": 336
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ConsoleLog",
+      "description": "Presence of console log function detected.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/image.ts",
+        "lineNum": 26
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ConsoleLog",
+      "description": "Presence of console log function detected.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 44
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ConsoleLog",
+      "description": "Presence of console log function detected.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 70
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ConsoleLog",
+      "description": "Presence of console log function detected.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 92
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ConsoleLog",
+      "description": "Presence of console log function detected.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 116
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ConsoleLog",
+      "description": "Presence of console log function detected.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 125
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ConsoleLog",
+      "description": "Presence of console log function detected.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 165
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ConsoleLog",
+      "description": "Presence of console log function detected.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 169
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ConsoleLog",
+      "description": "Presence of console log function detected.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 179
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ConsoleLog",
+      "description": "Presence of console log function detected.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 283
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ConsoleLog",
+      "description": "Presence of console log function detected.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 289
+      },
+      "riskRating": 1
+    }
+  ],
+  "ESLinting": [
+    {
+      "type": "ESLinting",
+      "description": "Type Property name `AESKey` must match one of the following formats: camelCase",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/types.ts",
+        "lineNum": 40
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Invalid type \"unknown\" of template literal expression.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/image.ts",
+        "lineNum": 26
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Expected only 0 line after block description",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/snap.ts",
+        "lineNum": 11
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Expected only 0 line after block description",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/snap.ts",
+        "lineNum": 20
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Expected only 0 line after block description",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/snap.ts",
+        "lineNum": 35
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Expected only 0 line after block description",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/snap.ts",
+        "lineNum": 53
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Expected only 0 line after block description",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/snap.ts",
+        "lineNum": 71
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Expected only 0 line after block description",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/snap.ts",
+        "lineNum": 89
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "'State' is already declared in the upper scope on line 6 column 29.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/snap.ts",
+        "lineNum": 93
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Expected only 0 line after block description",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/snap.ts",
+        "lineNum": 103
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Missing return type on function.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/snap.ts",
+        "lineNum": 107
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "'State' is already declared in the upper scope on line 6 column 29.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/snap.ts",
+        "lineNum": 107
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "'getStateIdentifier' was used before it was defined.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/snap.ts",
+        "lineNum": 118
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Prefer using an optional chain expression instead, as it's more concise and easier to read.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/snap.ts",
+        "lineNum": 121
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/snap.ts",
+        "lineNum": 121
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Missing return type on function.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/snap.ts",
+        "lineNum": 124
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "'getStateIdentifier' was used before it was defined.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/snap.ts",
+        "lineNum": 125
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "'EventLog' is defined but never used.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 3
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Forbidden non-null assertion.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 37
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Forbidden non-null assertion.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 62
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Forbidden non-null assertion.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 63
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Forbidden non-null assertion.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 64
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Forbidden non-null assertion.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 86
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Forbidden non-null assertion.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 87
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Invalid type \"unknown\" of template literal expression.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 116
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Invalid type \"unknown\" of template literal expression.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 125
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Forbidden non-null assertion.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 137
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "'e' is defined but never used.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 142
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Forbidden non-null assertion.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 151
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Forbidden non-null assertion.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 152
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Forbidden non-null assertion.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 153
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Forbidden non-null assertion.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 154
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Forbidden non-null assertion.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 162
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Invalid type \"unknown\" of template literal expression.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 165
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Invalid type \"unknown\" of template literal expression.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 169
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Missing return type on function.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 175
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Missing return type on function.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 184
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Missing return type on function.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 192
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Missing return type on function.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 198
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Missing return type on function.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 206
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 232
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 256
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Missing return type on function.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 278
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 302
+      },
+      "riskRating": 1
+    },
+    {
+      "type": "ESLinting",
+      "description": "Missing return type on function.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 307
+      },
+      "riskRating": 1
+    }
+  ],
+  "UnusedImports": [
+    {
+      "type": "UnusedImports",
+      "description": "Import 'EventLog' is declared but never used.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/token.ts",
+        "lineNum": 3
+      },
+      "riskRating": 1
+    }
+  ],
+  "UsedBeforeDefinedArrowFunctions": [
+    {
+      "type": "UsedBeforeDefinedArrowFunctions",
+      "description": "Arrow function 'getStateIdentifier' is used before it is defined.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/snap.ts",
+        "lineNum": 118
+      },
+      "riskRating": 2
+    },
+    {
+      "type": "UsedBeforeDefinedArrowFunctions",
+      "description": "Arrow function 'getStateIdentifier' is used before it is defined.",
+      "position": {
+        "filePath": "/Users/rafafuentes/Desktop/coti-snap/packages/snap/src/utils/snap.ts",
+        "lineNum": 125
+      },
+      "riskRating": 2
+    }
+  ]
+}

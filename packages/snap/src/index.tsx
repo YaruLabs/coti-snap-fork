@@ -216,7 +216,6 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
             },
           });
         } catch (error) {
-          console.error(error);
         }
         return;
       case 'token-cancel':
@@ -261,7 +260,6 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
           await recalculateBalances();
           await returnToHomePage(id);
         } catch (error) {
-          console.error(error);
           await snap.request({
             method: 'snap_updateInterface',
             params: {
@@ -333,7 +331,6 @@ export const onUserInput: OnUserInputHandler = async ({ id, event }) => {
             },
           });
         } else {
-          console.error('Failed to fetch token details');
         }
     }
   }

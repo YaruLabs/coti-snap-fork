@@ -23,7 +23,6 @@ export const getSVGfromMetadata = async (
       </svg>
     `;
   } catch (error) {
-    console.error(`Failed to fetch image: ${error}`);
     return null;
   }
 };
