@@ -1327,8 +1327,13 @@ export const SendButton = styled.button.withConfig({
   border-radius: 12px;
   font-size: 1.5rem;
   font-weight: 600;
-  padding: 14px 0;
+  padding: 16px 32px;
   cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex: 1;
+  gap: 6px;
   margin-top: ${spacing.xl};
   margin-bottom: 0;
   width: 100%;
