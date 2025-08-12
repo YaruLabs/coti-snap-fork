@@ -115,6 +115,18 @@ const buttonBase = `
   }
 `;
 
+const buttonBaseAction = `
+  outline: none;
+  cursor: pointer;
+  font-weight: ${typography.weights.semibold};
+  transition: all ${transitions.normal};
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
 const inputBase = `
   border: 1.5px solid ${colors.border.primary};
   border-radius: ${borderRadius.md};
@@ -351,7 +363,7 @@ export const IconButton = styled.button.withConfig({
 
 export const MenuDropdown = styled.div`
   position: absolute;
-  top: 42px;
+  top: 30px;
   right: 0;
   background: ${colors.background.primary};
   box-shadow: ${shadows.dropdown};
@@ -375,7 +387,7 @@ export const MenuItem = styled.button`
   font-size: ${typography.sizes.lg};
   color: ${colors.text.primary};
   font-weight: ${typography.weights.medium};
-  padding: ${spacing.xl};
+  padding: ${spacing.md};
   cursor: pointer;
   transition: background ${transitions.fast};
   
@@ -386,7 +398,7 @@ export const MenuItem = styled.button`
 
 export const SortDropdown = styled.div`
   position: absolute;
-  top: 42px;
+  top: 30px;
   right: 0;
   background: ${colors.background.primary};
   box-shadow: ${shadows.dropdown};
@@ -411,7 +423,7 @@ export const SortOption = styled.button.withConfig({
   font-size: ${typography.sizes.lg};
   color: #000000 !important;
   font-weight: ${typography.weights.medium};
-  padding: ${spacing.xl};
+  padding: ${spacing.md};
   cursor: pointer;
   transition: background ${transitions.fast};
   position: relative;
@@ -593,6 +605,12 @@ export const TransferContainer = styled.div`
   box-shadow: none;
   padding: 0 ${spacing.lg};
   background: none;
+`;
+
+export const TransferContainerMain = styled.div`
+  box-shadow: none;
+  padding: 0 ${spacing.lg};
+  background: none;
   width: 100%;
   max-width: 100%;
 `;
@@ -603,7 +621,7 @@ export const SendAmount = styled.div`
   gap: ${spacing.xs};
   font-size: ${typography.sizes.lg};
   font-weight: ${typography.weights.normal};
-  color: ${colors.text.primary};
+  color: #1F2D67 !important;
 `;
 
 export const AccountBox = styled.div.withConfig({
@@ -634,6 +652,7 @@ export const AccountIcon = styled.div`
 export const AccountDetails = styled.div`
   display: flex;
   flex-direction: column;
+  color: #000000 !important;
 `;
 
 export const AccountName = styled.div`
@@ -643,7 +662,7 @@ export const AccountName = styled.div`
 
 export const AccountAddress = styled.div`
   font-size: ${typography.sizes.sm};
-  color: ${colors.text.tertiary};
+  color: #000000 !important;
 `;
 
 export const DropdownIcon = styled.div`
@@ -670,6 +689,7 @@ export const AddressInput = styled.input`
   font-size: ${typography.sizes.md};
   flex: 1;
   background: transparent;
+  color: #000000 !important;
 `;
 
 export const ScanButton = styled.button`
@@ -1278,7 +1298,7 @@ export const NFTDetailsLabel = styled.span`
 `;
 
 export const NFTDetailsValue = styled.span`
-  color: ${colors.text.primary};
+  color: #1F2D67 !important;
   font-weight: ${typography.weights.bold};
   font-size: ${typography.sizes.xxl};
 `;
@@ -1323,9 +1343,10 @@ export const SendButton = styled.button.withConfig({
   background: ${({ backgroundColor }) => backgroundColor || '#1E29F6'};
   color: ${({ textColor }) => textColor || '#fff'};
   border-radius: 12px;
+  border: 2px solid #1E29F6;
   font-size: 1.5rem;
   font-weight: 600;
-  padding: 16px 32px;
+  padding: 20px 40px;
   cursor: pointer;
   align-items: center;
   justify-content: center;
@@ -1336,7 +1357,7 @@ export const SendButton = styled.button.withConfig({
   margin-bottom: 0;
   width: 100%;
   transition: background 0.2s, opacity 0.2s;
-  ${buttonBase}
+  ${buttonBaseAction}
   
   &:hover:not(:disabled) {
     background: ${({ backgroundColor }) => 
@@ -1433,29 +1454,29 @@ export const TokenDetailsLogoSmall = styled.div`
 
 export const TokenDetailsContent = styled.div`
   width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 0;
+  box-sizing: border-box;
+  padding-top: 0;
+  margin: 0 auto 0;
   display: flex;
   flex-direction: column;
-  gap: ${spacing.lg};
+  gap: ${spacing.xxxl};
 `;
 
 export const TokenDetailsRow = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 0;
+  padding: 14px 0 0 12px;
 `;
 
 export const TokenDetailsLabel = styled.span`
-  color: ${colors.text.secondary};
+  color: #04133D !important;
   font-weight: ${typography.weights.semibold};
   font-size: ${typography.sizes.lg};
   flex: 1;
 `;
 
 export const TokenDetailsValue = styled.span`
-  color: ${colors.text.primary};
+  color: #1F2D67 !important;
   font-weight: ${typography.weights.bold};
   font-size: ${typography.sizes.lg};
   text-align: right;
@@ -1721,9 +1742,9 @@ export const BalanceContainer = styled.div`
 `;
 
 export const BalanceTitle = styled.div`
-  font-weight: 700;
+  font-weight: 900;
   font-size: 18px;
-  margin-top: 0;
+  color: #000000 !important;
 `;
 
 export const BalanceRow = styled.div`
@@ -1846,7 +1867,7 @@ export const TokenBalanceRow = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 14px 0 14px 0;
+  padding: 14px 0 0 12px;
 `;
 
 export const TokenBalanceLeft = styled.div`
@@ -1901,7 +1922,7 @@ export const TokenBalanceLogoSmall = styled.div`
 export const TokenBalanceName = styled.span`
   font-weight: 600;
   font-size: 16px;
-  color: #222;
+  color: #000000 !important;
   display: flex;
   align-items: center;
   height: 48px;
@@ -1920,7 +1941,7 @@ export const TokenBalanceRight = styled.div`  display: flex;
 export const TokenBalanceAmount = styled.span`
   font-size: 16px;
   font-weight: 700;
-  color: #7c8191;
+  color: #1F2D67 !important;
   max-width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1931,7 +1952,7 @@ export const TokenBalanceAmount = styled.span`
 export const TokenBalanceSymbol = styled.span`
   font-size: 16px;
   font-weight: 700;
-  color: #7c8191;
+  color: #1F2D67 !important;
   margin-left: 2px;
 `;
 
@@ -1958,7 +1979,7 @@ export const TokenNameRow = styled.div`
 export const TokenNameText = styled.span`
   font-weight: 600;
   font-size: 18px;
-  color: #222;
+  color: #04133D !important;
 `;
 
 export const AddressBadge = styled.div`

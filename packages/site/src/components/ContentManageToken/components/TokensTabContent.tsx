@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserProvider } from '@coti-io/coti-ethers';
 import { ImportedToken } from '../../../types/token';
 import { TokenRowComponent } from './TokenRow';
-import { TransferContainer } from '../styles';
+import { TransferContainerMain } from '../styles';
 
 interface TokensTabContentProps {
   tokens: ImportedToken[];
@@ -22,7 +22,7 @@ export const TokensTabContent: React.FC<TokensTabContentProps> = React.memo(({
   propAESKey, 
   onSelectToken 
 }) => (
-  <TransferContainer>
+  <TransferContainerMain>
     {tokens.map((token, index) => (
       <TokenRowComponent 
         key={`${token.address}-${index}`} 
@@ -34,7 +34,7 @@ export const TokensTabContent: React.FC<TokensTabContentProps> = React.memo(({
         onSelectToken={onSelectToken}
       />
     ))}
-  </TransferContainer>
+  </TransferContainerMain>
 ));
 
 TokensTabContent.displayName = 'TokensTabContent';
