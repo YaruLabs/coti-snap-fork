@@ -177,7 +177,7 @@ export const DisconnectButton = styled.button`
   font-size: ${(props) => props.theme.fontSizes.small};
   line-height: 1.2;
   border-radius: ${(props) => props.theme.radii.button};
-  background-color: #f86e6e;
+  background-color: #ff1900;
   color: #FFFFFF;
   border: none;
   font-weight: 500;

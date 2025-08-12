@@ -62,6 +62,10 @@ const getActionHoverBackgroundColor = (props: any) => {
   return 'rgba(30, 41, 246, 0.8)'; // #1E29F6 with soft opacity
 };
 
+const getCancelHoverBackgroundColor = (props: any) => {
+  return 'rgba(255, 25, 0, 0.8)'; // #ff1900 with soft opacity for hover effect
+};
+
 const ButtonStyle = styled.button<{
   $primary?: boolean;
   $error?: boolean;
@@ -134,6 +138,41 @@ const ButtonActionStyle = styled.button<{
   }
 `;
 
+const ButtonCancelStyle = styled.button<{
+  $primary?: boolean;
+  $error?: boolean;
+  $fullWith?: boolean;
+  $disabled?: boolean;
+}>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: ${(props) => props.theme.fontSizes.small};
+  line-height: 1.2;
+  border-radius: ${(props) => props.theme.radii.small};
+  background-color: #ff1900;
+  color: ${getColor};
+  border: ${getBorder};
+  font-weight: 500;
+  font-size: 'Sofia Pro';
+  flex: ${(props) => (props.$fullWith ? '1' : 'none')};
+  padding: 15px 40px;
+  min-height: 4.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  &:hover {
+    background-color: ${getCancelHoverBackgroundColor};
+    border: ${getHoverBorder};
+    color: ${getHoverColor};
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    background-color: ${getCancelHoverBackgroundColor};
+    color: ${getHoverColor};
+    opacity: 0.5;
+  }
+`;
 
 export const Button: React.FC<ButtonProps> = ({
   text,
@@ -184,5 +223,31 @@ export const ButtonAction: React.FC<ButtonProps> = ({
       {text}
       {iconRight && <span style={{ marginLeft: '8px' }}>{iconRight}</span>}
     </ButtonActionStyle>
+  );
+};
+
+export const ButtonCancel: React.FC<ButtonProps> = ({
+  text,
+  primary = false,
+  error = false,
+  fullWith = false,
+  onClick,
+  disabled = false,
+  icon,
+  iconLeft,
+  iconRight,
+}) => {
+  return (
+    <ButtonCancelStyle
+      $primary={primary}
+      $error={error}
+      $fullWith={fullWith}
+      onClick={onClick}
+      disabled={disabled}
+    >
+      {(iconLeft || icon) && <span style={{ marginRight: '8px' }}>{iconLeft || icon}</span>}
+      {text}
+      {iconRight && <span style={{ marginLeft: '8px' }}>{iconRight}</span>}
+    </ButtonCancelStyle>
   );
 };

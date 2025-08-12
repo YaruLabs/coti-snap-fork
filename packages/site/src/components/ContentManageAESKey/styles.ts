@@ -100,12 +100,17 @@ export const ContentBoldText = styled.p`
 
 
 export const Link = styled.a`
-  color: ${(props) => props.theme.colors.primary?.default};
+  color: white;
+  background-color: #1E29F6;
   text-decoration: none;
   cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease-in-out;
   
   &:hover {
-    text-decoration: underline;
+    background-color: #4d55f7;
+    text-decoration: none;
   }
 `;
 
