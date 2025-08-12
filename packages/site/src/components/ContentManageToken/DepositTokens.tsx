@@ -3,7 +3,6 @@ import { QRCode } from 'react-qrcode-logo';
 import { useCopyToClipboard } from '../../hooks/useCopyToClipboard';
 import CopyIcon from '../../assets/copy.svg';
 import CopySuccessIcon from '../../assets/copy-success.svg';
-import MetamaskLogo from '../../assets/images/metamask-fox.png';
 import {
   DepositModalContainer,
   DepositCloseButton,

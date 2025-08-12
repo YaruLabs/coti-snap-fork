@@ -837,6 +837,15 @@ export const DepositBorderWrapper = styled.div`
   border-radius: 30px;
   padding: 9px;
   width: auto;
+  
+  @media (max-width: 600px) {
+    background-color: transparent;
+    border-radius: 0;
+    padding: 0;
+    max-width: 600px;
+    height: 100vh;
+    min-height: 100vh;
+  }
 `;
 
 export const DepositModalContainer = styled.div`
@@ -851,6 +860,16 @@ export const DepositModalContainer = styled.div`
   flex-direction: column;
   align-items: center;
   position: relative;
+  
+  @media (max-width: 600px) {
+    background: #FFFFFF;
+    max-width: 600px;
+    border-radius: 0;
+    box-shadow: none;
+    height: 100vh;
+    min-height: 100vh;
+    justify-content: flex-start;
+  }
 `;
 
 export const DepositCloseButton = styled.button`
