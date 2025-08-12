@@ -131,7 +131,7 @@ const inputBase = `
   border: 1.5px solid ${colors.border.primary};
   border-radius: ${borderRadius.md};
   font-size: ${typography.sizes.lg};
-  color: ${colors.text.primary};
+  color: #000000 !important;
   background: ${colors.background.secondary};
   outline: none;
   transition: border-color ${transitions.fast}, background-color ${transitions.fast};
@@ -475,6 +475,11 @@ export const TokenLogos = styled.div`
   height: 40px;
   display: flex;
   align-items: center;
+  
+  @media (max-width: 600px) {
+    width: 32px;
+    height: 32px;
+  }
 `;
 
 export const TokenLogoBig = styled.div`
@@ -491,6 +496,12 @@ export const TokenLogoBig = styled.div`
   left: 0;
   top: 0;
   z-index: 1;
+  
+  @media (max-width: 600px) {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
 `;
 
 export const TokenLogoSmall = styled.div`
@@ -516,6 +527,10 @@ export const TokenName = styled.span`
   font-size: ${typography.sizes.lg};
   font-weight: ${typography.weights.bold};
   color: #000000 !important;
+  
+  @media (max-width: 600px) {
+    font-size: 14px;
+  }
 `;
 
 export const TokenValues = styled.div`
@@ -605,6 +620,10 @@ export const TransferContainer = styled.div`
   box-shadow: none;
   padding: 0 ${spacing.lg};
   background: none;
+  
+  @media (max-width: 600px) {
+    padding: 0 ${spacing.md};
+  }
 `;
 
 export const TransferContainerMain = styled.div`
@@ -622,6 +641,11 @@ export const SendAmount = styled.div`
   font-size: ${typography.sizes.lg};
   font-weight: ${typography.weights.normal};
   color: #1F2D67 !important;
+  
+  @media (max-width: 600px) {
+    font-size: 14px;
+    gap: 2px;
+  }
 `;
 
 export const AccountBox = styled.div.withConfig({
@@ -661,8 +685,18 @@ export const AccountName = styled.div`
 `;
 
 export const AccountAddress = styled.div`
-  font-size: ${typography.sizes.sm};
-  color: #000000 !important;
+  font-size: ${typography.sizes.md};
+  font-weight: ${typography.weights.normal};
+  color: #1F2D67 !important;
+  max-width: 120px;
+  text-align: right;
+  padding: 0 4px;
+
+  @media (max-width: 600px) {
+    max-width: 80px;
+    font-size: 14px;
+    gap: 2px;
+  }
 `;
 
 export const DropdownIcon = styled.div`
@@ -773,7 +807,7 @@ export const ModalHeader = styled.h2`
   text-align: center;
   padding: ${spacing.xxxl} ${spacing.xxxl} 0 ${spacing.xxxl};
   margin: 0 0 ${spacing.xl} 0;
-  color: ${colors.text.primary};
+  color: #000000 !important;
 `;
 
 export const ModalClose = styled.button`
@@ -796,7 +830,7 @@ export const ModalClose = styled.button`
 export const ModalLabel = styled.div`
   font-size: ${typography.sizes.md};
   font-weight: ${typography.weights.semibold};
-  color: ${colors.text.primary};
+  color: #000000 !important;
   margin: ${spacing.sm} 0 0 0;
 `;
 
@@ -1091,7 +1125,7 @@ export const TokenInfoRow = styled.div`
 `;
 
 export const TokenInfoValue = styled.span`
-  color: ${colors.text.primary};
+  color: #000000 !important;
   font-size: ${typography.sizes.md};
   align-items: center;
 `;
@@ -1112,7 +1146,7 @@ export const TokenSummaryLogo = styled.div`
   align-items: center;
   justify-content: center;
   font-size: ${typography.sizes.xxxxl};
-  color: ${colors.text.primary};
+  color: #000000 !important;
   font-weight: ${typography.weights.bold};
   position: relative;
 `;
@@ -1143,7 +1177,7 @@ export const TokenSummaryInfo = styled.div`
 export const TokenSummaryName = styled.div`
   font-size: ${typography.sizes.xl};
   font-weight: ${typography.weights.bold};
-  color: ${colors.text.primary};
+  color: #000000 !important;
 `;
 
 export const TokenSummaryAddress = styled.div`
@@ -1160,7 +1194,7 @@ export const TokenSummarySymbol = styled.div`
 
 export const TokenSummaryBalance = styled.div`
   font-size: ${typography.sizes.md};
-  color: rgb(179, 179, 179);
+  color: #B6B6B6 !important;
   font-weight: ${typography.weights.semibold};
   margin-top: ${spacing.sm};
   max-width: 200px;
@@ -1213,7 +1247,7 @@ export const CenteredText = styled.div`
   font-size: ${typography.sizes.xl};
   margin: ${spacing.xxl} 0 0 0;
   font-weight: ${typography.weights.normal};
-  color: ${colors.text.primary};
+  color: #000000 !important;
 `;
 
 export const LabelRow = styled.div`
@@ -1221,7 +1255,7 @@ export const LabelRow = styled.div`
   align-items: center;
   font-size: ${typography.sizes.md};
   font-weight: ${typography.weights.semibold};
-  color: ${colors.text.primary};
+  color: #000000 !important;
   margin-top: ${spacing.md};
 `;
 
@@ -1371,6 +1405,12 @@ export const SendButton = styled.button.withConfig({
     opacity: 0.5;
     cursor: not-allowed;
     background: ${({ backgroundColor }) => backgroundColor || '#1E29F6'};
+  }
+  
+  @media (max-width: 600px) {
+    font-size: 14px;
+    padding: 16px 32px;
+    margin-top: ${spacing.md};
   }
 `;
 

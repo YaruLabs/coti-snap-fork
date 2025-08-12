@@ -8,6 +8,12 @@ export const SectionTitle = styled.div`
   margin-top: ${spacing.xxl};
   margin-bottom: ${spacing.sm};
   color: #04133D99 !important;
+  
+  @media (max-width: 600px) {
+    font-size: 11px;
+    margin-top: ${spacing.lg};
+    margin-bottom: ${spacing.xs};
+  }
 `;
 
 export const AccountBox = styled.div.withConfig({
@@ -26,6 +32,12 @@ export const AccountBox = styled.div.withConfig({
   &:hover {
     background: ${colors.background.hover};
   }
+  
+  @media (max-width: 600px) {
+    padding: 6px 14px;
+    gap: 10px;
+    margin-bottom: ${spacing.xs};
+  }
 `;
 
 export const AccountIcon = styled.div`
@@ -37,6 +49,12 @@ export const AccountIcon = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 2.2rem;
+  
+  @media (max-width: 600px) {
+    width: 30px;
+    height: 30px;
+    font-size: 1.8rem;
+  }
 `;
 
 export const AccountDetails = styled.div`
@@ -49,6 +67,11 @@ export const AccountAddress = styled.div`
   color: #000000 !important;
   font-weight: ${typography.weights.normal};
   margin-top: ${spacing.sm};
+  
+  @media (max-width: 600px) {
+    font-size: ${typography.sizes.sm};
+    margin-top: ${spacing.xs};
+  }
 `;
 
 export const InputBox = styled.div`
@@ -66,6 +89,11 @@ export const InputBox = styled.div`
   &:focus-within {
     border: 1.5px solid ${colors.primary};
   }
+  
+  @media (max-width: 600px) {
+    padding: 14px ${spacing.md};
+    gap: ${spacing.xs};
+  }
 `;
 
 export const AddressInput = styled.input`
@@ -75,6 +103,10 @@ export const AddressInput = styled.input`
   flex: 1;
   background: transparent;
   color: #000000 !important;
+  
+  @media (max-width: 600px) {
+    font-size: ${typography.sizes.sm};
+  }
 `;
 
 export const AmountInput = styled.input`
@@ -85,6 +117,7 @@ export const AmountInput = styled.input`
   font-weight: ${typography.weights.normal};
   color: #1F2D67 !important;
   width: auto;
+  max-width: 120px;
   text-align: right;
   padding: 0 4px;
   appearance: textfield;
@@ -99,12 +132,22 @@ export const AmountInput = styled.input`
     outline: none;
     box-shadow: none;
   }
+  
+  @media (max-width: 600px) {
+    max-width: 80px;
+    font-size: 14px;
+  }
 `;
 
 export const BottomActions = styled.div`
   display: flex;
   justify-content: space-between;
   gap: ${spacing.lg};
+  
+  @media (max-width: 600px) {
+    flex-direction: column-reverse;
+    gap: 0px;
+  }
 `;
 
 export const CancelButton = styled.button`
@@ -162,6 +205,10 @@ export const HeaderBarSlotTitle = styled.div`
   text-align: center;
   font-weight: ${typography.weights.bold};
   font-size: ${typography.sizes.xxxxl};
+  
+  @media (max-width: 600px) {
+    font-size: ${typography.sizes.xxl};
+  }
 `;
 
 export const HeaderBarSlotRight = styled.div`
@@ -185,6 +232,11 @@ export const BalanceSubTransfer = styled.div.withConfig({
   font-weight: ${typography.weights.normal};
   flex: 1;
   margin-bottom: ${spacing.md};
+  
+  @media (max-width: 600px) {
+    font-size: ${typography.sizes.sm};
+    margin-bottom: ${spacing.xs};
+  }
 `;
 
 export const MaxButton = styled.button`
@@ -198,6 +250,10 @@ export const MaxButton = styled.button`
   
   &:hover {
     opacity: 0.8;
+  }
+  
+  @media (max-width: 600px) {
+    font-size: ${typography.sizes.sm};
   }
 `;
 
@@ -213,6 +269,12 @@ export const ArrowDownStyled = styled(ArrowDown)`
   width: 22px;
   height: 22px;
   color: #1F2D67 !important;
+  
+  @media (max-width: 600px) {
+    width: 18px;
+    height: 18px;
+    margin-left: ${spacing.xs};
+  }
 `;
 
 export const ClearIconButton = styled.button`
@@ -231,6 +293,11 @@ export const ClearIconButton = styled.button`
   
   &:hover {
     background: ${colors.background.tertiary};
+  }
+  
+  @media (max-width: 600px) {
+    width: 18px;
+    height: 18px;
   }
 `;
 
