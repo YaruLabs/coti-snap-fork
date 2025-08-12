@@ -1,7 +1,7 @@
 import { useInvokeSnap, useMetaMask, useRequestSnap } from '../hooks';
 import { shouldDisplayReconnectButton } from '../utils';
 import { Button } from './Button';
-import { ContentContainer } from './styles';
+import { ContentBorderWrapper, ContentContainer } from './styles';
 
 export const TestContent = ({ userAESKey }: { userAESKey: string | null }) => {
   const { installedSnap } = useMetaMask();
@@ -41,17 +41,19 @@ export const TestContent = ({ userAESKey }: { userAESKey: string | null }) => {
   };
 
   return (
-    <ContentContainer>
-      {userAESKey && <div>{userAESKey}</div>}
-      {shouldDisplayReconnectButton(installedSnap) && (
-        <Button primary text="Reconnect" onClick={requestSnap} />
-      )}
-      {installedSnap && (
-        <>
-          <Button primary text="Encrypt" onClick={handleEncryptClick} />
-          <Button primary text="Decrypt" onClick={handleDecryptClick} />
-        </>
-      )}
-    </ContentContainer>
+    <ContentBorderWrapper>
+      <ContentContainer>
+        {userAESKey && <div>{userAESKey}</div>}
+        {shouldDisplayReconnectButton(installedSnap) && (
+          <Button primary text="Reconnect" onClick={requestSnap} />
+        )}
+        {installedSnap && (
+          <>
+            <Button primary text="Encrypt" onClick={handleEncryptClick} />
+            <Button primary text="Decrypt" onClick={handleDecryptClick} />
+          </>
+        )}
+      </ContentContainer>
+    </ContentBorderWrapper>
   );
 };
