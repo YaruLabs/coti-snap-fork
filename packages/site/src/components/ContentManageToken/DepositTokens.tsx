@@ -60,7 +60,7 @@ export const DepositTokens: React.FC<DepositTokensProps> = React.memo(({
   return (
     <DepositModalContainer onKeyDown={handleKeyDown} tabIndex={-1}>
       <DepositCloseButton 
-        aria-label="Cerrar modal de depósito" 
+        aria-label="Close deposit modal" 
         onClick={handleClose}
         type="button"
       >

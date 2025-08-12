@@ -362,7 +362,7 @@ export const ImportTokenModal: React.FC<ImportTokenModalProps> = React.memo(({
                 disabled={state.importLoading}
                 type="button"
                 backgroundColor="#fff"
-                textColor="#4664ff"
+                textColor="#1E29F6"
               >
                 Back
               </SendButton>

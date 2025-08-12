@@ -12,7 +12,7 @@ export const slideUpFadeIn = keyframes`
 `;
 
 export const colors = {
-  primary: '#4664ff',
+  primary: '#1E29F6',
   primaryHover: '#3350e6',
   primaryDark: '#2946c7',
   secondary: '#3d5afe',

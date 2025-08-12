@@ -16,12 +16,12 @@ const Title = styled.h2`
   font-size: 1.8rem;
   font-weight: 600;
   margin-bottom: 16px;
-  color: #18191d;
+  color: #18191d !important;
 `;
 
 const Description = styled.p`
   font-size: 1.4rem;
-  color: #6b7280;
+  color: #18191d !important;;
   margin-bottom: 24px;
   max-width: 400px;
   line-height: 1.5;

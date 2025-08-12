@@ -74,7 +74,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             <SendButton
               onClick={onClose}
               backgroundColor="#fff"
-              textColor="#4664ff"
+              textColor="#1E29F6"
               style={{ flex: 1 }}
             >
               {cancelText}

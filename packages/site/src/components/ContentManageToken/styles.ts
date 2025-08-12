@@ -12,7 +12,7 @@ const slideUpFadeIn = keyframes`
 `;
 
 const colors = {
-  primary: '#4664ff',
+  primary: '#1E29F6',
   primaryHover: '#3350e6',
   primaryDark: '#2946c7',
   secondary: '#3d5afe',
@@ -183,7 +183,7 @@ export const QuickAccessButton = styled.button`
 `;
 
 export const QuickAccessLabel = styled.span`
-  color: ${colors.text.primary};
+  color: #000000 !important;
   font-size: ${typography.sizes.md};
   font-weight: ${typography.weights.normal};
   text-align: center;
@@ -192,7 +192,7 @@ export const QuickAccessLabel = styled.span`
 export const BalanceAmount = styled.div`
   font-weight: 600;
   font-size: 32px;
-  color: #000;
+  color: #000000 !important;
   margin-top: 2px;
   white-space: nowrap;
   text-align: center;
@@ -305,7 +305,7 @@ export const HeaderBar = styled.div`
 
 export const NetworkBadge = styled.div`
   background: none;
-  color: ${colors.text.tertiary};
+  color: #000000 !important;
   font-size: ${typography.sizes.lg};
   font-weight: ${typography.weights.medium};
   border-radius: ${spacing.lg};
@@ -337,9 +337,13 @@ export const IconButton = styled.button.withConfig({
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  color: ${colors.text.primary};
+  color: #000000 !important;
   border-radius: ${spacing.sm};
   transition: background ${transitions.fast};
+  
+  svg {
+    fill: #000000 !important;
+  }
   
   &:hover {
     background: ${colors.background.tertiary};
@@ -406,7 +410,7 @@ export const SortOption = styled.button.withConfig({
   border: none;
   outline: none;
   font-size: ${typography.sizes.lg};
-  color: ${colors.text.primary};
+  color: #000000 !important;
   font-weight: ${typography.weights.medium};
   padding: ${spacing.xl};
   cursor: pointer;
@@ -471,7 +475,7 @@ export const TokenLogoBig = styled.div`
   align-items: center;
   justify-content: center;
   font-size: ${typography.sizes.xl};
-  color: ${colors.text.primary};
+  color: #000000 !important;
   font-weight: ${typography.weights.medium};
   position: absolute;
   left: 0;
@@ -488,7 +492,7 @@ export const TokenLogoSmall = styled.div`
   align-items: center;
   justify-content: center;
   font-size: ${typography.sizes.base};
-  color: ${colors.text.primary};
+  color: #000000 !important;
   font-weight: ${typography.weights.medium};
   position: absolute;
   left: 18px;
@@ -501,7 +505,7 @@ export const TokenLogoSmall = styled.div`
 export const TokenName = styled.span`
   font-size: ${typography.sizes.lg};
   font-weight: ${typography.weights.bold};
-  color: ${colors.text.primary};
+  color: #000000 !important;
 `;
 
 export const TokenValues = styled.div`
@@ -522,7 +526,7 @@ export const TokenUsd = styled.span`
 export const TokenAmount = styled.span`
   font-size: ${typography.sizes.md};
   font-weight: ${typography.weights.bold};
-  color: ${colors.text.secondary};
+  color: #000000 !important;
   letter-spacing: 0.01em;
   word-break: break-all;
   overflow-wrap: break-word;
@@ -865,7 +869,7 @@ export const DepositTitle = styled.h2`
   font-weight: ${typography.weights.bold};
   text-align: center;
   margin: 0 0 ${spacing.xxxl} 0;
-  color: ${colors.text.primary};
+  color: #000000 !important;
 `;
 
 export const DepositQRWrapper = styled.div`
@@ -1290,7 +1294,7 @@ export const NFTDetailsDisclaimer = styled.div`
 export const SendButton = styled.button.withConfig({
   shouldForwardProp: (prop) => prop !== 'backgroundColor' && prop !== 'textColor'
 })<{ backgroundColor?: string; textColor?: string }>`
-  background: ${({ backgroundColor }) => backgroundColor || '#4664ff'};
+  background: ${({ backgroundColor }) => backgroundColor || '#1E29F6'};
   color: ${({ textColor }) => textColor || '#fff'};
   border-radius: 12px;
   font-size: 1.5rem;
@@ -1302,7 +1306,6 @@ export const SendButton = styled.button.withConfig({
   width: 100%;
   transition: background 0.2s, opacity 0.2s;
   ${buttonBase}
-  border: 2px solid #4664ff !important;
   
   &:hover:not(:disabled) {
     background: ${({ backgroundColor }) => 
@@ -1315,7 +1318,7 @@ export const SendButton = styled.button.withConfig({
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    background: ${({ backgroundColor }) => backgroundColor || '#4664ff'};
+    background: ${({ backgroundColor }) => backgroundColor || '#1E29F6'};
   }
 `;
 
@@ -1430,7 +1433,7 @@ export const TokenDetailsValue = styled.span`
 `;
 
 export const TokenDetailsLink = styled.a`
-  color: #4664ff;
+  color: #1E29F6;
   font-weight: 500;
   font-size: ${typography.sizes.lg};
   text-decoration: none;
@@ -1935,7 +1938,7 @@ export const AddressBadge = styled.div`
   padding: 4px 18px;
   font-size: 18px;
   font-weight: 500;
-  color: #4664ff;
+  color: #1E29F6;
   gap: 8px;
   user-select: none;
   cursor: pointer;

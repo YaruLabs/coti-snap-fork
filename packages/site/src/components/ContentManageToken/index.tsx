@@ -142,7 +142,6 @@ export const ContentManageToken: React.FC<ContentManageTokenProps> = ({ aesKey }
   };
 
   const handleNFTSendClick = (nft: ImportedToken) => {
-    // Siempre pasar el token COTI
     setTransferToken({
       address: '',
       name: 'COTI',

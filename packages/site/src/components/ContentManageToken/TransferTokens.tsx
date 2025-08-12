@@ -823,7 +823,7 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
           onClick={handleCancel} 
           type="button"
           backgroundColor="#fff"
-          textColor="#4664ff"
+          textColor="#1E29F6"
         >
           Cancel
         </SendButton>
@@ -831,7 +831,7 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
           disabled={!canContinue} 
           onClick={handleContinue}
           type="button"
-          backgroundColor="#4664ff"
+          backgroundColor="#1E29F6"
           textColor="#fff"
         >
           {txStatus === 'loading' ? 'Sending...' : 'Continue'}

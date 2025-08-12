@@ -117,7 +117,6 @@ const TokenDetails: React.FC<TokenDetailModalProps> = ({
 
   const handleSendToken = useCallback(() => {
     // TODO: Implement send token functionality
-    console.log('Send token clicked');
     menuDropdown.close();
   }, [menuDropdown]);
 
