@@ -143,21 +143,21 @@ export const MainStack = styled.div`
 
 export const QuickAccessGroup = styled.nav`
   display: flex;
-  gap: ${spacing.xxxxl};
+  gap: ${spacing.xxl};
   justify-content: center;
-  align-items: flex-start;
+  align-items: flex-center;
 `;
 
 export const QuickAccessItem = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: ${spacing.lg};
+  gap: ${spacing.md};
 `;
 
 export const QuickAccessButton = styled.button`
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: ${borderRadius.full};
   background: ${colors.primary};
   display: flex;
@@ -187,15 +187,18 @@ export const QuickAccessLabel = styled.span`
   font-size: ${typography.sizes.md};
   font-weight: ${typography.weights.normal};
   text-align: center;
+  font-weight: 450;
 `;
 
 export const BalanceAmount = styled.div`
   font-weight: 600;
-  font-size: 32px;
+  font-size: 24px;
   color: #000000 !important;
-  margin-top: 2px;
   white-space: nowrap;
   text-align: center;
+  align-items: center;
+  justify-content: center;
+  display: flex;
 `;
 
 export const BalanceEye = styled.button`
@@ -277,9 +280,9 @@ export const Tab = styled.button.withConfig({
   border: none;
   outline: none;
   font-size: ${typography.sizes.xl};
-  font-weight: ${({ active }) => (active ? typography.weights.bold : typography.weights.medium)};
-  color: ${({ active }) => (active ? colors.text.primary : colors.text.tertiary)};
-  border-bottom: 3px solid ${({ active }) => (active ? colors.text.primary : colors.border.primary)};
+  font-weight: ${({ active }) => (active ? typography.weights.normal : typography.weights.normal)};
+  color: ${({ active }) => (active ? colors.text.primary : "#071550")};
+  border-bottom: 2px solid ${({ active }) => (active ? "#1E29F6" : colors.border.primary)};
   padding: 0 ${spacing.xl} ${spacing.lg} ${spacing.xl};
   cursor: pointer;
   transition: color ${transitions.normal}, border-bottom ${transitions.normal};
@@ -300,7 +303,7 @@ export const HeaderBar = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 0 0 ${spacing.lg} 0;
+  padding: ${spacing.sm} 0 0 0;
 `;
 
 export const NetworkBadge = styled.div`
@@ -340,10 +343,6 @@ export const IconButton = styled.button.withConfig({
   color: #000000 !important;
   border-radius: ${spacing.sm};
   transition: background ${transitions.fast};
-  
-  svg {
-    fill: #000000 !important;
-  }
   
   &:hover {
     background: ${colors.background.tertiary};
@@ -451,7 +450,7 @@ export const TokenRow = styled.div`
 export const TokenInfo = styled.div`
   display: flex;
   align-items: center;
-  gap: ${spacing.sm};
+  gap: ${spacing.xs};
   
   &:hover {
     cursor: pointer;
@@ -467,9 +466,8 @@ export const TokenLogos = styled.div`
 `;
 
 export const TokenLogoBig = styled.div`
-  width: 35px;
-  height: 35px;
-  background: ${colors.background.tertiary};
+  width: 40px;
+  height: 40px;
   border-radius: ${borderRadius.full};
   display: flex;
   align-items: center;
@@ -524,9 +522,9 @@ export const TokenUsd = styled.span`
 `;
 
 export const TokenAmount = styled.span`
-  font-size: ${typography.sizes.md};
+  font-size: 16px;
   font-weight: ${typography.weights.bold};
-  color: #000000 !important;
+  color: #1F2D67 !important;
   letter-spacing: 0.01em;
   word-break: break-all;
   overflow-wrap: break-word;

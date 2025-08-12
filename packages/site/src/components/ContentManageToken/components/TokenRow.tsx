@@ -4,12 +4,12 @@ import { useTokenOperations } from '../../../hooks/useTokenOperations';
 import { useSnap } from '../../../hooks/SnapContext';
 import { ImportedToken } from '../../../types/token';
 import { formatBalance } from '../../../utils/formatters';
+import {CotiLogo} from '../../../assets/icons';
 import { 
   TokenRow, 
   TokenInfo, 
   TokenLogos, 
   TokenLogoBig, 
-  TokenLogoSmall, 
   TokenName, 
   TokenValues, 
   TokenAmount 
@@ -80,12 +80,22 @@ export const TokenRowComponent: React.FC<TokenRowProps> = React.memo(({
     [token.address, token.symbol, index]
   );
 
+  const isCotiToken = useMemo(() => 
+    !token.address && token.symbol === 'COTI', 
+    [token.address, token.symbol]
+  );
+
   return (
     <TokenRow key={tokenKey} onClick={() => onSelectToken(token)}>
       <TokenInfo>
         <TokenLogos>
-          <TokenLogoBig>{token.symbol[0]}</TokenLogoBig>
-          <TokenLogoSmall>{token.symbol[0]}</TokenLogoSmall>
+          <TokenLogoBig>
+            {isCotiToken ? (
+              <CotiLogo/>
+            ) : (
+              token.symbol[0]
+            )}
+          </TokenLogoBig>
         </TokenLogos>
         <TokenName>{token.name}</TokenName>
       </TokenInfo>
