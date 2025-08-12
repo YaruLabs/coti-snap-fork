@@ -124,14 +124,14 @@ export const OnboardAccountWizard: React.FC<OnboardAccountWizardProps> = ({
         <ContentButtons>
           <ButtonCancel
             text="Cancel"
-            fullWith={true}
+            fullWidth={true}
             onClick={handleCancel}
             aria-label="Cancel onboarding"
           />
           <ButtonAction
             primary
             text="Onboard"
-            fullWith={true}
+            fullWidth={true}
             onClick={handleOnboardClick}
             aria-label="Start onboarding process"
           />

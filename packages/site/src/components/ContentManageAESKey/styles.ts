@@ -76,6 +76,10 @@ export const ContentButtons = styled.div`
   display: flex;
   gap: 8px;
   width: 100%;
+  
+  ${({ theme }) => theme.mediaQueries.small} {
+    flex-direction: column-reverse;
+  }
 `;
 
 export const ContentTitle = styled.p`
