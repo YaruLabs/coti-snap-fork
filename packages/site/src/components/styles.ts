@@ -1,5 +1,12 @@
 import styled from 'styled-components';
 
+export const ContentBorderWrapper = styled.div`
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 30px;
+  padding: 9px;
+  width: auto;
+`;
+
 export const ContentContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -9,8 +16,7 @@ export const ContentContainer = styled.div`
   overflow-y: auto;
   gap: 30px;
   background-color: ${(props) => props.theme.colors.background?.content};
-  box-shadow: ${({ theme }) => theme.shadows.default};
-  border-radius: ${({ theme }) => theme.radii.default};
+  border-radius: 24px;
   width: auto;
   ${({ theme }) => theme.mediaQueries.small} {
     flex-direction: column;
