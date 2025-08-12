@@ -167,3 +167,15 @@ export const CenteredTabsWrapper = styled.div`
   margin-top: ${spacing.lg};
   width: 100%;
 `;
+
+export const DepositHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: ${spacing.lg};
+`;
+
+export const DepositHeaderSpacer = styled.div`
+  width: 48px;
+`;

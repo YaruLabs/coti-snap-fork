@@ -832,15 +832,21 @@ export const ModalActionButton = styled.button.withConfig({
   }
 `;
 
+export const DepositBorderWrapper = styled.div`
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 30px;
+  padding: 9px;
+  width: auto;
+`;
+
 export const DepositModalContainer = styled.div`
   background: ${colors.background.primary};
   border-radius: ${borderRadius.xxxxl};
   box-shadow: ${shadows.lg};
-  width: 300px;
-  max-width: 98vw;
-  margin: ${spacing.xxxxl} auto;
-  gap: ${spacing.sm};
-  padding: ${spacing.xxxl} ${spacing.xxl} ${spacing.xxxl} ${spacing.xxl};
+  width: 320px;
+  max-width: 320px;
+  gap: ${spacing.xxl};
+  padding: 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -848,41 +854,49 @@ export const DepositModalContainer = styled.div`
 `;
 
 export const DepositCloseButton = styled.button`
-  position: absolute;
-  top: ${spacing.xxl};
-  right: ${spacing.xxl};
   background: none;
   border: none;
   font-size: 3rem;
   color: ${colors.text.primary};
   cursor: pointer;
   transition: background-color ${transitions.fast};
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   
   &:hover {
     background: ${colors.background.tertiary};
-    border-radius: ${spacing.xs};
+    border-radius: ${spacing.sm};
   }
+`;
+
+export const DepositHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+`;
+
+export const DepositHeaderSpacer = styled.div`
+  width: 48px;
 `;
 
 export const DepositTitle = styled.h2`
   font-size: ${typography.sizes.xxxxxl};
   font-weight: ${typography.weights.bold};
   text-align: center;
-  margin: 0 0 ${spacing.xxxl} 0;
   color: #000000 !important;
+  margin: 0;
 `;
 
 export const DepositQRWrapper = styled.div`
   background: ${colors.background.primary};
   border-radius: ${spacing.xl};
-  padding: ${spacing.lg};
-  margin-bottom: ${spacing.sm};
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid ${colors.border.secondary};
-  box-shadow: ${shadows.md};
 `;
 
 export const DepositAccountName = styled.div`
@@ -894,14 +908,13 @@ export const DepositAccountName = styled.div`
 `;
 
 export const DepositAccountAddress = styled.div`
-  font-size: ${typography.sizes.md};
-  color: ${colors.text.secondary};
+  font-size: 16px;
+  color: #000000 !important;
   font-weight: ${typography.weights.normal};
   text-align: center;
   word-break: break-all;
-  margin-bottom: 18px;
-  max-width: 280px;
   line-height: 1.5;
+  width: 100%;
 `;
 
 export const DepositCopyIconWrapper = styled.span`
@@ -915,21 +928,17 @@ export const DepositCopyIconWrapper = styled.span`
 export const DepositCopyButton = styled.button<{ $copied: boolean }>`
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: ${spacing.lg};
-  background: none;
+  background: ${colors.primary};
   border: none;
-  color: ${colors.primary};
-  font-size: ${typography.sizes.base};
+  color: #FFFFFF;
+  font-size: 14px;
   font-weight: ${typography.weights.semibold};
   cursor: pointer;
-  margin: 0 auto;
-  padding: ${spacing.sm} ${spacing.lg};
-  border-radius: ${borderRadius.sm};
-  svg {
-    color: inherit;
-    fill: currentColor;
-    stroke: currentColor;
-  }
+  width: 100%;
+  padding: ${spacing.lg} ${spacing.xxxl};
+  border-radius: ${borderRadius.md};
 `;
 
 export const TabButton = styled.button.withConfig({
