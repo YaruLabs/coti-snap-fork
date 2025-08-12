@@ -5,9 +5,9 @@ export const ContentContainer = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: left;
-  padding: 80px;
+  padding: 50px;
   overflow-y: auto;
-  gap: 16px;
+  gap: 30px;
   background-color: ${(props) => props.theme.colors.background?.content};
   box-shadow: ${({ theme }) => theme.shadows.default};
   border-radius: ${({ theme }) => theme.radii.default};
@@ -23,6 +23,8 @@ export const ContentTitle = styled.p`
   font-size: ${(props) => props.theme.fontSizes.title};
   font-weight: bold;
   margin: 0;
+  color: black !important;
+  text-align: center;
 `;
 
 export const ContentText = styled.p`
@@ -30,6 +32,17 @@ export const ContentText = styled.p`
   line-height: 1.2;
   font-weight: medium;
   margin: 0;
+  color: black !important;
+  text-align: center;
+`;
+
+export const ContentTextInstall = styled.p`
+  font-size: ${(props) => props.theme.fontSizes.small};
+  line-height: 1.2;
+  font-weight: medium;
+  margin: 0;
+  color: black !important;
+  text-align: left;
 `;
 
 export const HeaderBarCentered = styled.div`

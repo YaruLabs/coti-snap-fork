@@ -1,8 +1,25 @@
 import { useState } from 'react';
+import styled, { keyframes } from 'styled-components';
 import Metamask from '../assets/metamask_fox.svg';
+import SpinnerIcon from '../assets/spinner.png';
 import { useRequestSnap, useMetaMask } from '../hooks';
-import { Button } from './Button';
-import { ContentContainer, ContentText, ContentTitle } from './styles';
+import { ButtonAction } from './Button';
+import { ContentContainer, ContentTextInstall, ContentTitle } from './styles';
+
+const spin = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+const SpinnerImage = styled.img`
+  width: 20px;
+  height: 20px;
+  animation: ${spin} 1s linear infinite;
+`;
 
 export const ContentInstallAESKeyManager = () => {
   const requestSnap = useRequestSnap();
@@ -25,17 +42,18 @@ export const ContentInstallAESKeyManager = () => {
   return (
     <ContentContainer>
       <ContentTitle>Install the COTI MetaMask Snap</ContentTitle>
-      <ContentText>
+      <ContentTextInstall>
         Please install the COTI MetaMask snap to onboard your account. If you
         don't have the COTI snap installed you will be prompted to install it.
-      </ContentText>
+      </ContentTextInstall>
 
-      <Button
-        text={isInstalling ? "Installing..." : "Install with MetaMask"}
+      <ButtonAction
+        text={isInstalling ? "Installing" : "Install with MetaMask"}
         primary
         onClick={handleInstallSnap}
         disabled={isInstalling}
-        icon={<Metamask />}
+        iconLeft={isInstalling ? <SpinnerImage src={SpinnerIcon} alt="Loading" /> : undefined}
+        iconRight={<Metamask />}
       />
     </ContentContainer>
   );
