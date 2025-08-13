@@ -22,7 +22,6 @@ import {
   TokenBalanceLeft,
   TokenBalanceLogoBox,
   TokenBalanceLogoBig,
-  TokenBalanceLogoSmall,
   TokenBalanceName,
   TokenBalanceRight,
   TokenBalanceAmount,

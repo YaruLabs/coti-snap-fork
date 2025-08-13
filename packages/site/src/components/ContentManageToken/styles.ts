@@ -539,6 +539,7 @@ export const TokenValues = styled.div`
   align-items: flex-end;
   gap: 2px;
   min-width: 110px;
+  text-align: right;
 `;
 
 export const TokenUsd = styled.span`
@@ -553,12 +554,11 @@ export const TokenAmount = styled.span`
   font-weight: ${typography.weights.bold};
   color: #1F2D67 !important;
   letter-spacing: 0.01em;
-  word-break: break-all;
-  overflow-wrap: break-word;
-  max-width: 160px;
+  white-space: nowrap;
+  display: inline-block;
+  max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
-  display: inline-block;
 `;
 
 export const NFTGrid = styled.div`
