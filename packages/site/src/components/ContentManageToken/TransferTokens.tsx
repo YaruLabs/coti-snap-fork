@@ -8,7 +8,6 @@ import {
   TokenName,
   TokenLogos,
   TokenLogoBig,
-  TokenLogoSmall,
   SendAmount
 } from './styles';
 import { Alert } from './Alert';
@@ -651,11 +650,9 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
       let success = false;
 
       if (currentToken.symbol === 'COTI' || !currentToken.address) {
-        const amountInWei = parseUnits(amount, 18);
-
         success = await tokenOps.transferCOTI({
           to: addressInput,
-          amount: amountInWei.toString()
+          amount: amount
         });
       } else if (currentToken.tokenId && currentToken.type === 'ERC721') {
         success = await tokenOps.transferERC721({
