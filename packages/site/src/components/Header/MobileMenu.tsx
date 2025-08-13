@@ -20,14 +20,11 @@ export const MobileMenu = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   
-  const { isFlask } = useMetaMask();
+  const { isFlask, snapsDetected } = useMetaMask();
   const { isConnected, address } = useAccount();
   const { connectors, connect } = useConnect({ config });
   const { disconnect } = useDisconnect();
   const { wrongChain } = useWrongChain();
-
-  const isMetaMaskInstalled =
-    typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask;
 
   const connectorId = isFlask ? CONNECTOR_MM_FLASK_EXPORT.ID : CONNECTOR_MM_REGULAR_EXPORT.ID;
 
@@ -82,7 +79,7 @@ export const MobileMenu = () => {
           </>
         ) : (
           <>
-            {!isMetaMaskInstalled ? (
+            {!snapsDetected ? (
               <MobileInstallLink href={CONNECTOR_MM.INSTALLATION_URL} target="_blank">
                 Install Metamask
               </MobileInstallLink>
