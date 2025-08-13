@@ -62,31 +62,6 @@ export const QuickAccessLabel = styled.span`
   text-align: center;
 `;
 
-export const BalanceAmount = styled.div`
-  font-weight: 600;
-  font-size: 32px;
-  color: #000;
-  margin-top: 2px;
-  white-space: nowrap;
-  text-align: center;
-`;
-
-export const BalanceEye = styled.button`
-  background: none;
-  padding: 0;
-  margin-left: ${spacing.xs};
-  display: flex;
-  align-items: center;
-  ${buttonBase}
-  
-  svg {
-    width: 22px;
-    height: 22px;
-    color: ${colors.text.muted};
-    stroke: ${colors.text.muted};
-    fill: ${colors.background.primary};
-  }
-`;
 
 export const BalanceSub = styled.div`
   font-size: ${typography.sizes.sm};

@@ -1,10 +1,10 @@
 import React from 'react';
-import { TokenBalanceAmount } from './styles/balance';
-import type { BalanceProps } from './types/balance';
+import { PrimaryBalanceAmount } from '../styles/balance';
+import type { BalanceDisplayProps } from '../types/balance';
 
 const DEFAULT_CURRENCY = 'COTI';
 
-export const Balance: React.FC<BalanceProps> = ({ 
+export const BalanceDisplay: React.FC<BalanceDisplayProps> = ({ 
   balance, 
   currency = DEFAULT_CURRENCY,
   className,
@@ -21,8 +21,8 @@ export const Balance: React.FC<BalanceProps> = ({
   }, [formattedBalance, currency, showCurrency]);
 
   return (
-    <TokenBalanceAmount className={className}>
+    <PrimaryBalanceAmount className={className}>
       {displayText}
-    </TokenBalanceAmount>
+    </PrimaryBalanceAmount>
   );
 };

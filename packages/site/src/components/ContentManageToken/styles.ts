@@ -202,16 +202,6 @@ export const QuickAccessLabel = styled.span`
   font-weight: 450;
 `;
 
-export const BalanceAmount = styled.div`
-  font-weight: 600;
-  font-size: 24px;
-  color: #000000 !important;
-  white-space: nowrap;
-  text-align: center;
-  align-items: center;
-  justify-content: center;
-  display: flex;
-`;
 
 export const BalanceEye = styled.button`
   background: none;

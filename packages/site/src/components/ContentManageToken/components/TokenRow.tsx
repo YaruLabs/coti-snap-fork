@@ -1,18 +1,16 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { BrowserProvider } from '@coti-io/coti-ethers';
-import { useTokenOperations } from '../../../hooks/useTokenOperations';
-import { useSnap } from '../../../hooks/SnapContext';
 import { ImportedToken } from '../../../types/token';
 import { formatBalance } from '../../../utils/formatters';
 import {CotiLogo} from '../../../assets/icons';
+import { Balance } from '../Balance';
 import { 
   TokenRow, 
   TokenInfo, 
   TokenLogos, 
   TokenLogoBig, 
   TokenName, 
-  TokenValues, 
-  TokenAmount 
+  TokenValues 
 } from '../styles';
 
 interface TokenRowProps {
@@ -22,6 +20,9 @@ interface TokenRowProps {
   cotiBalance?: string | undefined;
   propAESKey?: string | null | undefined;
   onSelectToken: (token: ImportedToken) => void;
+  isDecrypted: boolean;
+  onToggleDecryption: () => void;
+  tokenBalance: string;
 }
 
 export const TokenRowComponent: React.FC<TokenRowProps> = React.memo(({ 
@@ -30,50 +31,37 @@ export const TokenRowComponent: React.FC<TokenRowProps> = React.memo(({
   provider, 
   cotiBalance, 
   propAESKey, 
-  onSelectToken 
+  onSelectToken,
+  isDecrypted,
+  onToggleDecryption,
+  tokenBalance 
 }) => {
-  const { userAESKey } = useSnap();
-  const effectiveAESKey = propAESKey || userAESKey;
-  const { decryptERC20Balance } = useTokenOperations(provider);
-  const [decryptedBalance, setDecryptedBalance] = useState<string>('');
-  const [isDecrypting, setIsDecrypting] = useState(false);
-
-  const decryptBalance = useCallback(async () => {
-    if (!token.address) {
-      setDecryptedBalance(cotiBalance || '0');
-      return;
-    }
-    
-    if (!effectiveAESKey) {
-      setDecryptedBalance('(encrypted)');
-      return;
-    }
-    
-    setIsDecrypting(true);
-    try {
-      const balance = await decryptERC20Balance(token.address, effectiveAESKey);
-      setDecryptedBalance(`${balance}`);
-    } catch (error) {
-      console.error('Error decrypting balance:', error);
-      setDecryptedBalance('(encrypted)');
-    } finally {
-      setIsDecrypting(false);
-    }
-  }, [token.address, effectiveAESKey, decryptERC20Balance, cotiBalance]);
-
-  React.useEffect(() => {
-    setDecryptedBalance('');
-    setIsDecrypting(false);
-  }, [token.address]);
-
-  React.useEffect(() => {
-    decryptBalance();
-  }, [decryptBalance]);
-
   const formattedBalance = useMemo(() => {
-    if (isDecrypting) return 'Loading...';
-    return formatBalance(decryptedBalance || '0');
-  }, [decryptedBalance, isDecrypting]);
+    const balance = token.symbol === 'COTI' ? (cotiBalance || '0') : tokenBalance;
+    
+    
+    if (!isDecrypted) return '(encrypted)';
+    
+    // Format balance considering decimals (only for raw integer balances)
+    if (balance && balance !== '0' && token.decimals && token.symbol !== 'COTI') {
+      // Check if balance is a raw integer (no decimal point)
+      if (!balance.includes('.') && /^\d+$/.test(balance)) {
+        const balanceNumber = BigInt(balance);
+        const divisor = BigInt(10 ** token.decimals);
+        const wholePart = balanceNumber / divisor;
+        const fractionalPart = balanceNumber % divisor;
+        
+        // Convert to readable format
+        const wholeStr = wholePart.toString();
+        const fractionalStr = fractionalPart.toString().padStart(token.decimals, '0');
+        const trimmedFractional = fractionalStr.replace(/0+$/, '').slice(0, 6); // Max 6 decimal places
+        
+        return trimmedFractional.length > 0 ? `${wholeStr}.${trimmedFractional}` : wholeStr;
+      }
+    }
+    
+    return formatBalance(balance);
+  }, [tokenBalance, cotiBalance, isDecrypted, token.symbol, token.decimals]);
 
   const tokenKey = useMemo(() => 
     token.address || `${token.symbol}-${index}`, 
@@ -100,9 +88,12 @@ export const TokenRowComponent: React.FC<TokenRowProps> = React.memo(({
         <TokenName>{token.name}</TokenName>
       </TokenInfo>
       <TokenValues>
-        <TokenAmount>
-          {formattedBalance} {token.symbol}
-        </TokenAmount>
+        <Balance
+          balance={formattedBalance}
+          currency={token.symbol}
+          isDecrypted={isDecrypted}
+          onToggleDecryption={onToggleDecryption}
+        />
       </TokenValues>
     </TokenRow>
   );

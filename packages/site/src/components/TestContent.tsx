@@ -34,7 +34,6 @@ export const TestContent = ({ userAESKey }: { userAESKey: string | null }) => {
         }),
       },
     });
-    console.log('result123', result);
     if (result) {
       alert(result);
     }
