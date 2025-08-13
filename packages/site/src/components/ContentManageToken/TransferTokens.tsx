@@ -71,6 +71,7 @@ interface TransferTokensProps {
   balance: string;
   aesKey?: string | null | undefined;
   initialToken?: any;
+  onTransferSuccess?: () => void;
 }
 
 interface Token {
@@ -177,7 +178,6 @@ const TokenBalanceDisplay: React.FC<{
 
   const formattedBalance = (() => {
     if (balance && balance !== '0') {
-      // COTI siempre tiene 18 decimales
       const decimals = token.symbol === 'COTI' ? 18 : (token.decimals || 18);
       return formatTokenBalance(balance, decimals);
     }
@@ -371,7 +371,8 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
   address,
   balance,
   aesKey,
-  initialToken
+  initialToken,
+  onTransferSuccess
 }) => {
   const [addressInput, setAddressInput] = useState('');
   const [amount, setAmount] = useState('');
@@ -488,9 +489,7 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
     if (currentToken?.tokenId && currentToken?.type === 'ERC721') {
       return true;
     }
-    // Allow empty amount while typing
     if (!amount || amount === '') return false;
-    // Allow decimal point at the end while typing
     if (amount.endsWith('.')) return false;
     return !isNaN(amountNum) && amountNum > 0 && amountNum <= balanceNum;
   }, [amount, amountNum, balanceNum, currentToken?.tokenId, currentToken?.type]);
@@ -522,7 +521,6 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
 
   const handleAmountChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    // Allow empty value, numbers, and decimal point
     if (value === '' || /^\d*\.?\d*$/.test(value)) {
       setAmount(value);
     }
@@ -685,7 +683,12 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
       if (success) {
         setTxStatus('success');
         fetchTokenBalance(currentToken);
-        onBack();
+        
+        if ((currentToken.symbol === 'COTI' || !currentToken.address) && onTransferSuccess) {
+          onTransferSuccess();
+        } else {
+          onBack();
+        }
       } else {
         setTxStatus('error');
         setTxError(tokenOps.error || `Error transferring ${currentToken.symbol}`);
@@ -694,7 +697,7 @@ export const TransferTokens: React.FC<TransferTokensProps> = React.memo(({
       setTxStatus('error');
       setTxError(error.message || `Error transferring ${currentToken.symbol}`);
     }
-  }, [provider, canContinue, tokenOps, addressInput, amount, currentToken, fetchTokenBalance, onBack]);
+  }, [provider, canContinue, tokenOps, addressInput, amount, currentToken, fetchTokenBalance, onBack, onTransferSuccess]);
 
   const handleCancel = useCallback(() => {
     onBack();
