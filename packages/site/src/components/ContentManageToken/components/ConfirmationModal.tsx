@@ -37,7 +37,6 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   address,
   symbol,
   confirmText = 'Confirm',
-  confirmButtonColor = '#e53935',
   cancelText = 'Cancel'
 }) => {
   if (!isOpen) return null;

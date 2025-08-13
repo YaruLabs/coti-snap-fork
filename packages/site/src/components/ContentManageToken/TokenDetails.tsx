@@ -116,19 +116,6 @@ const TokenDetails: React.FC<TokenDetailModalProps> = ({
     menuDropdown.close();
   }, [menuDropdown]);
 
-  const handleSendToken = useCallback(() => {
-    // TODO: Implement send token functionality
-    menuDropdown.close();
-  }, [menuDropdown]);
-
-  const handleSendClick = useCallback(() => {
-    setShowSendModal(true);
-  }, []);
-
-  const handleCloseSendModal = useCallback(() => {
-    setShowSendModal(false);
-  }, []);
-
   const handleHideToken = useCallback(() => {
     if (token) {
       removeToken(token.address);

@@ -1525,7 +1525,7 @@ export const TokenDetailsValue = styled.span`
 `;
 
 export const TokenDetailsLink = styled.a`
-  color: #1E29F6;
+  color: #1E29F6 !important;
   font-weight: 500;
   font-size: ${typography.sizes.lg};
   text-decoration: none;
@@ -1935,7 +1935,7 @@ export const TokenBalanceLogoBig = styled.div`
   justify-content: center;
   font-size: 18px;
   font-weight: 500;
-  color: #222;
+  color: #000000 !important;
   z-index: 1;
 `;
 
@@ -2043,11 +2043,18 @@ export const AddressCopyButton = styled.button`
   display: flex;
   align-items: center;
   cursor: pointer;
+  color: #1E29F6;
+  
   svg {
     width: 18px;
     height: 18px;
-    fill: currentColor;
     display: block;
+  }
+  
+  svg path,
+  svg rect {
+    stroke: #1E29F6 !important;
+    fill: none !important;
   }
 `;
 
