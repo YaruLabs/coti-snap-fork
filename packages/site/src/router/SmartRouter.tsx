@@ -4,16 +4,13 @@ import { useAccount } from 'wagmi';
 import styled from 'styled-components';
 
 import { useMetaMask, useWrongChain } from '../hooks';
-import { Header } from '../components';
+import { Header, Footer } from '../components';
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   margin: auto;
   width: 564px;
-  height: 100%;
-  max-height: 100vh;
-  max-height: calc(100vh - 120px);
   gap: 24px;
   box-sizing: border-box;
   border-radius: 14px;
@@ -74,6 +71,7 @@ export function SmartRouter() {
     <Container>
       <Header />
       <Outlet />
+      <Footer />
     </Container>
   );
 }

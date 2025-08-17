@@ -6,3 +6,4 @@ export * from './ContentSwitchNetwork';
 export * from './ContentManageAESKey';
 export * from './TestContent';
 export * from './GlobalBackground';
+export * from './Footer';
